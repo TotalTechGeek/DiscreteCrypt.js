@@ -1,0 +1,23 @@
+{
+  "name": "discretecrypt.js",
+  "version": "0.0.1",
+  "description": "Secure asymmetric vault system for networked cryptography.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "crypto",
+    "discretecrypt",
+    "secure",
+    "vault"
+  ],
+  "author": "Jesse Daniel Mitchell",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "aes-js": "^3.1.1",
+    "big-integer": "^1.6.34",
+    "jssha": "^2.3.1",
+    "scrypt-js": "^2.0.3"
+  }
+}
