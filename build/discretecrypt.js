@@ -5059,22 +5059,17 @@ const aesjs = require('aes-js')
 const jsSHA = require('jssha')
 const Buffer = require('buffer').Buffer
 
-function bufferFunc(a, b)
-{
-    return Buffer.from(a, b)
-
-}
-
+// Export everything.
 global.Buffer = Buffer
 global.jsSHA = jsSHA
 global.bigInt = bigInt
 global.aesjs = aesjs
-global.DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, bufferFunc)
+global.DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, Buffer)
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./discretecrypt.js":11,"aes-js":1,"buffer":3,"jsbn":5,"jssha":6,"scrypt-async":8}],11:[function(require,module,exports){
 
-function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
+function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 {
     const DEFAULT_SCRYPT_CONFIG = {
         N: 1 << 14,
@@ -5126,14 +5121,23 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
         return s;
     }
 
+    /**
+     * Gets the scrypt value.
+     * @param {*} key 
+     * @param {*} salt 
+     * @param {*} N 
+     * @param {*} r 
+     * @param {*} p 
+     * @param {*} len 
+     */
     function scryptPromise(key, salt, N, r, p, len)
     {
         if(typeof key === "string")
         {
-            key = [...bufferFunc(key.normalize('NFKC'))]
+            key = [...Buffer.from(key.normalize('NFKC'))]
         }
 
-        if(typeof salt === "string") salt = bufferFunc(salt, 'hex')
+        if(typeof salt === "string") salt = Buffer.from(salt, 'hex')
 
         return new Promise((resolve, reject) =>
         {
@@ -5142,6 +5146,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
                 r: r,
                 p: p,
                 dkLen: len,
+                interruptStep: exports.SCRYPT_PAUSE,
                 encoding: 'binary'
             }, (key) =>
             {
@@ -5191,14 +5196,28 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
             return this
         }
 
+        /**
+         * Alias for fromJSON
+         * @param {String|Object} json 
+         */
+        static import(json)
+        {
+            return this.fromJSON(json)
+        }
+
 
         /**
          * 
-         * @param {Object} json
+         * @param {String|Object} json
          * @returns {Contact} 
          */
         static fromJSON(json)
         {
+            if(typeof json === "string")
+            {
+                json = JSON.parse(json)
+            }
+
             let contact = new Contact()
             for(var prop in json)
             {
@@ -5206,6 +5225,17 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
             }
             return contact
         }
+
+        /**
+         * Used to export the (safe) JSON for the Contact
+         * @param {Object} extra 
+         */
+        export(extra)
+        {
+            this.clean(extra)
+            return JSON.stringify(this)
+        }
+
 
         /**
          * 
@@ -5239,11 +5269,16 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
          */
         compute(key)
         {
-            let salt = bufferFunc(this.salt, 'hex')
+            let salt = Buffer.from(this.salt, 'hex')
 
             return scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>
             {
                 this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()
+
+                let publicTest = new bigInt(this.params.gen).modPow(this.privateKey(), new bigInt(this.params.prime)).toString()
+
+                if(this.public !== publicTest) return Promise.reject("Incorrect Key")
+
                 return this
             })
         }
@@ -5267,14 +5302,14 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
             {
                 if(typeof key === "string")
                 {
-                    key = bufferFunc(key.normalize('NFKC'))
+                    key = Buffer.from(key.normalize('NFKC'))
                 } else if(!key)
                 {
                     key = randomBytes(32)
                 }
 
-                if(typeof salt === "string") salt = bufferFunc(salt, 'hex')
-                else if(!salt) salt = bufferFunc('00', 'hex')
+                if(typeof salt === "string") salt = Buffer.from(salt, 'hex')
+                else if(!salt) salt = Buffer.from('00', 'hex')
 
                 return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
                 {
@@ -5328,13 +5363,13 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
     {
         let dhexchange = new bigInt(data.public, 16).modPow(receiver.privateKey(), new bigInt(receiver.params.prime)).toString(16)
 
-        return scryptPromise([...bufferFunc(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
             {
-                let ctr = new aesjs.ModeOfOperation.ctr(dhkey, bufferFunc(truncate(data.hmac, 32), 'hex'))
+                let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))
             
                 let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))
             
-                let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, bufferFunc(truncate(data.hmac, 32), 'hex'))
+                let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))
             
                 let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))
             
@@ -5381,15 +5416,15 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
 
         hmac = hmac.getHMAC('HEX')
 
-        return scryptPromise([...bufferFunc(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return scryptPromise([...Buffer.from(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
         {
-            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, bufferFunc(truncate(hmac, 32), 'hex'))
+            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
 
             let ekey = ctr.encrypt(key)
 
             ekey = aesjs.utils.hex.fromBytes(ekey)
 
-            let ctr2 = new aesjs.ModeOfOperation.ctr(key, bufferFunc(truncate(hmac, 32), 'hex'))
+            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))
 
             let payload = ctr2.encrypt(msg)
             payload = aesjs.utils.hex.fromBytes(payload)
@@ -5403,9 +5438,17 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
         })
     }
 
+    exports.utils = {
+        truncate: truncate,
+        scryptPromise: scryptPromise,
+        hex: toHexString,
+        randomBytes: randomBytes
+    }
+
     exports.Contact = Contact
     exports.open = open
     exports.exchange = exchange
+    exports.SCRYPT_PAUSE = 0
     return exports
 }
 

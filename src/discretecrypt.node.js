@@ -9,11 +9,5 @@ function randomBytes(n)
     return crypto.randomBytes(n)
 }
 
-function bufferFunc(a, b)
-{
-    return Buffer.from(a, b)
-}
-
-let DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
-
+let DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 module.exports = DiscreteCrypt
