@@ -1,3 +1,7 @@
+<h1>DiscreteCrypt.js Browser Test</h1>
+<hr>
+<p style=" overflow-wrap: break-word;" id="out"></p>
+
 <script type="text/javascript" src="./node_modules/jssha/src/sha.js"></script>
 <script type="text/javascript" src="./node_modules/aes-js/index.js"></script>
 <script type="text/javascript" src="./node_modules/jsbn/index.js"></script>
@@ -10,15 +14,15 @@
     let bigInt = jsbn.BigInteger
     let d = new Date()
 
-    let params = {
-        prime : new bigInt("9337258299206731509799933749238072945211050670461145905014625822101372085456209940957131562283227400601292308149692164829693376912675307908079245489017931083161166993796519113825260060596655551769577287164799465144766290768013660391310347707944095797446444731903100000142599715425222457344225526050022510850154313193175456076342256477785118056757628487642302617333875748867700351674341574049695310990044994399351485992643408022666915974166176920756124484080619169135859795646360193746939432441585780096613854855953644492007654959352992892564952714977268124623221417703740932226294574825958290879995630824969541329034688682118673128950015122151255842370247174592601592710595976052348588496315410874492678391136168774470473187190911290643450889559272275574020874487751530000870127612125581289159639567671197675876301073866348976076967984619517428495174486870392475889674081258247148342572679329061225543662596317526998027836755651", 10),
-        gen : new bigInt('2')
-    }
+    // The scrypt tuned down due to the random 256 bit key space.
 
-    // This is tuned down due to the random 256 bit key space.
+    // These are far, far less than the default parameters.
+    // There is little need for the Scrypt step when standard brute-force is less expensive. 
+    // The scrypt step is still somewhat valuable, due to the HMAC (used as salt) making it difficult
+    // to change anything.   
     const scryptConfig = {
         N: 1 << 10,
-        r: 5,
+        r: 4,
         p: 1,
         len: 32
     }
@@ -46,8 +50,8 @@
     DiscreteCrypt = DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc)
 
     Promise.all([
-        DiscreteCrypt.Contact.create(null, null, scryptConfig, params),
-        DiscreteCrypt.Contact.create(null, null, scryptConfig, params)
+        DiscreteCrypt.Contact.create(null, null, scryptConfig),
+        DiscreteCrypt.Contact.create(null, null, scryptConfig)
     ]).then(([
         jesse,
         jerry
@@ -65,6 +69,3 @@
     })
 </script>
 
-<h1>DiscreteCrypt.js Browser Test</h1>
-<hr>
-<p style=" overflow-wrap: break-word;" id="out"></p>
