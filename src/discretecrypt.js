@@ -233,7 +233,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
      */
     function open(receiver, data)
     {
-        let dhexchange = new bigInt(data.public, 16).modPow(receiver.privateKey(), receiver.params.prime).toString(16)
+        let dhexchange = new bigInt(data.public, 16).modPow(receiver.privateKey(), new bigInt(receiver.params.prime)).toString(16)
 
         return scryptPromise([...bufferFunc(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
             {

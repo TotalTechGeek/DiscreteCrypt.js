@@ -1,5 +1,5 @@
 const scrypt = require('scrypt-js')
-const bigInt = require('big-integer')
+const bigInt = require('jsbn').BigInteger
 const aesjs = require('aes-js')
 const jsSHA = require('jssha')
 
