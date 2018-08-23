@@ -17,14 +17,11 @@
         p: 1,
         len: 32
     }
-
    
     function output(x)
     {
         document.getElementById('out').innerHTML += x + "<br><br>"
-
     }
-
 
     Promise.all([
         DiscreteCrypt.Contact.create(null, null, scryptConfig),

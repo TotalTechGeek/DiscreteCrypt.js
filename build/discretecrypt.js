@@ -5065,6 +5065,10 @@ function bufferFunc(a, b)
 
 }
 
+global.Buffer = Buffer
+global.jsSHA = jsSHA
+global.bigInt = bigInt
+global.aesjs = aesjs
 global.DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, bufferFunc)
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})

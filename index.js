@@ -1,5 +1,4 @@
-const bigInt = require('jsbn').BigInteger
-let DiscreteCrypt = require('./src/discretecrypt.node.js')
+let DiscreteCrypt = require('./build/discretecrypt.node.js')
 
 // The scrypt tuned down due to the random 256 bit key space.
 
