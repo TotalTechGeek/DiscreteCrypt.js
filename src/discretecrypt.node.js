@@ -12,7 +12,6 @@ function randomBytes(n)
 function bufferFunc(a, b)
 {
     return Buffer.from(a, b)
-
 }
 
 let DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)

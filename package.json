@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify src/discretecrypt.browser.js -o bundle.js"
+    "build": "mkdirp build && browserify src/discretecrypt.browser.js -o build/discretecrypt.js && minify build/discretecrypt.js -o build/discretecrypt.min.js"
   },
   "keywords": [
     "crypto",
@@ -22,6 +22,7 @@
     "jsbn": "^1.1.0",
     "jssha": "^2.3.1",
     "scrypt-async": "^2.0.0",
-    "scrypt-js": "^2.0.3"
+    "babel-minify": "^0.2.0",
+    "mkdirp": "^0.5.1"
   }
 }

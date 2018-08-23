@@ -10,4 +10,4 @@ function bufferFunc(a, b)
 
 }
 
-global.DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
+global.DiscreteCrypt = require('./discretecrypt.js')(scrypt, bigInt, aesjs, jsSHA, bufferFunc)
