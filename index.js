@@ -11,7 +11,7 @@ const scryptConfig = {
     N: 1 << 10,
     r: 5,
     p: 1,
-    len: 35
+    len: 32
 }
 
 
