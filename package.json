@@ -4,7 +4,8 @@
   "description": "Secure asymmetric vault system for networked cryptography.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify src/discretecrypt.browser.js -o bundle.js"
   },
   "keywords": [
     "crypto",
@@ -16,8 +17,11 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "aes-js": "^3.1.1",
+    "browserify": "^16.2.2",
+    "buffer": "^5.2.0",
     "jsbn": "^1.1.0",
     "jssha": "^2.3.1",
+    "scrypt-async": "^2.0.0",
     "scrypt-js": "^2.0.3"
   }
 }

@@ -2,16 +2,8 @@
 <hr>
 <p style=" overflow-wrap: break-word;" id="out"></p>
 
-<script type="text/javascript" src="./node_modules/jssha/src/sha.js"></script>
-<script type="text/javascript" src="./node_modules/aes-js/index.js"></script>
-<script type="text/javascript" src="./node_modules/jsbn/index.js"></script>
-<script type="text/javascript" src="./node_modules/scrypt-js/scrypt.js"></script>
-<script type="text/javascript" src="./node_modules/scrypt-js/thirdparty/buffer.js"></script>
-<script type="text/javascript" src="./node_modules/scrypt-js/thirdparty/unorm.js"></script>
-<script type="text/javascript" src="./node_modules/scrypt-js/thirdparty/setImmediate.js"></script>
-<script type="text/javascript" src="./src/discretecrypt.js"></script>
+<script type="text/javascript" src="bundle.js"></script>
 <script>
-    let bigInt = jsbn.BigInteger
     let d = new Date()
 
     // The scrypt tuned down due to the random 256 bit key space.
@@ -27,27 +19,13 @@
         len: 32
     }
 
-    function bufferFunc(a, b) 
-    {
-        function pad(x)
-        {
-            if(x.length % 2 == 1) return '0' + x
-            return x
-        }
-
-        if(b.toLowerCase() == 'hex')
-            a = pad(a)
-
-        return new buffer.Buffer(a, b)
-    }
-
+   
     function output(x)
     {
         document.getElementById('out').innerHTML += x + "<br><br>"
 
     }
 
-    DiscreteCrypt = DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc)
 
     Promise.all([
         DiscreteCrypt.Contact.create(null, null, scryptConfig),

@@ -51,7 +51,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
         return s;
     }
 
-    function scryptPromise(key, salt, N, r, p, len, progressCallback)
+    function scryptPromise(key, salt, N, r, p, len)
     {
         if(typeof key === "string")
         {
@@ -60,14 +60,17 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, bufferFunc, randomBytes)
 
         if(typeof salt === "string") salt = bufferFunc(salt, 'hex')
 
-
         return new Promise((resolve, reject) =>
         {
-            scrypt(key, salt, N, r, p, len, (error, progress, key) =>
+            scrypt(key, salt, {
+                N: N,
+                r: r,
+                p: p,
+                dkLen: len,
+                encoding: 'binary'
+            }, (key) =>
             {
-                if(error) reject(error)
                 if(key) resolve(key)
-                if(progressCallback) progressCallback(progress)
             })
         })
     }
