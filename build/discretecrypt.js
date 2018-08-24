@@ -5162,6 +5162,11 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
          */
         publicKey()
         {
+            if(!this.public)
+            {
+                throw "Public key not set."
+            }
+
             return new bigInt(this.public)
         }
 
@@ -5170,6 +5175,11 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
          */
         privateKey()
         {
+            if(!this.private)
+            {
+                throw "Private key not set."
+            }
+
             return new bigInt(this.private)
         }
 
