@@ -13,6 +13,47 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         gen: new bigInt('2')
     }
 
+    function modPow(a, b, c)
+    {
+        if(typeof a === "string") a = new bigInt(a)
+        if(typeof b === "string") b = new bigInt(b)
+        if(typeof c === "string") c = new bigInt(c)
+
+
+        function pow(a,b,c)
+        {
+            let one = BigInt(1)
+            let res = BigInt(1)
+            a = a % c;
+
+            while(b > 0)
+            {
+                if(b & one)
+                    res = (res * a) % c
+
+                b = b >> one
+                a = (a*a) % c
+            }
+
+            return res
+        }
+
+        if(typeof BigInt !== "undefined")
+        {
+            a = BigInt(a.toString())
+            b = BigInt(b.toString())
+            c = BigInt(c.toString())
+
+            return pow(a, b, c)
+        }
+        else
+        {
+            let red = bigInt.red(c)
+            return a.toRed(red).redPow(b).fromRed()
+        }
+    }
+
+
     if(!randomBytes)
     {
         if(window.crypto)
@@ -229,7 +270,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             {
                 this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()
 
-                let publicTest = new bigInt(this.params.gen).modPow(this.privateKey(), new bigInt(this.params.prime)).toString()
+                let publicTest = modPow(this.params.gen, this.privateKey(), this.params.prime).toString() 
 
                 if(this.public !== publicTest) return Promise.reject("Incorrect Key")
 
@@ -268,7 +309,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                 return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
                 {
                     key = new bigInt(toHexString(key), 16)
-                    let pub = params.gen.modPow(key, params.prime)
+                    let pub = modPow(params.gen, key, params.prime)
                     return [key, pub]  
                 })
             }
@@ -315,7 +356,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
      */
     function open(receiver, data)
     {
-        let dhexchange = new bigInt(data.public, 16).modPow(receiver.privateKey(), new bigInt(receiver.params.prime)).toString(16)
+        let dhexchange = modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)
 
         return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
             {
@@ -355,7 +396,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
     {
         if(!remember[sender.public + ',' + receiver.public])
         {
-            remember[sender.public + ',' + receiver.public] = receiver.publicKey().modPow(sender.privateKey(), new bigInt(sender.params.prime)).toString(16)
+            remember[sender.public + ',' + receiver.public] = modPow(receiver.publicKey(), sender.privateKey(), sender.params.prime).toString(16) 
         }
 
         msg = JSON.stringify(msg)

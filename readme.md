@@ -17,7 +17,13 @@ This will produce the necessary output.
 
 The following libraries were used:
 - aes-js
-- jsbn 
+- bn.js 
 - buffer
 - jsSHA
 - scrypt-async
+
+## Notes
+
+This library can leverage the new proposal for [native BigInts](https://github.com/tc39/proposal-bigint) in JavaScript, achieving far greater performance.
+
+At the time of writing, Chrome is the only browser with support for this proposal.

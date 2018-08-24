@@ -1,5 +1,5 @@
 const scrypt = require('scrypt-async')
-const bigInt = require('jsbn').BigInteger
+const bigInt = require('bn.js')
 const aesjs = require('aes-js')
 const jsSHA = require('jssha')
 
