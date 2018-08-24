@@ -5227,13 +5227,27 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         }
 
         /**
-         * Used to export the (safe) JSON for the Contact
-         * @param {Object} extra 
-         */
+        * Used to export the (safe) JSON for the Contact
+        * @param {Object} extra 
+        */
         export(extra)
         {
-            this.clean(extra)
-            return JSON.stringify(this)
+          let res = JSON.stringify(this)
+
+          if(extra)
+          {
+              if(extra.params || extra.all)
+              {
+                  delete res.params
+              }
+
+              if(extra.scryptConfig || extra.all)
+              {
+                  delete res.scryptConfig
+              }
+          }
+
+            return res
         }
 
 
