@@ -213,22 +213,24 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         */
         export(extra)
         {
-          let res = JSON.stringify(this)
+            let res = Object.assign({}, this)
 
-          if(extra)
-          {
-              if(extra.params || extra.all)
-              {
-                  delete res.params
-              }
+            delete res.private
 
-              if(extra.scryptConfig || extra.all)
-              {
-                  delete res.scryptConfig
-              }
-          }
+            if(extra)
+            {
+                if(extra.params || extra.all)
+                {
+                    delete res.params
+                }
 
-            return res
+                if(extra.scryptConfig || extra.all)
+                {
+                    delete res.scryptConfig
+                }
+            }
+
+            return JSON.stringify(res)
         }
 
 
