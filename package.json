@@ -4,7 +4,7 @@
   "description": "Secure asymmetric vault system for networked cryptography.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "build": "mkdirp build && browserify src/discretecrypt.browser.js -o build/discretecrypt.js && minify build/discretecrypt.js -o build/discretecrypt.min.js"
   },
   "keywords": [
@@ -23,6 +23,7 @@
     "buffer": "^5.2.0",
     "jssha": "^2.3.1",
     "mkdirp": "^0.5.1",
+    "mocha": "^5.2.0",
     "scrypt-async": "^2.0.0"
   }
 }
