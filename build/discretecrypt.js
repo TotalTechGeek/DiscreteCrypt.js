@@ -7232,12 +7232,12 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
     /**
      * Gets the scrypt value.
-     * @param {*} key 
-     * @param {*} salt 
-     * @param {*} N 
-     * @param {*} r 
-     * @param {*} p 
-     * @param {*} len 
+     * @param {String|Buffer|Array} key 
+     * @param {String|Buffer|Array} salt 
+     * @param {Number=} N 
+     * @param {Number=} r 
+     * @param {Number=} p 
+     * @param {Number=} len 
      */
     function scryptPromise(key, salt, N, r, p, len)
     {
@@ -7247,6 +7247,12 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         }
 
         if(typeof salt === "string") salt = Buffer.from(salt, 'hex')
+
+    
+        N = N || DEFAULT_SCRYPT_CONFIG.N
+        r = r || DEFAULT_SCRYPT_CONFIG.r
+        p = p || DEFAULT_SCRYPT_CONFIG.p
+        len = len || DEFAULT_SCRYPT_CONFIG.len
 
         return new Promise((resolve, reject) =>
         {
