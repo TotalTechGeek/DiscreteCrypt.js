@@ -261,12 +261,17 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
         /**
          * 
-         * @param {*} key 
+         * @param {String|Buffer|Array} key 
          * @returns {Promise.<Contact>}
          */
         compute(key)
         {
             let salt = Buffer.from(this.salt, 'hex')
+
+            if(typeof key === "string")
+            {
+                key = Buffer.from(key.normalize('NFKC'))
+            }
 
             return scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>
             {
@@ -284,8 +289,11 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         /**
          * Creates a contact from the given key / salt. 
          * If no salt is provided, it will randomly generate it.
-         * @param {*} key 
+         * @param {String|Buffer|Array} key 
          * @param {*} salt 
+         * @param {Object=} scryptConfig
+         * @param {Object=} params
+         * 
          * @returns {Promise.<Contact>}
          */
         static create(key, salt, scryptConfig, params) 
@@ -354,7 +362,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
     // Todo: add some sort of cache cleaner for remember, to prevent memory bloat
 
     /**
-     * 
+     * Opens an encrypted payload
      * @param {Contact} receiver 
      * @param {*} data 
      */
@@ -398,8 +406,11 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
     /**
      * This code assumes both individuals are using the same parameters. 
+     * Sends an encrypted message from the sender to the receiver.
+     * 
      * @param {Contact} sender 
      * @param {Contact} receiver 
+     * @param {*} msg
      */
     function exchange(sender, receiver, msg)
     {
@@ -442,11 +453,132 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         })
     }
 
+    /**
+     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
+     * using a given input key.
+     * 
+     * Uses the input key rather than a DH Exchange.
+     * 
+     * @param {String|Buffer|Array} inputKey 
+     * @param {*} msg 
+     * @param {Object=} scryptConfig 
+     */
+    function symmetricEncrypt(inputKey, msg, scryptConfig)
+    {
+        if(!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+
+        if(typeof inputKey === "undefined")
+        {
+            return Promise.reject('No input key provided.')
+        } 
+
+        if(typeof inputKey === "string")
+        {
+            inputKey = Buffer.from(inputKey.normalize('NFKC'))
+        } 
+
+        if(inputKey.length === 0)
+        {
+            return Promise.reject('Input key empty.')
+        }
+
+        let key = randomBytes(32)
+        msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
+        
+        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
+        hmac.setHMACKey(key, 'ARRAYBUFFER')
+        hmac.update(msg)
+        hmac = hmac.getHMAC('HEX')
+
+        return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
+        {
+            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
+
+            let ekey = ctr.encrypt(key)
+
+            ekey = aesjs.utils.hex.fromBytes(ekey)
+
+            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))
+
+            let payload = ctr2.encrypt(msg)
+            payload = aesjs.utils.hex.fromBytes(payload)
+
+            return {
+                payload: payload,
+                key: ekey, 
+                hmac: hmac
+            }
+        })
+    }
+
+
+    /**
+     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
+     * using a given input key.
+     * 
+     * Uses the input key rather than a DH Exchange.
+     * 
+     * @param {String|Buffer|Array} inputKey 
+     * @param {Object} data 
+     * @param {Object=} scryptConfig 
+     */
+    function symmetricDecrypt(inputKey, data, scryptConfig)
+    {
+        if(!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+        
+        if(typeof inputKey === "undefined")
+        {
+            return Promise.reject('No input key provided.')
+        } 
+
+        if(typeof inputKey === "string")
+        {
+            inputKey = Buffer.from(inputKey.normalize('NFKC'))
+        } 
+
+        if(inputKey.length === 0)
+        {
+            return Promise.reject('Input key empty.')
+        }
+        
+        return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
+            {
+                let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))
+            
+                let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))
+            
+                let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))
+            
+                let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))
+            
+                let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
+                hmac.setHMACKey(ekey, 'ARRAYBUFFER')
+                hmac.update(payload)
+
+                hmac = hmac.getHMAC('HEX')
+
+                if(hmac === data.hmac)
+                {   
+                    payload = aesjs.utils.utf8.fromBytes(payload)
+                    return JSON.parse(payload)
+                }
+                else
+                {
+                    return Promise.reject('Decryption failed.')
+                }
+            })
+    }
+
     exports.utils = {
         truncate: truncate,
         scryptPromise: scryptPromise,
         hex: toHexString,
         randomBytes: randomBytes
+    }
+
+    exports.Symmetric = {
+        encrypt: symmetricEncrypt,
+        decrypt: symmetricDecrypt
     }
 
     exports.clearCache = function()

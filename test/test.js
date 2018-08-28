@@ -195,3 +195,109 @@ describe('DiscreteCrypt', () =>
 
     })
 })
+
+
+describe('DiscreteCrypt', () =>
+{
+    describe('Symmetric', () =>
+    {
+        const SYM_KEY = 'Hello, World!'
+        const WRONG_KEY = 'Wrong, Key!'
+        const MESSAGE = 'This is the message.'
+        let encryption = DiscreteCrypt.Symmetric.encrypt(SYM_KEY, MESSAGE, scrypt) 
+        let decryption = encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(SYM_KEY, i, scrypt))
+
+        
+        describe('#encrypt', () =>
+        {
+            it('should reject upon empty key', (done) =>
+            {
+                DiscreteCrypt.Symmetric.encrypt('', MESSAGE).then(() =>
+                {
+                    return done(new Error())
+                }).catch(c =>
+                {
+                    return done()
+                })
+            })
+
+            it('should reject upon no key', (done) =>
+            {
+                DiscreteCrypt.Symmetric.encrypt(undefined, MESSAGE).then(() =>
+                {
+                    return done(new Error())
+                }).catch(c =>
+                {
+                    return done()
+                })
+            })
+
+            it('should produce result', (done) =>
+            {
+                encryption.then(result =>
+                {
+                    if(result) return done()
+                    return done(new Error())
+                })
+            })
+        })
+
+        describe('#decrypt', () =>
+        {
+            it('should reject upon empty key', (done) =>
+            {
+                DiscreteCrypt.Symmetric.decrypt('', MESSAGE).then(() =>
+                {
+                    return done(new Error())
+                }).catch(c =>
+                {
+                    return done()
+                })
+            })
+
+            it('should reject upon no key', (done) =>
+            {
+                DiscreteCrypt.Symmetric.decrypt(undefined, MESSAGE).then(() =>
+                {
+                    return done(new Error())
+                }).catch(c =>
+                {
+                    return done()
+                })
+            })
+
+            it('should decrypt properly', (done) =>
+            {
+                decryption.then(result =>
+                {
+                    if(result && result === MESSAGE)
+                    {
+                        return done()
+                    }
+
+                    return done(new Error())
+                })
+            })
+
+
+            it('should reject upon failed decryption', (done) =>
+            {
+                encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(WRONG_KEY, i, scrypt)).then(result =>
+                {
+                    return done(new Error())
+                }).catch(error =>
+                {
+                    return done()
+                })
+
+            })
+
+        })
+
+
+
+
+    })
+
+
+})
