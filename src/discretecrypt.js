@@ -351,6 +351,8 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         return x
     }
 
+    // Todo: add some sort of cache cleaner for remember, to prevent memory bloat
+
     /**
      * 
      * @param {Contact} receiver 
@@ -358,7 +360,12 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
      */
     function open(receiver, data)
     {
-        let dhexchange = modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)
+        if(!remember[data.public + ',' + receiver.public])
+        {
+            remember[data.public + ',' + receiver.public] =  modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)
+        }
+
+        let dhexchange = remember[data.public + ',' + receiver.public]
 
         return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
             {
@@ -440,6 +447,11 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         scryptPromise: scryptPromise,
         hex: toHexString,
         randomBytes: randomBytes
+    }
+
+    exports.clearCache = function()
+    {
+        remember = {}
     }
 
     exports.Contact = Contact
