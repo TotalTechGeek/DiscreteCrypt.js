@@ -7146,17 +7146,76 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         len: 64
     }
 
+    // Funnily enough, it seems the default params can have their pohlig found in 7.    
     const DEFAULT_PARAMS = {
         prime: new bigInt('1236027852723267358067496240415081192016632901798652377386974104662393263762300791015297301419782476103015366958792837873764932552461292791165884073898812814414137342163134112441573878695866548152604326906481241134560091096795607547486746060322717834549300353793656273878542405925895784382400028374603183267116520399667622873636417533621785188753096887486165751218947390793886174932206305484313257628695734926449809428884085464402485504798782585345665225579018127843073619788513405272670558284073983759985451287742892999484270521626583252756445695489268987027078838378407733148367649564107237496006094048593708959670063677802988307113944522310326616125731276572628521088574537964296697257866765026848588469121515995674723869067535040253689232576404893685613618463095967906841853447414047313021676108205138971649482561844148237707440562831931089544088821151806962538015278155763187487878945694840272084274212918033049841007502061'),
         gen: new bigInt('2')
     }
+
+
+    /**
+     * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
+     * @param {BigInt|bigInt|string} prime
+     * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
+     */
+    function native_pohlig(prime, range)
+    {
+        if(typeof prime === "string") prime = BigInt(prime)
+        else if(typeof prime === "object") prime = BigInt(prime.toString())
+
+        prime -= BigInt(1)
+        let factors = BigInt(1)
+
+        let max = BigInt((range || (1 << 12)) + 1)
+
+        for(let i = BigInt(2); i < max; i++)
+        {
+            while(!(prime % i))
+            {
+                prime /= i
+                factors *= i
+            }
+        }
+
+        return [prime.toString(), factors.toString()]
+    }
+
+    /**
+     * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
+     * @param {BigInt|bigInt|string} prime
+     * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
+     */
+    function pohlig(prime, range)
+    {
+        if(typeof BigInt !== "undefined")
+        {
+            return native_pohlig(prime, range)
+        }
+
+        if(typeof prime === "string") prime = new bigInt(prime)
+        
+        prime.isubn(1)
+        let factors = new bigInt(1)
+        let max = (range || (1 << 12)) + 1
+        for(let i = 2; i < max; i++)
+        {
+
+            while(!prime.modn(i))
+            {
+                prime.idivn(i)
+                factors.imuln(i)
+            }
+        }
+
+        return [prime.toString(), factors.toString()]
+    }
+
 
     function modPow(a, b, c)
     {
         if(typeof a === "string") a = new bigInt(a)
         if(typeof b === "string") b = new bigInt(b)
         if(typeof c === "string") c = new bigInt(c)
-
 
         function pow(a,b,c)
         {
@@ -7182,7 +7241,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             b = BigInt(b.toString())
             c = BigInt(c.toString())
 
-            return pow(a, b, c)
+            return new bigInt(pow(a, b, c).toString())
         }
         else
         {
@@ -7375,6 +7434,101 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             }
 
             return JSON.stringify(res)
+        }
+
+
+        /**
+         * This is not how DiscreteCrypt (C++) does it,
+         * but it will be modified to match this approach.
+         * @param {*} data 
+         */
+        sign(data)
+        {
+            // todo: add BigInt native implementation
+
+            let d = Buffer.from(JSON.stringify(data))
+            let priv = this.privateKey()
+
+            let [ph, factor] = pohlig(this.params.prime)
+
+            ph = new bigInt(ph)
+
+            // compute the DSA pub key
+            let g = modPow(this.params.gen, factor, this.params.prime)
+
+
+            // compute a private k value by using an HMAC
+            // the difference between this and DiscreteCrypt (C++) is that
+            // the key for the HMAC is the private key, not the contact's password (which is secure but meh).
+            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
+            hmac.setHMACKey(priv.toString(16), 'HEX')
+            hmac.update(d)
+            hmac = hmac.getHMAC('HEX')
+
+            // compute a public hash
+            let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
+            hash.update(d)
+            hash = hash.getHash('HEX')
+
+            // perform the DSA Algorithm
+            let x = priv
+            let k = new bigInt(hmac, 16)
+            let H = new bigInt(hash, 16)
+
+            let r = modPow(g, k, this.params.prime).mod(ph)
+            let s = k.invm(ph).imul(H.iadd(x.imul(r))).mod(ph)
+
+            return {
+                r: r.toString(16),
+                s: s.toString(16), 
+                data: data
+            }
+        }
+
+
+        /**
+         * Verifies the signed data.
+         * @param {*} data 
+         */
+        verify(data)
+        {
+            if(!data.s || !data.r) return false
+
+            let pub = this.publicKey()
+
+            let [ph, factor] = pohlig(this.params.prime)
+
+            ph = new bigInt(ph)
+
+            // compute the DSA pub keys
+            pub = modPow(pub, factor, this.params.prime)
+            let g = modPow(this.params.gen, factor, this.params.prime)
+
+            // get the data
+            let d = Buffer.from(JSON.stringify(data.data))
+
+            // compute the hash for the data to verify against
+            let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
+            hash.update(d)
+            hash = hash.getHash('HEX')
+
+            // get the s & r values for verification
+            let s = new bigInt(data.s, 16)
+            let r = new bigInt(data.r, 16)
+
+            // perform DSA verification
+            let H = new bigInt(hash, 16)
+            let w = s.invm(ph)
+
+            let u1 = H.mul(w).mod(ph)
+            let u2 = r.mul(w).mod(ph)
+
+            let g_u1 = modPow(g, u1, this.params.prime)
+            let g_u2 = modPow(pub, u2, this.params.prime)
+
+            let v = g_u1.imul(g_u2).mod(new bigInt(this.params.prime)).mod(ph)
+
+            return v.eq(r)
         }
 
 
@@ -7717,7 +7871,8 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         truncate: truncate,
         scryptPromise: scryptPromise,
         hex: toHexString,
-        randomBytes: randomBytes
+        randomBytes: randomBytes,
+        pohlig: pohlig
     }
 
     exports.Symmetric = {
