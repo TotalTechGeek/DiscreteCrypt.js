@@ -2,6 +2,8 @@
 
 A project for simple & secure data transmission.
 
+[![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master)
+
 ## To Build (for browser)
 
 Run the following commands:

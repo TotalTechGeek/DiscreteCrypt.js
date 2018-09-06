@@ -14,8 +14,15 @@ const PW = 'Hello World'
 const SALT = '00'
 const TXT = 'Hello, World'
 
+
+
 let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt)
 let contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
+
+let contact_exchange = Promise.all([contact, contact2]).then(([contact, contact2]) =>
+{
+    return contact.send(contact2, TXT)
+})
 
 let signedData = contact.then(contact =>
 {
@@ -89,6 +96,28 @@ describe('DiscreteCrypt.Contact', () =>
                 return done()
             })
         })
+
+
+        it('should remove the scrypt', (done) =>
+        {
+            contact.then(contact =>
+            {
+                contact = JSON.parse(contact.export({ scrypt : true }))
+                if(typeof contact.scryptConfig !== "undefined") return done(new Error())
+                return done()
+            })
+        })
+
+
+        it('should remove the params', (done) =>
+        {
+            contact.then(contact =>
+            {
+                contact = JSON.parse(contact.export({ params: true }))
+                if(typeof contact.params !== "undefined") return done(new Error())
+                return done()
+            })
+        })
     })
 
 
@@ -111,6 +140,66 @@ describe('DiscreteCrypt.Contact', () =>
         })
     })
 
+    describe('#privateKey', () =>
+    {
+        it('should return an object', (done) =>
+        {
+            contact.then(contact =>
+            {
+                if(typeof contact.privateKey() === "object") return done()
+                return done(new Error())
+
+            })
+        })
+
+        it('should throw an error if no private key', (done) =>
+        {
+            contact.then(contact =>
+            {
+                try {
+                    contact = DiscreteCrypt.Contact.import(contact.export())
+                    contact.privateKey()
+                    return done(new Error())
+                }
+                catch(ex)
+                {
+                    return done()
+                }
+
+            })
+        })
+    })
+
+    describe('#publicKey', () =>
+    {
+        it('should return an object', (done) =>
+        {
+            contact.then(contact =>
+            {
+                if(typeof contact.publicKey() === "object") return done()
+                return done(new Error())
+
+            })
+        })
+
+        it('should throw an error if no public key', (done) =>
+        {
+            contact.then(contact =>
+            {
+                try {
+                    contact = DiscreteCrypt.Contact.import(contact.export())
+                    contact.public = 0
+                    contact.publicKey()
+                    return done(new Error())
+                }
+                catch(ex)
+                {
+                    return done()
+                }
+
+            })
+        })
+    })
 
     describe('#verify', () =>
     {
@@ -174,6 +263,70 @@ describe('DiscreteCrypt.Contact', () =>
                 })
             })
         })
+    })
+
+    describe('#send', () =>
+    {
+        it('should call the exchange code and open as expected', (done) =>
+        {
+            contact_exchange.then(data =>
+            {
+                return contact2.then(contact =>
+                {
+                    return contact.open(data)
+                })
+            }).then(data =>
+            {
+                if(data === TXT) return done()
+                return done(new Error())
+            }).catch(err =>
+            {
+                return done(new Error())
+            })
+        })
+
+    })
+
+
+    // also tests import code
+    describe('#clean', () =>
+    {
+        it('should remove the params from the cleaned object', (done) =>
+        {
+            contact.then(contact =>
+            {
+                contact = DiscreteCrypt.Contact.import(contact)
+                contact.clean({ params : true })
+                if(contact.params) return done(new Error())
+                return done()
+            })
+        })
+
+        it('should remove the scrypt from the cleaned object', (done) =>
+        {
+            contact.then(contact =>
+            {
+                contact = DiscreteCrypt.Contact.import(contact)
+                contact.clean({ scrypt : true })
+                if(contact.scryptConfig) return done(new Error())
+                return done()
+            })
+        })
+
+
+        it('should remove the scrypt & params from the cleaned object', (done) =>
+        {
+            contact.then(contact =>
+            {
+                contact = DiscreteCrypt.Contact.import(contact)
+                contact.clean({ all : true })
+                if(contact.scryptConfig || contact.params) return done(new Error())
+                return done()
+            })
+        })
+        
+
+
     })
 })
 
@@ -255,9 +408,60 @@ describe('DiscreteCrypt', () =>
     })
 })
 
-
 describe('DiscreteCrypt', () =>
 {
+    describe('#clearCache', () =>
+    {
+        it('should execute without issue', () =>
+        {
+            DiscreteCrypt.clearCache()
+        })
+    })
+
+    describe('utils', () =>
+    {
+        describe('#scryptPromise', () =>
+        {
+            // todo: more tests in here, though it is already covered by other tests tbh.
+            let scryptP = DiscreteCrypt.utils.scryptPromise(TXT, '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len)
+
+            it('should be able to process string input', (done) =>
+            {
+                scryptP.then(data =>
+                {
+                    return done()
+                })
+            })
+
+            it('should match the test vector (output test)', (done) =>
+            {
+                scryptP.then(data =>
+                {
+                    if(DiscreteCrypt.utils.hex(data).toLowerCase() === '8a2d641456a541d54ed820b4d891399028b6df7df6736ce818717855751690ab')
+                        return done()
+                })
+            })
+        })
+
+        describe('#truncate', () =>
+        {
+            it('should truncate to a specified len', (done) =>
+            {
+                let v = DiscreteCrypt.utils.truncate('0'.repeat(32), 16)
+                if(v.length == 16) return done()
+                return done(new Error())
+            })
+
+            it('should not need to truncate if under the length', (done) =>
+            {
+                let v = DiscreteCrypt.utils.truncate('0'.repeat(14), 16)
+                if(v.length == 14) return done()
+                return done(new Error())
+            })
+        })
+    })
+
+
     describe('Symmetric', () =>
     {
         const SYM_KEY = 'Hello, World!'

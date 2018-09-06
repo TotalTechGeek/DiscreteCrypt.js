@@ -289,7 +289,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                     delete res.params
                 }
 
-                if(extra.scryptConfig || extra.all)
+                if(extra.scryptConfig || extra.all || extra.scrypt)
                 {
                     delete res.scryptConfig
                 }
@@ -317,7 +317,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         {
             return open(this, data)
         }
-
 
         /**
          * This is not how DiscreteCrypt (C++) does it,
@@ -437,7 +436,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                     delete this.params
                 }
 
-                if(extra.scryptConfig || extra.all)
+                if(extra.scryptConfig || extra.scrypt || extra.all)
                 {
                     delete this.scryptConfig
                 }
@@ -501,7 +500,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                 }
 
                 if(typeof salt === "string") salt = Buffer.from(salt, 'hex')
-                else if(!salt) salt = Buffer.from('00', 'hex')
 
                 return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
                 {
