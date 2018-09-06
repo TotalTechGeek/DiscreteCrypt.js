@@ -7152,34 +7152,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         gen: new bigInt('2')
     }
 
-
-    /**
-     * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
-     * @param {BigInt|bigInt|string} prime
-     * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
-     */
-    function native_pohlig(prime, range)
-    {
-        if(typeof prime === "string") prime = BigInt(prime)
-        else if(typeof prime === "object") prime = BigInt(prime.toString())
-
-        prime -= BigInt(1)
-        let factors = BigInt(1)
-
-        let max = BigInt((range || (1 << 12)) + 1)
-
-        for(let i = BigInt(2); i < max; i++)
-        {
-            while(!(prime % i))
-            {
-                prime /= i
-                factors *= i
-            }
-        }
-
-        return [prime.toString(), factors.toString()]
-    }
-
     /**
      * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
      * @param {BigInt|bigInt|string} prime
@@ -7187,8 +7159,38 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
      */
     function pohlig(prime, range)
     {
+        /* istanbul ignore if  */
         if(typeof BigInt !== "undefined")
         {
+            /**
+            * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
+            * @param {BigInt|bigInt|string} prime
+            * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
+            * 
+            */
+            function native_pohlig(prime, range)
+            {
+                if(typeof prime === "string") prime = BigInt(prime)
+                else if(typeof prime === "object") prime = BigInt(prime.toString())
+
+                prime -= BigInt(1)
+                let factors = BigInt(1)
+
+                let max = BigInt((range || (1 << 12)) + 1)
+
+                /* istanbul ignore next */
+                for(let i = BigInt(2); i < max; i++)
+                {
+                    while(!(prime % i))
+                    {
+                        prime /= i
+                        factors *= i
+                    }
+                }
+
+                return [prime.toString(), factors.toString()]
+            }
+
             return native_pohlig(prime, range)
         }
 
@@ -7217,6 +7219,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         if(typeof b === "string") b = new bigInt(b)
         if(typeof c === "string") c = new bigInt(c)
 
+        /* istanbul ignore next */
         function pow(a,b,c)
         {
             let one = BigInt(1)
@@ -7235,6 +7238,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             return res
         }
 
+        /* istanbul ignore if  */
         if(typeof BigInt !== "undefined")
         {
             a = BigInt(a.toString())
@@ -7251,6 +7255,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
     }
 
 
+    /* istanbul ignore if */
     if(!randomBytes)
     {
         if(window.crypto)
@@ -7427,7 +7432,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                     delete res.params
                 }
 
-                if(extra.scryptConfig || extra.all)
+                if(extra.scryptConfig || extra.all || extra.scrypt)
                 {
                     delete res.scryptConfig
                 }
@@ -7455,7 +7460,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         {
             return open(this, data)
         }
-
 
         /**
          * This is not how DiscreteCrypt (C++) does it,
@@ -7575,7 +7579,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                     delete this.params
                 }
 
-                if(extra.scryptConfig || extra.all)
+                if(extra.scryptConfig || extra.scrypt || extra.all)
                 {
                     delete this.scryptConfig
                 }
@@ -7639,7 +7643,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                 }
 
                 if(typeof salt === "string") salt = Buffer.from(salt, 'hex')
-                else if(!salt) salt = Buffer.from('00', 'hex')
 
                 return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
                 {

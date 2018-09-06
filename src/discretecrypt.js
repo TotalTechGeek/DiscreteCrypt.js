@@ -14,34 +14,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         gen: new bigInt('2')
     }
 
-
-    /**
-     * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
-     * @param {BigInt|bigInt|string} prime
-     * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
-     */
-    function native_pohlig(prime, range)
-    {
-        if(typeof prime === "string") prime = BigInt(prime)
-        else if(typeof prime === "object") prime = BigInt(prime.toString())
-
-        prime -= BigInt(1)
-        let factors = BigInt(1)
-
-        let max = BigInt((range || (1 << 12)) + 1)
-
-        for(let i = BigInt(2); i < max; i++)
-        {
-            while(!(prime % i))
-            {
-                prime /= i
-                factors *= i
-            }
-        }
-
-        return [prime.toString(), factors.toString()]
-    }
-
     /**
      * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
      * @param {BigInt|bigInt|string} prime
@@ -49,8 +21,38 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
      */
     function pohlig(prime, range)
     {
+        /* istanbul ignore if  */
         if(typeof BigInt !== "undefined")
         {
+            /**
+            * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
+            * @param {BigInt|bigInt|string} prime
+            * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
+            * 
+            */
+            function native_pohlig(prime, range)
+            {
+                if(typeof prime === "string") prime = BigInt(prime)
+                else if(typeof prime === "object") prime = BigInt(prime.toString())
+
+                prime -= BigInt(1)
+                let factors = BigInt(1)
+
+                let max = BigInt((range || (1 << 12)) + 1)
+
+                /* istanbul ignore next */
+                for(let i = BigInt(2); i < max; i++)
+                {
+                    while(!(prime % i))
+                    {
+                        prime /= i
+                        factors *= i
+                    }
+                }
+
+                return [prime.toString(), factors.toString()]
+            }
+
             return native_pohlig(prime, range)
         }
 
@@ -79,6 +81,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         if(typeof b === "string") b = new bigInt(b)
         if(typeof c === "string") c = new bigInt(c)
 
+        /* istanbul ignore next */
         function pow(a,b,c)
         {
             let one = BigInt(1)
@@ -97,6 +100,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             return res
         }
 
+        /* istanbul ignore if  */
         if(typeof BigInt !== "undefined")
         {
             a = BigInt(a.toString())
@@ -113,6 +117,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
     }
 
 
+    /* istanbul ignore if */
     if(!randomBytes)
     {
         if(window.crypto)
