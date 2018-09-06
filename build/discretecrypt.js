@@ -7334,6 +7334,15 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         })
     }
 
+    const PROMISE_TRICK = function()
+    {
+        let arg = arguments
+        return this[0].then(contact =>
+        {
+            return contact[this[1]].apply(contact, arg)
+        })
+    }
+
     class Contact 
     {
         /**
@@ -7402,6 +7411,14 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
          */
         static fromJSON(json)
         {
+            if(json instanceof Promise)
+            {
+                return json.then(json =>
+                {
+                    return Contact.fromJSON(json)
+                })
+            }
+
             if(typeof json === "string")
             {
                 json = JSON.parse(json)
@@ -7513,7 +7530,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
         /**
          * Verifies the signed data.
-         * @param {*} data 
+         * @param {Object|Promise.<Object>} data 
          */
         verify(data)
         {
@@ -7523,43 +7540,51 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             // This is fine in quite a few use cases (where verification is rare, on public data),
             // but is not good in quite a few others.
             
-            if(!data.s || !data.r) return false
+            if(!(data instanceof Promise))
+            {
+                data = Promise.resolve(data)
+            }
 
-            let pub = this.publicKey()
+            return data.then(data =>
+            {
+                if(!data.s || !data.r) return false
 
-            let [ph, factor] = pohlig(this.params.prime)
+                let pub = this.publicKey()
 
-            ph = new bigInt(ph)
+                let [ph, factor] = pohlig(this.params.prime)
 
-            // compute the DSA pub keys
-            pub = modPow(pub, factor, this.params.prime)
-            let g = modPow(this.params.gen, factor, this.params.prime)
+                ph = new bigInt(ph)
 
-            // get the data
-            let d = Buffer.from(JSON.stringify(data.data))
+                // compute the DSA pub keys
+                pub = modPow(pub, factor, this.params.prime)
+                let g = modPow(this.params.gen, factor, this.params.prime)
 
-            // compute the hash for the data to verify against
-            let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
-            hash.update(d)
-            hash = hash.getHash('HEX')
+                // get the data
+                let d = Buffer.from(JSON.stringify(data.data))
 
-            // get the s & r values for verification
-            let s = new bigInt(data.s, 16)
-            let r = new bigInt(data.r, 16)
+                // compute the hash for the data to verify against
+                let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
+                hash.update(d)
+                hash = hash.getHash('HEX')
 
-            // perform DSA verification
-            let H = new bigInt(hash, 16)
-            let w = s.invm(ph)
+                // get the s & r values for verification
+                let s = new bigInt(data.s, 16)
+                let r = new bigInt(data.r, 16)
 
-            let u1 = H.mul(w).mod(ph)
-            let u2 = r.mul(w).mod(ph)
+                // perform DSA verification
+                let H = new bigInt(hash, 16)
+                let w = s.invm(ph)
 
-            let g_u1 = modPow(g, u1, this.params.prime)
-            let g_u2 = modPow(pub, u2, this.params.prime)
+                let u1 = H.mul(w).mod(ph)
+                let u2 = r.mul(w).mod(ph)
 
-            let v = g_u1.imul(g_u2).mod(new bigInt(this.params.prime)).mod(ph)
+                let g_u1 = modPow(g, u1, this.params.prime)
+                let g_u2 = modPow(pub, u2, this.params.prime)
 
-            return v.eq(r)
+                let v = g_u1.imul(g_u2).mod(new bigInt(this.params.prime)).mod(ph)
+
+                return v.eq(r)
+            })
         }
 
 
@@ -7589,6 +7614,36 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         }
 
         /**
+         * Converts the object to the fully asynchronous Contact
+         */
+        async()
+        {
+            return Contact._modifyPromise(Promise.resolve(this))
+        }
+
+        static _modifyPromise(prom)
+        {
+            [
+                'sign',
+                'open',
+                'send',
+                'export',
+                'verify',
+                'publicKey',
+                'privateKey',
+                'compute'                
+            ].forEach(func =>
+            {
+                prom[func] = PROMISE_TRICK.bind([prom, func])
+            })
+
+            prom['async'] = () => prom
+
+            return prom
+        }
+
+
+        /**
          * 
          * @param {String|Buffer|Array} key 
          * @returns {Promise.<Contact>}
@@ -7602,7 +7657,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                 key = Buffer.from(key.normalize('NFKC'))
             }
 
-            return scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>
+            let scryptProm = scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>
             {
                 this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()
 
@@ -7612,8 +7667,9 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
                 return this
             })
-        }
 
+            return Contact._modifyPromise(scryptProm)
+        }
 
         /**
          * Creates a contact from the given key / salt. 
@@ -7670,7 +7726,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                 return contact
             })
 
-            return keyPairPromise
+            return Contact._modifyPromise(keyPairPromise)
         }
     }
 
@@ -7696,39 +7752,52 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
      */
     function open(receiver, data)
     {
-        if(!remember[data.public + ',' + receiver.public])
+        if(!(receiver instanceof Promise)) 
         {
-            remember[data.public + ',' + receiver.public] =  modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)
+            receiver = Promise.resolve(receiver)
         }
 
-        let dhexchange = remember[data.public + ',' + receiver.public]
+        if(!(data instanceof Promise)) 
+        {
+            data = Promise.resolve(data)
+        }
 
-        return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return Promise.all([receiver, data]).then(([receiver, data]) =>
+        {
+            if(!remember[data.public + ',' + receiver.public])
             {
-                let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))
-            
-                let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))
-            
-                let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))
-            
-                let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))
-            
-                let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
-                hmac.setHMACKey(ekey, 'ARRAYBUFFER')
-                hmac.update(payload)
-
-                hmac = hmac.getHMAC('HEX')
-
-                if(hmac === data.hmac)
-                {   
-                    payload = aesjs.utils.utf8.fromBytes(payload)
-                    return JSON.parse(payload)
-                }
-                else
+                remember[data.public + ',' + receiver.public] =  modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)
+            }
+    
+            let dhexchange = remember[data.public + ',' + receiver.public]
+    
+            return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
                 {
-                    return Promise.reject('Decryption failed.')
-                }
-            })
+                    let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))
+                
+                    let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))
+                
+                    let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))
+                
+                    let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))
+                
+                    let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
+                    hmac.setHMACKey(ekey, 'ARRAYBUFFER')
+                    hmac.update(payload)
+    
+                    hmac = hmac.getHMAC('HEX')
+    
+                    if(hmac === data.hmac)
+                    {   
+                        payload = aesjs.utils.utf8.fromBytes(payload)
+                        return JSON.parse(payload)
+                    }
+                    else
+                    {
+                        return Promise.reject('Decryption failed.')
+                    }
+                })
+        })
     }
 
 
@@ -7742,42 +7811,60 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
      */
     function exchange(sender, receiver, msg)
     {
-        if(!remember[sender.public + ',' + receiver.public])
+        if(!(sender instanceof Promise)) 
         {
-            remember[sender.public + ',' + receiver.public] = modPow(receiver.publicKey(), sender.privateKey(), sender.params.prime).toString(16) 
+            sender = Promise.resolve(sender)
+        }
+        
+        if(!(receiver instanceof Promise)) 
+        {
+            receiver = Promise.resolve(receiver)
         }
 
-        msg = JSON.stringify(msg)
-
-        let dhexchange = remember[sender.public + ',' + receiver.public]
-        let key = randomBytes(32)
-        msg = aesjs.utils.utf8.toBytes(msg)
-
-        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
-        hmac.setHMACKey(key, 'ARRAYBUFFER')
-        hmac.update(msg)
-
-        hmac = hmac.getHMAC('HEX')
-
-        return scryptPromise([...Buffer.from(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        if(!(msg instanceof Promise)) 
         {
-            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
+            msg = Promise.resolve(msg)
+        }        
 
-            let ekey = ctr.encrypt(key)
-
-            ekey = aesjs.utils.hex.fromBytes(ekey)
-
-            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))
-
-            let payload = ctr2.encrypt(msg)
-            payload = aesjs.utils.hex.fromBytes(payload)
-
-            return {
-                payload: payload,
-                key: ekey, 
-                hmac: hmac,
-                public: sender.publicKey().toString(16)
+        return Promise.all([sender, receiver, msg]).then(([sender, receiver, msg]) =>
+        {
+            if(!remember[sender.public + ',' + receiver.public])
+            {
+                remember[sender.public + ',' + receiver.public] = modPow(receiver.publicKey(), sender.privateKey(), sender.params.prime).toString(16) 
             }
+        
+            msg = JSON.stringify(msg)
+        
+            let dhexchange = remember[sender.public + ',' + receiver.public]
+            let key = randomBytes(32)
+            msg = aesjs.utils.utf8.toBytes(msg)
+        
+            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
+            hmac.setHMACKey(key, 'ARRAYBUFFER')
+            hmac.update(msg)
+        
+            hmac = hmac.getHMAC('HEX')
+        
+            return scryptPromise([...Buffer.from(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+            {
+                let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
+            
+                let ekey = ctr.encrypt(key)
+            
+                ekey = aesjs.utils.hex.fromBytes(ekey)
+            
+                let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))
+            
+                let payload = ctr2.encrypt(msg)
+                payload = aesjs.utils.hex.fromBytes(payload)
+            
+                return {
+                    payload: payload,
+                    key: ekey, 
+                    hmac: hmac,
+                    public: sender.publicKey().toString(16)
+                }
+            })
         })
     }
 

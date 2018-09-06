@@ -16,18 +16,8 @@ const TXT = 'Hello, World'
 
 
 
-let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt)
-let contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
-
-let contact_exchange = Promise.all([contact, contact2]).then(([contact, contact2]) =>
-{
-    return contact.send(contact2, TXT)
-})
-
-let signedData = contact.then(contact =>
-{
-    return contact.sign(TXT)
-})
+let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt), contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
+let signedData = contact.sign(TXT)
 
 describe('DiscreteCrypt.Contact', () =>
 {
@@ -178,7 +168,6 @@ describe('DiscreteCrypt.Contact', () =>
             {
                 if(typeof contact.publicKey() === "object") return done()
                 return done(new Error())
-
             })
         })
 
@@ -201,17 +190,39 @@ describe('DiscreteCrypt.Contact', () =>
         })
     })
 
+    describe('#async', () =>
+    {
+        // should convert to the asynchronous promise structure
+        it('should convert to the asynchronous promise structure', (done) =>
+        {
+            // clones the contact
+            DiscreteCrypt.Contact.import(contact.async()).then(contact =>
+            {
+                if(contact instanceof DiscreteCrypt.Contact)
+                {
+                    contact = contact.async()
+                    if(contact instanceof Promise)
+                    {
+                        // check if it has these functions
+                        if(contact.send && contact.open)
+                        {
+                            return done()
+                        }
+                    }
+                }
+                return done(new Error())
+            })
+        })
+    })
+
     describe('#verify', () =>
     {
         it('should verify when the signature is real', (done) =>
         {
-            signedData.then(data =>
+            contact.verify(signedData).then(valid =>
             {
-                contact.then(contact =>
-                {
-                    if(contact.verify(data)) return done()
-                    return done(new Error())
-                })
+                if(valid) return done()
+                return done(new Error())
             })
         })
 
@@ -219,13 +230,17 @@ describe('DiscreteCrypt.Contact', () =>
         {
             signedData.then(data =>
             {
-                contact.then(contact =>
+                data.r = 1234567
+                contact.verify(data).then(valid =>
                 {
-                    data.r = 1234567
-                    if(!contact.verify(data)) return done()
+                    if(!valid) return done()
+                    return done(new Error())
+                }).catch(err =>
+                {
                     return done(new Error())
                 })
             })
+
         })
 
     })
@@ -267,15 +282,9 @@ describe('DiscreteCrypt.Contact', () =>
 
     describe('#send', () =>
     {
-        it('should call the exchange code and open as expected', (done) =>
+        it('should call the exchange code and open as expected (using asynchronous data)', (done) =>
         {
-            contact_exchange.then(data =>
-            {
-                return contact2.then(contact =>
-                {
-                    return contact.open(data)
-                })
-            }).then(data =>
+            contact2.open(contact.send(contact2, Promise.resolve(TXT))).then(data =>
             {
                 if(data === TXT) return done()
                 return done(new Error())
@@ -330,19 +339,8 @@ describe('DiscreteCrypt.Contact', () =>
     })
 })
 
-
-let exchange = Promise.all([contact, contact2]).then(([contact, contact2]) =>
-{
-    return DiscreteCrypt.exchange(contact, contact2, 'Hello World!')
-})
-
-
-let open_exchange = Promise.all([exchange, contact2]).then(([exchange, contact2]) =>
-{
-    return DiscreteCrypt.open(contact2, exchange)
-})
-
-
+// Creates an exchange, and tests with a synchronous version of the contact
+let exchange = contact2.then(contact2 => DiscreteCrypt.exchange(contact, contact2, 'Hello World!'))
 
 describe('DiscreteCrypt', () =>
 {
@@ -380,23 +378,24 @@ describe('DiscreteCrypt', () =>
     {
         it('Exchange is opened', (done) =>
         {
-            open_exchange.then(msg =>
+            exchange.then(exchange =>
             {
-                if(msg === "undefined") return done(new Error())
-                if(msg !== "Hello World!") return done(new Error())
-                return done()
-            }).catch(() =>
-            {
-                return done(new Error())
+                // test synchronous data
+                DiscreteCrypt.open(contact2, exchange).then(msg =>
+                {
+                    if(msg === "undefined") return done(new Error())
+                    if(msg !== "Hello World!") return done(new Error())
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                })
             })
         })
 
         it('Bad Exchange is rejected', (done) =>
         {
-            Promise.all([exchange, contact]).then(([exchange, contact]) =>
-            {
-                return DiscreteCrypt.open(contact, exchange)
-            }).then(() =>
+            DiscreteCrypt.open(contact, exchange).then(() =>
             {
                 return done(new Error())
             }).catch(err =>
