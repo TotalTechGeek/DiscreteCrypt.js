@@ -134,28 +134,22 @@ describe('DiscreteCrypt.Contact', () =>
     {
         it('should return an object', (done) =>
         {
-            contact.then(contact =>
+            contact.privateKey().then(priv =>
             {
-                if(typeof contact.privateKey() === "object") return done()
+                if(typeof priv === "object") return done()
                 return done(new Error())
-
             })
         })
 
         it('should throw an error if no private key', (done) =>
         {
-            contact.then(contact =>
+            // test chained asynchronous methods
+            DiscreteCrypt.Contact.import(contact.export()).privateKey().then(priv =>
             {
-                try {
-                    contact = DiscreteCrypt.Contact.import(contact.export())
-                    contact.privateKey()
-                    return done(new Error())
-                }
-                catch(ex)
-                {
-                    return done()
-                }
-
+                return done(new Error())
+            }).catch(err =>
+            {
+                return done()
             })
         })
     })
@@ -164,9 +158,9 @@ describe('DiscreteCrypt.Contact', () =>
     {
         it('should return an object', (done) =>
         {
-            contact.then(contact =>
+            contact.publicKey().then(pub =>
             {
-                if(typeof contact.publicKey() === "object") return done()
+                if(typeof pub === "object") return done()
                 return done(new Error())
             })
         })
@@ -176,7 +170,8 @@ describe('DiscreteCrypt.Contact', () =>
             contact.then(contact =>
             {
                 try {
-                    contact = DiscreteCrypt.Contact.import(contact.export())
+                    // I need a synchronous contact for this to be easy
+                    contact = DiscreteCrypt.Contact.import(contact.export(), true)
                     contact.public = 0
                     contact.publicKey()
                     return done(new Error())
@@ -256,7 +251,6 @@ describe('DiscreteCrypt.Contact', () =>
                 {
                     if(typeof contact.private === "undefined") return done(new Error())
                     if(contact.private !== '100393829911931591529540054103479785938321494005673330544449391501206113347665') return done(new Error())
-
                     return done()
                 }).catch(() =>
                 {

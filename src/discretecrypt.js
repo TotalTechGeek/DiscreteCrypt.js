@@ -81,28 +81,27 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         if(typeof b === "string") b = new bigInt(b)
         if(typeof c === "string") c = new bigInt(c)
 
-        /* istanbul ignore next */
-        function pow(a,b,c)
-        {
-            let one = BigInt(1)
-            let res = BigInt(1)
-            a = a % c;
-
-            while(b > 0)
-            {
-                if(b & one)
-                    res = (res * a) % c
-
-                b = b >> one
-                a = (a*a) % c
-            }
-
-            return res
-        }
-
-        /* istanbul ignore if  */
+        /* istanbul ignore if */
         if(typeof BigInt !== "undefined")
         {
+            function pow(a,b,c)
+            {
+                let one = BigInt(1)
+                let res = BigInt(1)
+                a = a % c;
+    
+                while(b > 0)
+                {
+                    if(b & one)
+                        res = (res * a) % c
+    
+                    b = b >> one
+                    a = (a*a) % c
+                }
+    
+                return res
+            }
+            
             a = BigInt(a.toString())
             b = BigInt(b.toString())
             c = BigInt(c.toString())
@@ -199,10 +198,10 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
     const PROMISE_TRICK = function()
     {
         let arg = arguments
-        return this[0].then(contact =>
+        return Contact._modifyPromise(this[0].then(contact =>
         {
             return contact[this[1]].apply(contact, arg)
-        })
+        }))
     }
 
     class Contact 
@@ -260,27 +259,39 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
          * Alias for fromJSON
          * @param {String|Object} json 
          */
-        static import(json)
+        static import(json, sync)
         {
-            return this.fromJSON(json)
+            return this.fromJSON(json, sync)
         }
 
 
         /**
-         * 
-         * @param {String|Object} json
-         * @returns {Contact} 
+         * Imports the asynchronous version of a DiscreteCrypt Contact
+         * @private
+         * @param {String|Object|Promise} json 
          */
-        static fromJSON(json)
+        static _fromJSONAsync(json)
         {
-            if(json instanceof Promise)
+            if(!(json instanceof Promise))
             {
-                return Contact._modifyPromise(json.then(json =>
-                {
-                    return Contact.fromJSON(json)
-                }))
+                json = Promise.resolve(json)
             }
 
+            let contact = json.then(json =>
+            {
+                return Contact._fromJSONSync(json)
+            })
+
+            return this._modifyPromise(contact)
+        }
+
+        /**
+         * Imports the synchronous version of a DiscreteCrypt Contact
+         * @private
+         * @param {String|Object} json 
+         */
+        static _fromJSONSync(json)
+        {
             if(typeof json === "string")
             {
                 json = JSON.parse(json)
@@ -291,7 +302,26 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             {
                 contact[prop] = json[prop]
             }
+
             return contact
+        }
+
+
+        /**
+         *
+         * @param {String|Object|Promise} json
+         * @param {Boolean=} sync Determines whether this returns a synchronous contact or asynchronous.
+         * If true, the input must be synchronous.
+         *  @returns {Promise.<Contact>} 
+         */
+        static fromJSON(json, sync)
+        {
+            if(sync)
+            {
+                return Contact._fromJSONSync(json)
+            }
+
+            return Contact._fromJSONAsync(json)
         }
 
         /**
@@ -459,6 +489,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         {
             delete this.private
         
+            /* istanbul ignore else */ 
             if(extra)
             {
                 if(extra.params || extra.all)
@@ -493,7 +524,8 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                 'verify',
                 'publicKey',
                 'privateKey',
-                'compute'                
+                'compute', 
+                'clean'                
             ].forEach(func =>
             {
                 prom[func] = PROMISE_TRICK.bind([prom, func])
@@ -514,6 +546,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         {
             let salt = Buffer.from(this.salt, 'hex')
 
+            /* istanbul ignore else : I'm trusting the user input on this one. scrypt will throw an error otherwise */
             if(typeof key === "string")
             {
                 key = Buffer.from(key.normalize('NFKC'))
@@ -560,7 +593,9 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
                     key = randomBytes(32)
                 }
 
-                if(typeof salt === "string") salt = Buffer.from(salt, 'hex')
+                /* istanbul ignore else: not necessary. I'm trusting that it is an array like object. */
+                if(typeof salt === "string") 
+                    salt = Buffer.from(salt, 'hex')
 
                 return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
                 {
@@ -749,10 +784,12 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             return Promise.reject('No input key provided.')
         } 
 
+        /* istanbul ignore else */
         if(typeof inputKey === "string")
         {
             inputKey = Buffer.from(inputKey.normalize('NFKC'))
         } 
+        
 
         if(inputKey.length === 0)
         {
@@ -808,6 +845,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
             return Promise.reject('No input key provided.')
         } 
 
+        /* istanbul ignore else */
         if(typeof inputKey === "string")
         {
             inputKey = Buffer.from(inputKey.normalize('NFKC'))
@@ -871,5 +909,6 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
     return exports
 }
 
+/* istanbul ignore else */
 if(typeof module !== "undefined")
 module.exports = DiscreteCrypt
