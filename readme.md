@@ -12,7 +12,7 @@ This library makes it quite easy to implement end-to-end encryption both in the 
 
 The library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from nspdh. 
 
-A neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. 
+A neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.
 
 You may alternatively generate keys ephemerally, and encrypt the generated "contact" symmetrically (like traditional cryptosystems).
 
@@ -71,14 +71,14 @@ To create a re-usable contact for public-key cryptography (one you can import at
 let me = Contact.create('<SuperSecurePassword>')
 
 // creates the public contact, store this somewhere
-let public = me.export()
+let pub = me.export()
 ```
 
 
 **2 - Import the Public Contact & Compute (To turn it back into a private contact)**
 
 ```js
-let me = Contact.import(public).compute('<SuperSecurePassword>')
+let me = Contact.import(pub).compute('<SuperSecurePassword>')
 ```
 
 And that's it! 
