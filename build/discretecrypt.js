@@ -7438,6 +7438,26 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
 
         /**
+         * Sends the data to the recipient, encrypted.
+         * @param {Contact} recipient 
+         * @param {*} data 
+         */
+        send(recipient, data)
+        {
+            return exchange(this, recipient, data)
+        }
+
+        /**
+         * Opens an encrypted payload for the contact.
+         * @param {*} data 
+         */
+        open(data)
+        {
+            return open(this, data)
+        }
+
+
+        /**
          * This is not how DiscreteCrypt (C++) does it,
          * but it will be modified to match this approach.
          * @param {*} data 
@@ -7445,6 +7465,7 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         sign(data)
         {
             // todo: add BigInt native implementation
+            // todo: cache pohlig values
 
             let d = Buffer.from(JSON.stringify(data))
             let priv = this.privateKey()
@@ -7492,6 +7513,12 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
          */
         verify(data)
         {
+            // todo: discover ways to optimize this (unnecessary when bigint comes around).
+            // takes 1.2s on non-native BigInt JS engines.
+            
+            // This is fine in quite a few use cases (where verification is rare, on public data),
+            // but is not good in quite a few others.
+            
             if(!data.s || !data.r) return false
 
             let pub = this.publicKey()
