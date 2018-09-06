@@ -7413,10 +7413,10 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
         {
             if(json instanceof Promise)
             {
-                return json.then(json =>
+                return Contact._modifyPromise(json.then(json =>
                 {
                     return Contact.fromJSON(json)
-                })
+                }))
             }
 
             if(typeof json === "string")
