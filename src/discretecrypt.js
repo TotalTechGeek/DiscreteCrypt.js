@@ -300,6 +300,26 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
 
 
         /**
+         * Sends the data to the recipient, encrypted.
+         * @param {Contact} recipient 
+         * @param {*} data 
+         */
+        send(recipient, data)
+        {
+            return exchange(this, recipient, data)
+        }
+
+        /**
+         * Opens an encrypted payload for the contact.
+         * @param {*} data 
+         */
+        open(data)
+        {
+            return open(this, data)
+        }
+
+
+        /**
          * This is not how DiscreteCrypt (C++) does it,
          * but it will be modified to match this approach.
          * @param {*} data 
