@@ -375,6 +375,12 @@ function DiscreteCrypt(scrypt, bigInt, aesjs, jsSHA, Buffer, randomBytes)
          */
         verify(data)
         {
+            // todo: discover ways to optimize this (unnecessary when bigint comes around).
+            // takes 1.2s on non-native BigInt JS engines.
+            
+            // This is fine in quite a few use cases (where verification is rare, on public data),
+            // but is not good in quite a few others.
+            
             if(!data.s || !data.r) return false
 
             let pub = this.publicKey()

@@ -10,8 +10,17 @@ const DiscreteCrypt = require('../index.js')
 }
 
 
-let contact = DiscreteCrypt.Contact.create('Hello World', '00', scrypt)
+const PW = 'Hello World'
+const SALT = '00'
+const TXT = 'Hello, World'
+
+let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt)
 let contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
+
+let signedData = contact.then(contact =>
+{
+    return contact.sign(TXT)
+})
 
 describe('DiscreteCrypt.Contact', () =>
 {
@@ -80,6 +89,56 @@ describe('DiscreteCrypt.Contact', () =>
                 return done()
             })
         })
+    })
+
+
+    describe('#sign', () =>
+    {
+        it('should output an object with r, s, and the data', (done) =>
+        {
+            signedData.then(data =>
+            {
+                if(data.s && data.r && data.data)
+                {
+                    if(data.data === TXT)
+                    {
+                        return done()
+                    }
+                }
+
+                return done(new Error())
+            })
+        })
+    })
+
+
+    describe('#verify', () =>
+    {
+        it('should verify when the signature is real', (done) =>
+        {
+            signedData.then(data =>
+            {
+                contact.then(contact =>
+                {
+                    if(contact.verify(data)) return done()
+                    return done(new Error())
+                })
+            })
+        })
+
+        it('should not verify when the signature is false', (done) =>
+        {
+            signedData.then(data =>
+            {
+                contact.then(contact =>
+                {
+                    data.r = 1234567
+                    if(!contact.verify(data)) return done()
+                    return done(new Error())
+                })
+            })
+        })
+
     })
 
     // also tests the import code.
