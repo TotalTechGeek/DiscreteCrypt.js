@@ -3,6 +3,7 @@
 <p style=" overflow-wrap: break-word;" id="out"></p>
 <script type="text/javascript" src="../build/discretecrypt.js"></script>
 <script>
+    const Contact = DiscreteCrypt.Contact
     let d = new Date()
 
     // The scrypt tuned down due to the random 256 bit key space.
@@ -23,23 +24,23 @@
         document.getElementById('out').innerHTML += x + "<br><br>"
     }
 
-    Promise.all([
-        DiscreteCrypt.Contact.create(null, null, scryptConfig),
-        DiscreteCrypt.Contact.create(null, null, scryptConfig)
-    ]).then(([
-        jesse,
-        jerry
-    ]) =>
+
+    let jesse = Contact.create(null, null, scryptConfig),
+        jerry = Contact.create(null, null, scryptConfig)
+    
+
+    jesse.send(jerry, { master: 'This is a master password', organization_id: '1'}).then(data =>
     {
-        DiscreteCrypt.exchange(jesse, jerry, { master: 'This is a master password', organization_id: '1'}).then(data =>
-        {
-            output(JSON.stringify(data))
-            DiscreteCrypt.open(jerry, data).then(i=>output(JSON.stringify(i))).then(() =>
-            {
-                let y = new Date()
-                output(y-d + ' ms')
-            }).catch(output)
-        })
+        output(JSON.stringify(data))
+        return jerry.open(data)
     })
+    .then(i=>output(JSON.stringify(i)))
+    .then(() =>
+    {
+        let y = new Date()
+        output(y-d + ' ms')
+    })
+    .catch(output)
+    
 </script>
 
