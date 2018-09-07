@@ -1,6 +1,6 @@
 {
   "name": "discretecrypt.js",
-  "version": "0.0.25",
+  "version": "0.0.25.1",
   "description": "A very simple-to-use cryptosystem, designed to make security easy.",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,10 @@
     "secure",
     "vault"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TotalTechGeek/DiscreteCrypt.js"
+  },
   "author": "Jesse Daniel Mitchell",
   "license": "BSD-2-Clause",
   "dependencies": {
