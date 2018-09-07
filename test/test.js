@@ -14,8 +14,6 @@ const PW = 'Hello World'
 const SALT = '00'
 const TXT = 'Hello, World'
 
-
-
 let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt), contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
 let signedData = contact.sign(TXT)
 
