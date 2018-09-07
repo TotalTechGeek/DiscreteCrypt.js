@@ -1,7 +1,7 @@
 {
   "name": "discretecrypt.js",
-  "version": "0.0.1",
-  "description": "Secure asymmetric vault system for networked cryptography.",
+  "version": "0.0.25",
+  "description": "A very simple-to-use cryptosystem, designed to make security easy.",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha",
