@@ -18,16 +18,16 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "aes-js": "^3.1.1",
-    "babel-minify": "^0.2.0",
     "bn.js": "^4.11.8",
-    "browserify": "^16.2.2",
     "buffer": "^5.2.0",
     "jssha": "^2.3.1",
-    "mkdirp": "^0.5.1",
-    "mocha": "^5.2.0",
     "scrypt-async": "^2.0.0"
   },
   "devDependencies": {
+    "mocha": "^5.2.0",
+    "mkdirp": "^0.5.1",
+    "babel-minify": "^0.2.0",
+    "browserify": "^16.2.2",
     "coveralls": "^3.0.2",
     "nyc": "^13.0.1"
   }
