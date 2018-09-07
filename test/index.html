@@ -12,12 +12,7 @@
     // There is little need for the Scrypt step when standard brute-force is less expensive. 
     // The scrypt step is still somewhat valuable, due to the HMAC (used as salt) making it difficult
     // to change anything.   
-    const scryptConfig = {
-        N: 1 << 10,
-        r: 4,
-        p: 1,
-        len: 32
-    }
+    const scryptConfig = DiscreteCrypt.defaults.ephemeralScrypt()
    
     function output(x)
     {
@@ -44,3 +39,36 @@
     
 </script>
 
+
+<hr>
+
+Message <textarea id="msg">
+
+</textarea>
+<br>
+Password <input id="pass" type="password" />
+<button onclick="encrypt()">Encrypt</button> <button onclick="decrypt()">Decrypt</button>
+
+<br>
+
+<script>
+    function encrypt()
+    {
+        let msg = document.getElementById('msg')
+        let password = document.getElementById('pass').value
+        DiscreteCrypt.Symmetric.encrypt(password, msg.value, DiscreteCrypt.defaults.tunedScrypt()).then(encrypted =>
+        {
+            msg.value = JSON.stringify(encrypted)
+        })
+    }
+
+    function decrypt()
+    {
+        let msg = document.getElementById('msg')
+        let password = document.getElementById('pass').value
+        DiscreteCrypt.Symmetric.decrypt(password, JSON.parse(msg.value), DiscreteCrypt.defaults.tunedScrypt()).then(decrypted =>
+        {
+            msg.value = decrypted
+        })
+    }
+</script>

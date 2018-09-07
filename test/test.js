@@ -2,13 +2,7 @@ const assert = require('assert')
 const DiscreteCrypt = require('../index.js')
 
  // scrypt tuned down for performance, since security isn't necessary here.
- let scrypt = {
-    N: 1 << 10, 
-    r: 4, 
-    p: 1,
-    len: 32
-}
-
+ let scrypt = DiscreteCrypt.defaults.ephemeralScrypt()
 
 const PW = 'Hello World'
 const SALT = '00'
@@ -46,7 +40,6 @@ describe('DiscreteCrypt.Contact', () =>
         checkHas('should have a salt, randomly generated if no salt provided', 'salt', contact2)
         checkHas('should have a private key', 'private', contact)
         checkHas('should have a private key, randomly generated if no key provided', 'private', contact2)
-
         checkHas('should have a public key', 'public', contact)
         checkHas('should have the DH parameters', 'params', contact)
         checkHas('should have the scrypt parameters', 'scryptConfig', contact)
@@ -325,9 +318,7 @@ describe('DiscreteCrypt.Contact', () =>
                 return done()
             })
         })
-        
-
-
+    
     })
 })
 
@@ -452,16 +443,71 @@ describe('DiscreteCrypt', () =>
         })
     })
 
+    describe('defaults', () =>
+    {
+        describe('#params', () =>
+        {
+            // I could test for the default values in here, but these are subject to change so eh. 
+            it('should get the default params', (done) =>
+            {
+               let params = DiscreteCrypt.defaults.params()
+               if(params.prime && params.gen) return done()
+               return done(new Error())
+            })
+        })
+
+        describe('#scrypt', () =>
+        {
+            it('should get the default scrypt', (done) =>
+            {
+                // I could test for the default values in here, but these are subject to change so eh. 
+                let config = DiscreteCrypt.defaults.scrypt()
+                if(config.N && config.r && config.p && config.len)
+                {
+                    return done()
+                }
+                return done(new Error())
+
+            })
+        })
+
+        describe('#ephemeralScrypt', () =>
+        {
+            it('should get the tuned scrypt', (done) =>
+            {
+                // I could test for the default values in here, but these are subject to change so eh. 
+                let config = DiscreteCrypt.defaults.tunedScrypt()
+                if(config.N && config.r && config.p && config.len)
+                {
+                    return done()
+                }
+                return done(new Error())
+            })
+        })
+
+        describe('#ephemeralScrypt', () =>
+        {
+            it('should get the ephemeral scrypt', (done) =>
+            {
+                // I could test for the default values in here, but these are subject to change so eh. 
+                let config = DiscreteCrypt.defaults.ephemeralScrypt()
+                if(config.N && config.r && config.p && config.len)
+                {
+                    return done()
+                }
+                return done(new Error())
+            })
+        })
+    })
 
     describe('Symmetric', () =>
     {
         const SYM_KEY = 'Hello, World!'
         const WRONG_KEY = 'Wrong, Key!'
         const MESSAGE = 'This is the message.'
-        let encryption = DiscreteCrypt.Symmetric.encrypt(SYM_KEY, MESSAGE, scrypt) 
-        let decryption = encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(SYM_KEY, i, scrypt))
+        let encryption = DiscreteCrypt.Symmetric.encrypt(SYM_KEY, MESSAGE, DiscreteCrypt.defaults.ephemeralScrypt()) 
+        let decryption = encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(SYM_KEY, i, DiscreteCrypt.defaults.ephemeralScrypt()))
 
-        
         describe('#encrypt', () =>
         {
             it('should reject upon empty key', (done) =>
@@ -533,7 +579,6 @@ describe('DiscreteCrypt', () =>
                 })
             })
 
-
             it('should reject upon failed decryption', (done) =>
             {
                 encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(WRONG_KEY, i, scrypt)).then(result =>
@@ -543,14 +588,8 @@ describe('DiscreteCrypt', () =>
                 {
                     return done()
                 })
-
             })
-
         })
-
-
-
-
     })
 
 

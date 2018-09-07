@@ -7134,24 +7134,7 @@ const bigInt = require('bn.js')
 const aesjs = require('aes-js')
 const jsSHA = require('jssha')
 
-let IS_NODEJS_ENVIRONMENT = false
-
-// Only Node.JS has a process variable that is of [[Class]] process
-try
-{
-    IS_NODEJS_ENVIRONMENT = Object.prototype.toString.call(global.process) === '[object process]'
-}
-catch (e)
-{}
-
-/* istanbul ignore if */
-if (IS_NODEJS_ENVIRONMENT)
-{
-    global.jsSHA = jsSHA
-    global.bigInt = bigInt
-    global.aesjs = aesjs
-}
-
+// Applied in Password-Based cases.
 const DEFAULT_SCRYPT_CONFIG = {
     N: 1 << 14,
     r: 10,
@@ -7159,10 +7142,29 @@ const DEFAULT_SCRYPT_CONFIG = {
     len: 64
 }
 
+// Should be applied for performance reasons when the author is willing to accept 
+// slightly reduced security for performance reasons. 
+// This can securely be applied in situations where password input is reasonably decent.
+const TUNED_SCRYPT_CONFIG = {
+    N: 1 << 14, 
+    r: 11, 
+    p: 1,
+    len: 48
+}
+
+// This should be applied in cases where the key doesn't need much stretching. 
+// Usually due to ephemeral keys
+const EPHEMERAL_SCRYPT_CONFIG = {
+    N: 1 << 10, 
+    r: 4, 
+    p: 1,
+    len: 32
+}
+
 // Funnily enough, it seems the default params can have their pohlig found in 7.    
 const DEFAULT_PARAMS = {
-    prime: new bigInt('1236027852723267358067496240415081192016632901798652377386974104662393263762300791015297301419782476103015366958792837873764932552461292791165884073898812814414137342163134112441573878695866548152604326906481241134560091096795607547486746060322717834549300353793656273878542405925895784382400028374603183267116520399667622873636417533621785188753096887486165751218947390793886174932206305484313257628695734926449809428884085464402485504798782585345665225579018127843073619788513405272670558284073983759985451287742892999484270521626583252756445695489268987027078838378407733148367649564107237496006094048593708959670063677802988307113944522310326616125731276572628521088574537964296697257866765026848588469121515995674723869067535040253689232576404893685613618463095967906841853447414047313021676108205138971649482561844148237707440562831931089544088821151806962538015278155763187487878945694840272084274212918033049841007502061'),
-    gen: new bigInt('2')
+    prime: '1236027852723267358067496240415081192016632901798652377386974104662393263762300791015297301419782476103015366958792837873764932552461292791165884073898812814414137342163134112441573878695866548152604326906481241134560091096795607547486746060322717834549300353793656273878542405925895784382400028374603183267116520399667622873636417533621785188753096887486165751218947390793886174932206305484313257628695734926449809428884085464402485504798782585345665225579018127843073619788513405272670558284073983759985451287742892999484270521626583252756445695489268987027078838378407733148367649564107237496006094048593708959670063677802988307113944522310326616125731276572628521088574537964296697257866765026848588469121515995674723869067535040253689232576404893685613618463095967906841853447414047313021676108205138971649482561844148237707440562831931089544088821151806962538015278155763187487878945694840272084274212918033049841007502061',
+    gen: '2'
 }
 
 /**
@@ -7265,35 +7267,46 @@ function modPow(a, b, c)
     }
 }
 
-/* istanbul ignore next: Browser specific code */
-if (typeof window !== "undefined" && window.crypto)
-{
-    exports.randomBytes = function(n)
-    {
-        let arr = new Uint8Array(n)
-        window.crypto.getRandomValues(arr)
-        return arr
-    }
-}
-else
-{
-    let warning = false
-    exports.randomBytes = function(n)
-    {
-        if (!warning)
-        {
-            console.warn('Window.crypto not detected. This might be insecure, please override the exports.randomBytes function with a secure one.')
-            warning = true
-        }
 
-        let arr = new Uint8Array(n)
-        for (var i = 0; i < arr.length; i++)
+
+/* istanbul ignore next: Browser specific code */
+if(typeof window !== "undefined")
+{
+    if(window.crypto)
+    {    
+        exports.randomBytes = function(n)
         {
-            arr[i] = (Math.random() * 256) | 0
+            let arr = new Uint8Array(n)
+            window.crypto.getRandomValues(arr)
+            return arr
         }
-        return arr
     }
+    else
+    {
+        let warning = false
+        exports.randomBytes = function(n)
+        {
+            if (!warning)
+            {
+                console.warn('Window.crypto not detected. This might be insecure, please override the exports.randomBytes function with a secure one.')
+                warning = true
+            }
+    
+            let arr = new Uint8Array(n)
+            for (var i = 0; i < arr.length; i++)
+            {
+                arr[i] = (Math.random() * 256) | 0
+            }
+            return arr
+        }
+    }
+
+    global.jsSHA = jsSHA
+    global.bigInt = bigInt
+    global.aesjs = aesjs
 }
+
+
 
 function toHexString(byteArray)
 {
@@ -7395,7 +7408,7 @@ class ContactPromise
      * Sends the data to the recipient, encrypted.
      * @param {Contact} recipient 
      * @param {*} data 
-     * @returns {ContactPromise}
+     * @returns {Promise.<Object>}
      * 
      */
     open /* istanbul ignore next */ (data)
@@ -7408,7 +7421,7 @@ class ContactPromise
      * Sends the data to the recipient, encrypted.
      * @param {Contact} recipient 
      * @param {*} data 
-     * @returns {ContactPromise}
+     * @returns {Promise.<Object>}
      */
     send /* istanbul ignore next */ (recipient, data)
     {
@@ -7591,7 +7604,7 @@ class Contact
      * @param {String|Object|Promise} json
      * @param {Boolean=} sync Determines whether this returns a synchronous contact or asynchronous.
      * If true, the input must be synchronous.
-     *  @returns {Promise.<Contact>} 
+     *  @returns {ContactPromise} 
      */
     static fromJSON(json, sync)
     {
@@ -7659,6 +7672,12 @@ class Contact
     {
         // todo: add BigInt native implementation
         // todo: cache pohlig values
+        // todo: Consider implementing Schnorr's Signature Algorithm instead of
+        // this DSA variant. 
+        
+        // This algorithm is secure, but Schnorr's should be faster. 
+        // Schnorr's implementation note: The K value must be longer than the hash.length + private.length,
+        // I might need to use Scrypt.   
 
         let d = Buffer.from(JSON.stringify(data))
         let priv = this.privateKey()
@@ -7816,7 +7835,7 @@ class Contact
     /**
      * Computes the private key for a contact from an input key.
      * @param {String|Buffer|Array} key 
-     * @returns {Promise.<Contact>}
+     * @returns {ContactPromise}
      */
     compute(key)
     {
@@ -7975,6 +7994,12 @@ function open(receiver, data)
 /**
  * This code assumes both individuals are using the same parameters. 
  * Sends an encrypted message from the sender to the receiver.
+ * 
+ * Todo: consider adding advanced options, like allowing the embedding of tuned scrypt parameters
+ * on the exchange key.
+ * 
+ * The scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,
+ * but the speed is not as important in this step.
  * 
  * @param {Contact} sender 
  * @param {Contact} receiver 
@@ -8156,11 +8181,56 @@ function symmetricDecrypt(inputKey, data, scryptConfig)
     })
 }
 
+
+function params()
+{
+    return Object.freeze(DEFAULT_PARAMS)
+}
+
+
+/**
+ * This Scrypt configuration is the default recommended scrypt configuration.
+ * This is for securing highly sensitive data in worst case conditions.
+ */
+function scryptConfig()
+{
+    return Object.freeze(DEFAULT_SCRYPT_CONFIG)    
+}
+
+/**
+ * This Scrypt Configuration should be applied when the keys are ephemeral.
+ */
+function ephemeralScrypt() 
+{
+    return Object.freeze(EPHEMERAL_SCRYPT_CONFIG)
+}
+
+/**
+ * Should be applied for performance reasons when the author is willing to accept 
+ * slightly reduced security for performance reasons. 
+ * 
+ * This can securely be applied in situations where password input is reasonably decent.
+ * 
+ * Consider it a healthy middle ground between the default (top-secret) and 
+ * ephemeral.
+ */
+function tunedScrypt()
+{
+    return Object.freeze(TUNED_SCRYPT_CONFIG)
+}
+
 exports.utils = {
     truncate: truncate,
     scryptPromise: scryptPromise,
     hex: toHexString,
     pohlig: pohlig
+}
+
+exports.defaults = {
+    params: params,
+    scrypt: scryptConfig,
+    ephemeralScrypt: ephemeralScrypt,
+    tunedScrypt: tunedScrypt
 }
 
 exports.Symmetric = {

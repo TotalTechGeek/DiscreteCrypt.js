@@ -11,7 +11,7 @@ A project for simple & secure data transmission, based on the DiscreteCrypt prot
 
 This library makes it quite easy to implement end-to-end encryption both in the web browser and in Node.js, and provides extra utilities to make it convenient to encrypt symmetrically as well.
 
-The library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from nspdh. 
+The library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from nspdh. 
 
 A neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.
 
