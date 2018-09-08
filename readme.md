@@ -1,25 +1,24 @@
 # DiscreteCrypt.js
 
-[![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master) [![GitHub license](https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg)](https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master) [![GitHub license](https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg)](https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE) [![npm version](https://badge.fury.io/js/discretecrypt.js.svg)](https://badge.fury.io/js/discretecrypt.js)
 
 ![Shield](https://svgshare.com/i/8D1.svg)
 
 A project for simple & secure data transmission, based on the DiscreteCrypt protocol (an alternative to PGP).
 
-
 ## What's it do?
 
 This library makes it quite easy to implement end-to-end encryption both in the web browser and in Node.js, and provides extra utilities to make it convenient to encrypt symmetrically as well.
 
-The library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from nspdh. 
+The library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from [nspdh](https://github.com/TotalTechGeek/nspdh). 
 
 A neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.
 
 You may alternatively generate keys ephemerally, and encrypt the generated "contact" symmetrically (like traditional cryptosystems).
 
-## How do I use it?
+You may also create signatures (similar to GPG/PGP).
 
-(More documentation necessary)
+## How do I use it?
 
 In DiscreteCrypt, we refer to "public keys" as "contacts," and they are generated asynchronously as promises. 
 
@@ -104,6 +103,9 @@ DiscreteCrypt.Symmetric.encrypt(key, data).then(encrypted =>
 })
 ```
 
+## Documentation
+
+Here is where you can view the rest of [the documentation](https://jessemitchell.me/DiscreteCrypt.js)
 
 ## To Build (for browser)
 
@@ -119,11 +121,11 @@ This will produce the necessary output.
 ## Dependencies
 
 The following libraries were used:
-- aes-js
-- bn.js 
-- buffer
-- jsSHA
-- scrypt-async
+- [aes-js](https://github.com/ricmoo/aes-js)
+- [bn.js](https://github.com/indutny/bn.js/)
+- [buffer](https://github.com/feross/buffer)
+- [jsSHA](https://github.com/Caligatio/jsSHA)
+- [scrypt-async](https://github.com/dchest/scrypt-async-js)
 
 ## Notes
 
