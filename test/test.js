@@ -662,6 +662,51 @@ describe('DiscreteCrypt', () =>
                 })
             })
 
+            it('should be able to process keys longer than 64 bytes (string)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromise('1'.repeat(65), '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+            it('should be able to process keys longer than 64 bytes (Buffer)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromise(Buffer.from('1'.repeat(65)), '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+
+            it('should be able to process salt longer than 64 bytes (string)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromise('0'.repeat(64), '1'.repeat(65), scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+            it('should be able to process salt longer than 64 bytes (Buffer)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromise('0'.repeat(64), Buffer.from('1'.repeat(65)), scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
 
             it('should be able to deal with optional parameters', (done) =>
             {

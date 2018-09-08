@@ -7351,7 +7351,15 @@ function scryptPromise(key, salt, N, r, p, len)
 {
     if (typeof key === "string")
     {
-        key = [...Buffer.from(key.normalize('NFKC'))]
+        key = Buffer.from(key.normalize('NFKC'))
+    } 
+    
+    // bug in the SHA256 library code used by scrypt makes this part necessary
+    if (key.length > 64 && !key.push)
+    {
+        // quite a few array-like structures don't have a "push" method,
+        // which makes this necessary.
+        key = [...key]
     }
 
     if (typeof salt === "string") salt = Buffer.from(salt, 'hex')
@@ -8015,7 +8023,7 @@ function truncate(x, len)
 
         let dhexchange = remember[data.public + ',' + receiver.public]
 
-        return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return scryptPromise(Buffer.from(dhexchange, 'hex'), data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))
 
@@ -8095,7 +8103,7 @@ function truncate(x, len)
 
         hmac = hmac.getHMAC('HEX')
 
-        return scryptPromise([...Buffer.from(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return scryptPromise(Buffer.from(dhexchange, 'hex'), hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
 
@@ -8162,7 +8170,7 @@ function truncate(x, len)
         hmac.update(msg)
         hmac = hmac.getHMAC('HEX')
 
-        return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
+        return scryptPromise(inputKey, hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
 
@@ -8213,7 +8221,7 @@ function truncate(x, len)
             return Promise.reject('Input key empty.')
         }
 
-        return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
+        return scryptPromise(inputKey, data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))
 

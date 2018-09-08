@@ -1,6 +1,6 @@
 {
   "name": "discretecrypt.js",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "description": "A very simple-to-use cryptosystem, designed to make security easy.",
   "main": "index.js",
   "scripts": {
