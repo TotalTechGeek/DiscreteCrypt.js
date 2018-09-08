@@ -43,7 +43,7 @@ const DEFAULT_PARAMS = {
  */
 function pohlig(prime, range)
 {
-    /* istanbul ignore if  */
+    /* istanbul ignore if */
     if (typeof BigInt !== "undefined")
     {
         /**
@@ -85,7 +85,6 @@ function pohlig(prime, range)
     let max = (range || (1 << 12)) + 1
     for (let i = 2; i < max; i++)
     {
-
         while (!prime.modn(i))
         {
             prime.idivn(i)
@@ -96,6 +95,13 @@ function pohlig(prime, range)
     return [prime.toString(), factors.toString()]
 }
 
+/**
+ * Performs modular exponentiation
+ * @param {*} a 
+ * @param {*} b 
+ * @param {*} c 
+ * @returns {bigInt}
+ */
 function modPow(a, b, c)
 {
     if (typeof a === "string") a = new bigInt(a)
@@ -533,58 +539,70 @@ class Contact
 
     /**
      * Signs data using the Contact.
-     * This is not how DiscreteCrypt (C++) does it,
-     * but it will be modified to match this approach.
+     * 
+     * This is not how DiscreteCrypt (C++) currently handles signatures,
+     * but that will be changed.
+     * 
      * @param {*} data 
+     * @param {Object|Promise.<Object>} data 
+     * 
      */
     sign(data)
     {
-        // todo: add BigInt native implementation
-        // todo: cache pohlig values
-        // todo: Consider implementing Schnorr's Signature Algorithm instead of
-        // this DSA variant. 
-        
-        // This algorithm is secure, but Schnorr's should be faster. 
-        // Schnorr's implementation note: The K value must be longer than the hash.length + private.length,
-        // I might need to use Scrypt.  It could use the ephemeral scrypt config or lower, 
-        // and doesn't need stored because the k value never needs to be reproduced
+        // Performs the Schnorr Signature Algorithm
 
-        let d = Buffer.from(JSON.stringify(data))
+        // constants for the Scrypt step of the signature. 
+        // this computes K deterministically, (similar to what is recommended in DSA)
+        // in such a way that protects the upper bits of the private key.
+        // I would've used an HMAC, but I didn't want any information to leak about the private key (by dividing out the hash).
+        // These values can likely be tweaked quite freely.
+        const N = 1 << 5
+        const r = 4
+        const p = 1
+
+        // gets the private key 
         let priv = this.privateKey()
 
-        let [ph, factor] = pohlig(this.params.prime)
+        /**
+         * the following line will need to be altered based on the hash algorithm.
+         * please do not forget this. it's the length of the output in bytes.
+         * ensuring K > (private.length + hash.length) prevents an attacker from learning information about the private key.
+         */
+        const HASH_LENGTH = 32
+        const len = (priv.bitLength() / 8) + HASH_LENGTH + 1
 
-        ph = new bigInt(ph)
-
-        // compute the DSA pub key
-        let g = modPow(this.params.gen, factor, this.params.prime)
-
-        // compute a private k value by using an HMAC
-        // the difference between this and DiscreteCrypt (C++) is that
-        // the key for the HMAC is the private key, not the contact's password (which is secure but meh).
-        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
-        hmac.setHMACKey(priv.toString(16), 'HEX')
-        hmac.update(d)
-        hmac = hmac.getHMAC('HEX')
-
-        // compute a public hash
-        let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
-        hash.update(d)
-        hash = hash.getHash('HEX')
-
-        // perform the DSA Algorithm
-        let x = priv
-        let k = new bigInt(hmac, 16)
-        let H = new bigInt(hash, 16)
-
-        let r = modPow(g, k, this.params.prime).mod(ph)
-        let s = k.invm(ph).imul(H.iadd(x.imul(r))).mod(ph)
-
-        return {
-            r: r.toString(16),
-            s: s.toString(16),
-            data: data
+        // Allows asynchronous input
+        if (!(data instanceof Promise))
+        {
+            data = Promise.resolve(data)
         }
+        
+        // computes the signature
+        return data.then(data =>
+        {
+            let d = Buffer.from(JSON.stringify(data))
+            
+            // scrypt is used to create the K value deterministically
+            return scryptPromise(d, Buffer.from(priv.toString(16), 'hex'), N, r, p, len).then(k_derived =>
+            {
+                let K = new bigInt(toHexString(k_derived), 16)       
+                
+                // K is used to generate R
+                let R = Buffer.from(modPow(this.params.gen, K, this.params.prime).toString(16), 'hex')
+    
+                // compute a public hash
+                let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
+                hash.update(R)
+                hash.update(d)
+                hash = hash.getHash('HEX')
+                
+                // computes the signature values
+                let e = new bigInt(hash, 16)
+                let s = K.sub(priv.mul(e))
+    
+                return { s: s.toString(16), e: e.toString(16), data: data }
+            })
+        })
     }
 
     /**
@@ -593,12 +611,6 @@ class Contact
      */
     verify(data)
     {
-        // todo: discover ways to optimize this (unnecessary when bigint comes around).
-        // takes 1.2s on non-native BigInt JS engines.
-
-        // This is fine in quite a few use cases (where verification is rare, on public data),
-        // but is not good in quite a few others.
-
         if (!(data instanceof Promise))
         {
             data = Promise.resolve(data)
@@ -606,43 +618,32 @@ class Contact
 
         return data.then(data =>
         {
-            if (!data.s || !data.r) return false
+            if (!data.s || !data.e) return false
 
-            let pub = this.publicKey()
-
-            let [ph, factor] = pohlig(this.params.prime)
-
-            ph = new bigInt(ph)
-
-            // compute the DSA pub keys
-            pub = modPow(pub, factor, this.params.prime)
-            let g = modPow(this.params.gen, factor, this.params.prime)
-
-            // get the data
             let d = Buffer.from(JSON.stringify(data.data))
+            
+            // Gets the e & s bignums
+            let s = new bigInt(data.s, 16)
+            let e = new bigInt(data.e, 16)
 
-            // compute the hash for the data to verify against
+            // computes the values
+            let gs = modPow(this.params.gen, s, this.params.prime)
+            let ye = modPow(this.publicKey(), e, this.params.prime)
+            
+            // multiplies them together to get R (for the hash) 
+            let R = Buffer.from(gs.mul(ye).mod(new bigInt(this.params.prime)).toString(16), 'hex')
+
+            // compute the hash
             let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')
+            hash.update(R)
             hash.update(d)
             hash = hash.getHash('HEX')
 
-            // get the s & r values for verification
-            let s = new bigInt(data.s, 16)
-            let r = new bigInt(data.r, 16)
+            // get it as a bigint
+            let ev = new bigInt(hash, 16)
 
-            // perform DSA verification
-            let H = new bigInt(hash, 16)
-            let w = s.invm(ph)
-
-            let u1 = H.mul(w).mod(ph)
-            let u2 = r.mul(w).mod(ph)
-
-            let g_u1 = modPow(g, u1, this.params.prime)
-            let g_u2 = modPow(pub, u2, this.params.prime)
-
-            let v = g_u1.imul(g_u2).mod(new bigInt(this.params.prime)).mod(ph)
-
-            return v.eq(r)
+            // verify the signature
+            return ev.eq(e)
         })
     }
 

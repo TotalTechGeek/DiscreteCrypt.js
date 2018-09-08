@@ -108,7 +108,7 @@ describe('DiscreteCrypt.Contact', () =>
         {
             signedData.then(data =>
             {
-                if(data.s && data.r && data.data)
+                if(data.s && data.e && data.data)
                 {
                     if(data.data === TXT)
                     {
@@ -216,7 +216,7 @@ describe('DiscreteCrypt.Contact', () =>
         {
             signedData.then(data =>
             {
-                data.r = 1234567
+                data.s = '1234567'
                 contact.verify(data).then(valid =>
                 {
                     if(!valid) return done()
@@ -402,6 +402,16 @@ describe('DiscreteCrypt', () =>
 
     describe('utils', () =>
     {
+        describe('#pohlig', () =>
+        {
+            it('should compute the Pohlig-Hellman prime from the Nearly-Safe Prime', (done) =>
+            {
+                let val = DiscreteCrypt.utils.pohlig(DiscreteCrypt.defaults.params().prime)[1]
+                if(val == 420) return done()
+                return done(new Error())
+            })
+        })
+
         describe('#scryptPromise', () =>
         {
             // todo: more tests in here, though it is already covered by other tests tbh.
