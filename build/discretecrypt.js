@@ -7906,9 +7906,8 @@ const PROMISE_TRICK = function()
     /**
      * Creates a contact from the given key / salt. 
      * 
-     * 
-     * @param {String|Buffer|Array=} key Key, can be passed in as a string or Buffer-like object.
-     * @param {*=} salt Salt, can be passed in as a hex string or Buffer-like object.
+     * @param {String|Buffer|Uint8Array|Array=} key Key, can be passed in as a string or Buffer-like object.
+     * @param {String|Buffer|Uint8Array|Array=} salt Salt, can be passed in as a hex string or Buffer-like object.
      * @param {Object=} scryptConfig Configuration for Scrypt
      * @param {Object=} params Discrete Log Parameters
      * @returns {ContactPromise}
@@ -7918,18 +7917,27 @@ const PROMISE_TRICK = function()
         let contact = new Contact()
 
         // if there is no defined scrypt config, and no key, automatically switch to ephemeral scrypt settings.
-        if(typeof key === "undefined" && typeof scryptConfig === "undefined") scryptConfig = EPHEMERAL_SCRYPT_CONFIG
+        if(!key && typeof scryptConfig === "undefined") scryptConfig = EPHEMERAL_SCRYPT_CONFIG
 
         scryptConfig = scryptConfig || DEFAULT_SCRYPT_CONFIG
         params = params || DEFAULT_PARAMS
 
         function getKeyPair(key, salt)
         {
+            // numbers get converted to a string
+            if(typeof key === "number")
+            {
+                key = key.toString()
+            }
+
+            // strings get converted to buffers (after normalization)
             if (typeof key === "string")
             {
                 key = Buffer.from(key.normalize('NFKC'))
             }
-            else if (typeof key === "undefined")
+            
+            // empty key or no key get one randomly generated
+            if (!key || !key.length)
             {
                 key = exports.randomBytes(32)
             } 

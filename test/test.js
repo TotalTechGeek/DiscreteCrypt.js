@@ -15,7 +15,9 @@ let signedData2 = contact.sign(Promise.resolve(TXT), true)
 let signedData3 = contact.sign(TXT)
 
 
-let contact3 = DiscreteCrypt.Contact.create(PW)
+let contact3 = DiscreteCrypt.Contact.create(PW), 
+    contact4 = DiscreteCrypt.Contact.create(1234, null, scrypt),
+    contact5 = DiscreteCrypt.Contact.create('', null, scrypt)
 
 describe('DiscreteCrypt.Contact', () =>
 {
@@ -45,6 +47,22 @@ describe('DiscreteCrypt.Contact', () =>
         it('should create a contact even without parameters (ephemeral test)', (done) =>
         {
             contact3.then(contact =>
+            {
+                return done()
+            })
+        })
+
+        it('should be able to handle a numeric password', (done) =>
+        {
+            contact4.then(contact =>
+            {
+                return done()
+            })
+        })
+
+        it('should handle an empty string password (by treating it as an undefined parameter)', (done) =>
+        {
+            contact5.then(contact =>
             {
                 return done()
             })
