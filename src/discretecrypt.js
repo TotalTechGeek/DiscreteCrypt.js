@@ -223,14 +223,6 @@ function scryptPromise(key, salt, N, r, p, len)
         key = Buffer.from(key.normalize('NFKC'))
     } 
     
-    // bug in the SHA256 library code used by scrypt makes this part necessary
-    if (key.length > 64 && !key.push)
-    {
-        // quite a few array-like structures don't have a "push" method,
-        // which makes this necessary.
-        key = [...key]
-    }
-
     if (typeof salt === "string") salt = Buffer.from(salt, 'hex')
 
     N = N || DEFAULT_SCRYPT_CONFIG.N

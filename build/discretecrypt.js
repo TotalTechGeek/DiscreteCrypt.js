@@ -4435,7 +4435,7 @@ function typedArraySupport () {
   // Can typed array instances can be augmented?
   try {
     var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
     return arr.foo() === 42
   } catch (e) {
     return false
@@ -6642,7 +6642,11 @@ function scrypt(password, salt, logN, r, dkLen, interruptStep, callback, encodin
 
   function PBKDF2_HMAC_SHA256_OneIter(password, salt, dkLen) {
     // compress password if it's longer than hash block length
-    password = password.length <= 64 ? password : SHA256(password);
+    if(password.length > 64) {
+      // SHA256 expects password to be an Array. If it's not
+      // (i.e. it doesn't have .push method), convert it to one.
+      password = SHA256(password.push ? password : Array.prototype.slice.call(password, 0));
+    }
 
     var i, innerLen = 64 + salt.length + 4,
         inner = new Array(innerLen),
@@ -6886,6 +6890,10 @@ function scrypt(password, salt, logN, r, dkLen, interruptStep, callback, encodin
         throw new Error('scrypt: missing N parameter');
       }
     }
+
+    // XXX: If opts.p or opts.dkLen is 0, it will be set to the default value
+    // instead of throwing due to incorrect value. To avoid breaking
+    // compatibility, this will only be changed in the next major version.
     p = opts.p || 1;
     r = opts.r;
     dkLen = opts.dkLen || 32;
@@ -7354,14 +7362,6 @@ function scryptPromise(key, salt, N, r, p, len)
         key = Buffer.from(key.normalize('NFKC'))
     } 
     
-    // bug in the SHA256 library code used by scrypt makes this part necessary
-    if (key.length > 64 && !key.push)
-    {
-        // quite a few array-like structures don't have a "push" method,
-        // which makes this necessary.
-        key = [...key]
-    }
-
     if (typeof salt === "string") salt = Buffer.from(salt, 'hex')
 
     N = N || DEFAULT_SCRYPT_CONFIG.N
