@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master) [![GitHub license](https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg)](https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE) [![npm version](https://badge.fury.io/js/discretecrypt.js.svg)](https://badge.fury.io/js/discretecrypt.js)
 
-![Shield](https://svgshare.com/i/8D1.svg)
+![Shield](https://cdn.rawgit.com/TotalTechGeek/31fe6bc0b4e6a82d3e3f46d4fbb3cc42/raw/d70723337819b9258779cc0284fdcc3cb6ce3331/shield-js.svg)
 
 A project for simple & secure data transmission, based on the DiscreteCrypt protocol (an alternative to PGP).
 
