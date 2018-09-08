@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Manual | discretecrypt.js</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A very simple-to-use cryptosystem, designed to make security easy."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="discretecrypt.js"><meta property="twitter:description" content="A very simple-to-use cryptosystem, designed to make security easy."></head>
+<body class="layout-container manual-root" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/TotalTechGeek/DiscreteCrypt.js"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/index.html"><a href="manual/index.html#getting-started" data-ice="link">Getting Started</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#creating-an-ephemeral-contact" data-ice="link">Creating an Ephemeral Contact</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#importing-someone--39-s-contact" data-ice="link">Importing Someone&apos;s Contact</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#encrypting-data-for-a-contact" data-ice="link">Encrypting Data for a Contact</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#opening-encrypted-data" data-ice="link">Opening Encrypted Data</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#creating-a-long-term-contact" data-ice="link">Creating a Long-Term Contact</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/index.html"><a href="manual/index.html#symmetric" data-ice="link">Symmetric</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#using-contacts" data-ice="link">Using Contacts</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#using-symmetric-utilities" data-ice="link">Using Symmetric Utilities</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#encrypt" data-ice="link">Encrypt</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#decrypt" data-ice="link">Decrypt</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/index.html"><a href="manual/index.html#signatures" data-ice="link">Signatures</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#signing" data-ice="link">Signing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#verifying" data-ice="link">Verifying</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#signature-bundling" data-ice="link">Signature Bundling</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#signing" data-ice="link">Signing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#verifying" data-ice="link">Verifying</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/index.html"><a href="manual/index.html#advanced" data-ice="link">Advanced</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/index.html"><a href="manual/index.html#tuning-scrypt-performance" data-ice="link">Tuning Scrypt Performance</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/index.html"><a href="manual/index.html#upcoming" data-ice="link">Upcoming</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#alternative-formats" data-ice="link">Alternative Formats</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#discretecrypt--c----compatibility" data-ice="link">DiscreteCrypt (C++) Compatibility</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#multi-recipient-encryption" data-ice="link">Multi-Recipient Encryption</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#multi-signatures" data-ice="link">Multi-Signatures</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#proof-of-work" data-ice="link">Proof-Of-Work</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/index.html"><a href="manual/index.html#more" data-ice="link">More</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="getting-started">Getting Started</h1><p>Welcome to DiscreteCrypt.js! </p>
+<p>First, I feel like we need to clarify what the term &quot;Contact&quot; means in DiscreteCrypt. It is an object-oriented abstraction of public key cryptography, to make it easier to think about the flow of data.</p>
+<p>You can create a personal contact (private key), or you can receive other people&apos;s contacts (public keys).</p>
+<h2 id="creating-an-ephemeral-contact">Creating an Ephemeral Contact</h2><p>Let&apos;s start by creating an ephemeral contact.</p>
+<p>This is a type of contact that is not meant to be recovered, and is good for one-off sessions.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let me = DiscreteCrypt.Contact.create()
+
+me.export().then(contact =&gt;
+{
+    // send the &quot;contact&quot; variable to someone else, over Ajax or websocket.
+}) </code>
+</code></pre>
+<h2 id="importing-someone--39-s-contact">Importing Someone&apos;s Contact</h2><p>Here is how one should import an exported contact.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let you = DiscreteCrypt.Contact.import(receivedContact)</code>
+</code></pre>
+<h2 id="encrypting-data-for-a-contact">Encrypting Data for a Contact</h2><p>Let&apos;s encrypt data for someone&apos;s contact. This uses asymmetric cryptography to ensure only the intended recipient can open the message.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">me.send(you, &quot;Hey, this is a secret message&quot;).then(encrypted =&gt;
+{
+    // send the &quot;encrypted&quot; variable over ajax or websocket
+})</code>
+</code></pre>
+<p>You are not limited to strings. You can send any other JSON-serializable type using DiscreteCrypt.js (like Numbers, Booleans, Arrays, Objects)</p>
+<h2 id="opening-encrypted-data">Opening Encrypted Data</h2><p>To open received data, just do the following: </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">me.open(dataFromYou).then(data =&gt;
+{
+    // Hey! we decrypted this and got the data back :)
+    console.log(data)
+}).catch(err =&gt;
+{
+    // Oh no! It didn&apos;t decrypt properly. 
+    console.error(err)
+})</code>
+</code></pre>
+<h2 id="creating-a-long-term-contact">Creating a Long-Term Contact</h2><p>Now we&apos;re getting into PGP/GPG territory. This is a contact that you intend to use over a longer period of time, and not just for a one-off chat session with someone. </p>
+<p>To do this, all you need to do is pass in a key in the &quot;Create&quot; method.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// the key doesn&apos;t have to be a string. You can actually use any Uint8Array or Buffer-like structure.
+let me = DiscreteCrypt.Contact.create(&quot;SuperSecurePassword&quot;)</code>
+</code></pre>
+<p>To store it, you&apos;ll need to export it (which you need to do anyway for other people to &quot;contact&quot; you).</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">me.export().then(contact =&gt;
+{
+    // store contact somewhere, in a database or in a json file or something.
+})</code>
+</code></pre>
+<p>Then you can load it back in by importing it and executing the &quot;compute&quot; method, restoring your &quot;personal&quot;/private access. </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// me_stored is your exported contact loaded in from a file
+let me = DiscreteCrypt.Contact.import(me_stored).compute(&quot;SuperSecurePassword&quot;)</code>
+</code></pre>
+<p>In crypto-terms: This allows you to easily recover your private key from your public key. This is only possible because your private key is derived using scrypt (which makes brute-force exceptionally difficult). </p>
+<p>These long-term contacts can be used for a variety of things, like securing communication of nodes in a cloud cluster, or allowing you to create a really modern end-to-end encrypted chat app.  </p>
+<h1 id="symmetric">Symmetric</h1><p>You can also use DiscreteCrypt.js to encrypt data symmetrically. This can be done in two ways:</p>
+<h2 id="using-contacts">Using Contacts</h2><p>You could in theory send data to your own contact.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">
+// creates a long term contact to store
+let me = DiscreteCrypt.Contact.Create(&apos;some pass&apos;)
+
+me.export().then(contact_to_store =&gt;
+{
+    // store it somewhere
+})
+
+me.send(me, { a: &apos;Secret Data&apos; }).then(encrypted =&gt;
+{
+    // encrypted data only your contact file can open
+})</code>
+</code></pre>
+<h2 id="using-symmetric-utilities">Using Symmetric Utilities</h2><p>By removing the key exchange steps of the DiscreteCrypt protocol, the scheme can be simplified to a convenient symmetric authenticated encryption scheme.</p>
+<h3 id="encrypt">Encrypt</h3><p>To encrypt:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DiscreteCrypt.Symmetric.encrypt(&apos;password&apos;, data).then(encrypted_data =&gt;
+{
+    // do something with the encrypted data, like store it
+})</code>
+</code></pre>
+<h3 id="decrypt">Decrypt</h3><p>And decrypting is very similar:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">DiscreteCrypt.Symmetric.decrypt(&apos;password&apos;, encrypted_data).then(decrypted_data =&gt;
+{
+    // do something with the decrypted data,
+    console.log(decrypted_data)
+})</code>
+</code></pre>
+<h1 id="signatures">Signatures</h1><p>Some might want to be able to use their contacts to &quot;sign&quot; data. Here&apos;s how:</p>
+<h2 id="signing">Signing</h2><p>Here is how to sign data:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// assuming &quot;me&quot; is a contact
+
+me.sign(data).then(sig =&gt;
+{
+    // &lt;code to send the signature somewhere&gt;
+})</code>
+</code></pre>
+<h2 id="verifying">Verifying</h2><pre><code class="lang-js"><code class="source-code prettyprint">me.verify(sig, data).then(data =&gt;
+{
+    // the data verified against is passed to then
+}).catch(err =&gt;
+{
+    // rejects if not verified
+})</code>
+</code></pre>
+<h2 id="signature-bundling">Signature Bundling</h2><p>You are also able to bundle in the source data with the signature itself. This might be useful if you plan to release the data along with the signature anyway.</p>
+<h3 id="signing">Signing</h3><pre><code class="lang-js"><code class="source-code prettyprint">me.sign(data, true).then(sig =&gt;
+{
+    // the data is bundled in with the signature.
+    // &lt;code to send the bundled signature somewhere&gt;
+
+})</code>
+</code></pre>
+<h3 id="verifying">Verifying</h3><pre><code class="lang-js"><code class="source-code prettyprint">me.verify(sig).then(data =&gt;
+{
+    // returns the data that was verified by the signature
+}).catch(err =&gt;
+{
+
+})</code>
+</code></pre>
+<h1 id="advanced">Advanced</h1><h2 id="tuning-scrypt-performance">Tuning Scrypt Performance</h2><p>DiscreteCrypt&apos;s various functions will allow you to manually tune their performance based on security thresholds you feel comfortable with.</p>
+<p>By default, DiscreteCrypt is tuned to its strictest security parameters (though DiscreteCrypt automatically optimizes the performance of ephemeral contacts). These parameters are tuned in an attempt to guarantee their lifetimes will outlast your own.</p>
+<p>We offer three sane defaults for Scrypt Parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Method</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Default</td>
+<td><code>DiscreteCrypt.defaults.scrypt()</code></td>
+<td>Strict. Makes it extremely difficult to bruteforce the key-space. Should protect passwords rated at least 40-48 bits in zxcvbn. (Decent Performance)</td>
+</tr>
+<tr>
+<td>Tuned</td>
+<td><code>DiscreteCrypt.defaults.tunedScrypt()</code></td>
+<td>Makes it difficult to bruteforce the key-space. Should protect passwords rated at least 60 bits in zxcvbn. (Great Performance)</td>
+</tr>
+<tr>
+<td>Ephemeral</td>
+<td><code>DiscreteCrypt.defaults.ephemeralScrypt()</code></td>
+<td>Used for contacts where you can either guarantee that the key will have quite a bit of entropy, or will be completely random. (Best Performance)</td>
+</tr>
+</tbody>
+</table>
+<p>Keep in mind that the tuning for Ephemeral is above what GPG was using as its key derivation algorithm by default until quite recently.</p>
+<p>Example Calls:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// create fully random key manually, rather than letting DiscreteCrypt do it.  
+let key = crypto.randomBytes(32)
+let me = DiscreteCrypt.Contact.create(key, null, DiscreteCrypt.defaults.ephemeralScrypt())</code>
+</code></pre>
+<pre><code class="lang-js"><code class="source-code prettyprint">DiscreteCrypt.Symmetric.encrypt(&apos;Some really long and secure password&apos;, { organization: 1, txt: &apos;Hello&apos; }, DiscreteCrypt.defaults.tunedScrypt())</code>
+</code></pre>
+<h1 id="upcoming">Upcoming</h1><h3 id="alternative-formats">Alternative Formats</h3><p>The current format is based mostly on hexadecimal values stored as JSON. This is not optimal. </p>
+<p>I will be implementing binary (and base64) formats that will improve the space efficiency of the data produced by DiscreteCrypt.js.</p>
+<h3 id="discretecrypt--c----compatibility">DiscreteCrypt (C++) Compatibility</h3><p>This is not the first iteration of DiscreteCrypt, there is a C++ tool that is much more powerful, but much more difficult to use.</p>
+<p>Once I improve the C++ implementation, I aim to make the C++ version capable of interacting with the JS version, and vice versa.</p>
+<h3 id="multi-recipient-encryption">Multi-Recipient Encryption</h3><p>The DiscreteCrypt protocol was designed to allow for multi-recipient encryption, support for this is planned in DiscreteCrypt.js </p>
+<h3 id="multi-signatures">Multi-Signatures</h3><p>DiscreteCrypt.js implements Schnorr&apos;s algorithm, which allows for space-efficient multi-party signatures.</p>
+<p>This will be supported in later versions of the library.</p>
+<h3 id="proof-of-work">Proof-Of-Work</h3><p>I will eventually implement a proof-of-work utility, just to make it easier to implement your security.</p>
+<h3 id="more">More</h3><p>There are a few other things I&apos;m planning on supporting that are a bit difficult to describe.</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

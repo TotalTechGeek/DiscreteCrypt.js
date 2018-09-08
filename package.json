@@ -1,10 +1,11 @@
 {
   "name": "discretecrypt.js",
-  "version": "0.0.28",
+  "version": "0.0.30",
   "description": "A very simple-to-use cryptosystem, designed to make security easy.",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha",
+    "doc": "esdoc",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "mkdirp build && browserify src/discretecrypt.browser.js -o build/discretecrypt.js && minify build/discretecrypt.js -o build/discretecrypt.min.js"
   },
@@ -28,12 +29,14 @@
     "scrypt-async": "^2.0.0"
   },
   "devDependencies": {
-    "buffer": "^5.2.0",
-    "mocha": "^5.2.0",
-    "mkdirp": "^0.5.1",
     "babel-minify": "^0.2.0",
     "browserify": "^16.2.2",
+    "buffer": "^5.2.0",
     "coveralls": "^3.0.2",
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "mocha": "^5.2.0",
     "nyc": "^13.0.1"
   }
 }

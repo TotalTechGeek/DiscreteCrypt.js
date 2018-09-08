@@ -7169,6 +7169,7 @@ const DEFAULT_PARAMS = {
 
 /**
  * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
+ * @private
  * @param {BigInt|bigInt|string} prime
  * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
  */
@@ -7177,11 +7178,10 @@ function pohlig(prime, range)
     /* istanbul ignore if */
     if (typeof BigInt !== "undefined")
     {
-        /**
+        /*
          * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). 
          * @param {BigInt|bigInt|string} prime
          * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)
-         * 
          */
         function native_pohlig(prime, range)
         {
@@ -7231,12 +7231,14 @@ function pohlig(prime, range)
     return [prime.toString(), factors.toString()]
 }
 
+
+
 /**
- * Performs modular exponentiation
- * @param {*} a 
- * @param {*} b 
- * @param {*} c 
- * @returns {bigInt}
+ * @private
+ * @param {Number|String|bigInt} a base
+ * @param {Number|String|bigInt} b exponent
+ * @param {Number|String|bigInt} c modulus
+ * @returns {bigInt} result
  */
 function modPow(a, b, c)
 {
@@ -7319,6 +7321,11 @@ if(typeof window !== "undefined")
 
 
 
+/**
+ * Converts a byte array to a hex string
+ * @private
+ * @param {Array|Buffer|ArrayBuffer|Uint8Array} byteArray 
+ */
 function toHexString(byteArray)
 {
     var s = '';
@@ -7331,12 +7338,14 @@ function toHexString(byteArray)
 
 /**
  * Gets the scrypt value.
+ * @private
  * @param {String|Buffer|Array} key 
  * @param {String|Buffer|Array} salt 
  * @param {Number=} N 
  * @param {Number=} r 
  * @param {Number=} p 
  * @param {Number=} len 
+ * @returns {Promise.<Uint8Array|Buffer>} derived key
  */
 function scryptPromise(key, salt, N, r, p, len)
 {
@@ -7378,13 +7387,11 @@ const PROMISE_TRICK = function()
     }))
 }
 
-// This is a stub class for auto-completion
-class ContactPromise
+/**
+ * A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.
+ */
+/*export   */class ContactPromise
 {
-    constructor /* istanbul ignore next */  (promise)
-    {
-    }
-
     /**
      * 
      * @param {Function} data
@@ -7404,13 +7411,14 @@ class ContactPromise
     }
     
     /**
-     * Signs data using the Contact.
+     * Signs data using the Contact, using the Schnorr Signature algorithm.    
      * This is not how DiscreteCrypt  (C++) does it,
      * but it will be modified to match this approach.
      * @param {*} data 
+     * @param {Boolean} bundle
      * @returns {ContactPromise}
      */
-    sign /* istanbul ignore next */ (data)
+    sign /* istanbul ignore next */ (data, bundle)
     {
 
     }
@@ -7453,16 +7461,19 @@ class ContactPromise
 
     /**
      * Verifies the signed data.
+
+     * @param {Object|Promise.<Object>=} data      
+     * @param {Object|Promise.<Object>=} source      
      * @returns {ContactPromise}
      */
-    verify /* istanbul ignore next */ (data)
+    verify /* istanbul ignore next */ (data, source)
     {
 
     }
 
      /**
       * Returns the public key
-     * @returns {ContactPromise}
+     * @returns {ContactPromise.<bigInt>}
      */
     publicKey /* istanbul ignore next */ ()
     {
@@ -7503,12 +7514,14 @@ class ContactPromise
 
 }
 
-
-class Contact
+/**
+ * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.
+ */
+/*export   */class Contact
 {
     /**
      * Returns the public key
-     * @returns {bigInt}
+     * @returns {bigInt} public key
      */
     publicKey()
     {
@@ -7522,7 +7535,7 @@ class Contact
 
     /**
      * Returns the private key
-     * @returns {bigInt}
+     * @returns {bigInt} private key
      */
     privateKey()
     {
@@ -7537,7 +7550,8 @@ class Contact
     /**
      * 
      * @param {*} params 
-     * @returns {Contact}
+     * @protected
+     * @returns {Contact} Contact
      */
     setParams(params)
     {
@@ -7551,7 +7565,8 @@ class Contact
     /**
      * 
      * @param {*} scryptConfig
-     * @returns {Contact} 
+     * @protected
+     * @returns {Contact} Contact
      */
     setScrypt(scryptConfig)
     {
@@ -7561,7 +7576,9 @@ class Contact
 
     /**
      * Alias for fromJSON
-     * @param {String|Object} json 
+     * @see fromJSON
+     * @param {String|Object} json
+     * @returns {ContactPromise|Contact} 
      */
     static
     import(json, sync)
@@ -7611,7 +7628,8 @@ class Contact
     }
 
     /**
-     *
+     * Processes a JSON string or object, and converts it into a Contact class. 
+     * 
      * @param {String|Object|Promise} json
      * @param {Boolean=} sync Determines whether this returns a synchronous contact or asynchronous.
      * If true, the input must be synchronous.
@@ -7628,8 +7646,9 @@ class Contact
     }
 
     /**
-     * Used to export the (safe) JSON for the Contact
+     * Used to export the (safe) JSON for the Contact for sharing.
      * @param {Object} extra 
+     * @returns {Object} An object that is safe to share with others
      */
     export (extra)
     {
@@ -7656,8 +7675,9 @@ class Contact
 
     /**
      * Sends the data to the recipient, encrypted.
-     * @param {Contact} recipient 
-     * @param {*} data 
+     * @param {Contact|ContactPromise} recipient 
+     * @param {*} data
+     * @returns {Promise.<Object>} Encrypted data
      */
     send(recipient, data)
     {
@@ -7667,6 +7687,7 @@ class Contact
     /**
      * Opens an encrypted payload for the contact.
      * @param {*} data 
+     * @returns {Promise.<Object>} Decrypted data
      */
     open(data)
     {
@@ -7674,16 +7695,17 @@ class Contact
     }
 
     /**
-     * Signs data using the Contact.
+     * Signs data using the Contact, using the Schnorr Signature algorithm.
      * 
      * This is not how DiscreteCrypt (C++) currently handles signatures,
      * but that will be changed.
      * 
      * @param {*} data 
      * @param {Object|Promise.<Object>} data 
-     * 
+     * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.
+     * @returns {Promise.<Object>} Signature
      */
-    sign(data)
+    sign(data, bundle)
     {
         // Performs the Schnorr Signature Algorithm
 
@@ -7699,7 +7721,7 @@ class Contact
         // gets the private key 
         let priv = this.privateKey()
 
-        /**
+        /*
          * the following line will need to be altered based on the hash algorithm.
          * please do not forget this. it's the length of the output in bytes.
          * ensuring K > (private.length + hash.length) prevents an attacker from learning information about the private key.
@@ -7735,28 +7757,39 @@ class Contact
                 // computes the signature values
                 let e = new bigInt(hash, 16)
                 let s = K.sub(priv.mul(e))
-    
-                return { s: s.toString(16), e: e.toString(16), data: data }
+
+                let result = { s: s.toString(16), e: e.toString(16) }
+                
+                if(bundle) result.data = data
+
+                return result
             })
         })
     }
 
     /**
      * Verifies the signed data.
-     * @param {Object|Promise.<Object>} data 
+     * @param {Object|Promise.<Object>} data
+     * @param {Object|Promise.<Object>=} source      
+     * @returns {Promise.<Boolean>} 
      */
-    verify(data)
+    verify(data, source)
     {
         if (!(data instanceof Promise))
         {
             data = Promise.resolve(data)
         }
 
-        return data.then(data =>
+        if (!(source instanceof Promise))
         {
-            if (!data.s || !data.e) return false
+            source = Promise.resolve(source)
+        }
 
-            let d = Buffer.from(JSON.stringify(data.data))
+        return Promise.all([data, source]).then(([data, source]) =>
+        {
+            if (!data.s || !data.e) return Promise.reject('Signature Not Verified')
+            
+            let d = Buffer.from(JSON.stringify(source || data.data))
             
             // Gets the e & s bignums
             let s = new bigInt(data.s, 16)
@@ -7778,8 +7811,9 @@ class Contact
             // get it as a bigint
             let ev = new bigInt(hash, 16)
 
-            // verify the signature
-            return ev.eq(e)
+            if(ev.eq(e)) return source || data.data
+
+            return Promise.reject('Signature Not Verified')
         })
     }
 
@@ -7811,6 +7845,7 @@ class Contact
 
     /**
      * Converts the object to the fully asynchronous Contact
+     * @returns {ContactPromise}
      */
     async ()
     {
@@ -7870,17 +7905,20 @@ class Contact
 
     /**
      * Creates a contact from the given key / salt. 
-     * If no salt is provided, it will randomly generate it.
-     * @param {String|Buffer|Array} key 
-     * @param {*} salt 
-     * @param {Object=} scryptConfig
-     * @param {Object=} params
      * 
+     * 
+     * @param {String|Buffer|Array=} key Key, can be passed in as a string or Buffer-like object.
+     * @param {*=} salt Salt, can be passed in as a hex string or Buffer-like object.
+     * @param {Object=} scryptConfig Configuration for Scrypt
+     * @param {Object=} params Discrete Log Parameters
      * @returns {ContactPromise}
      */
     static create(key, salt, scryptConfig, params)
     {
         let contact = new Contact()
+
+        // if there is no defined scrypt config, and no key, automatically switch to ephemeral scrypt settings.
+        if(typeof key === "undefined" && typeof scryptConfig === "undefined") scryptConfig = EPHEMERAL_SCRYPT_CONFIG
 
         scryptConfig = scryptConfig || DEFAULT_SCRYPT_CONFIG
         params = params || DEFAULT_PARAMS
@@ -7891,10 +7929,10 @@ class Contact
             {
                 key = Buffer.from(key.normalize('NFKC'))
             }
-            else if (!key)
+            else if (typeof key === "undefined")
             {
                 key = exports.randomBytes(32)
-            }
+            } 
 
             /* istanbul ignore else: not necessary. I'm trusting that it is an array like object. */
             if (typeof salt === "string")
@@ -7945,10 +7983,10 @@ function truncate(x, len)
 
 /**
  * Opens an encrypted payload
- * @param {Contact} receiver 
+ * @param {Contact|ContactPromise} receiver 
  * @param {*} data 
  */
-function open(receiver, data)
+/*export   */function open(receiver, data)
 {
     if (!(receiver instanceof Promise))
     {
@@ -7999,10 +8037,11 @@ function open(receiver, data)
 }
 
 /**
- * This code assumes both individuals are using the same parameters. 
- * Sends an encrypted message from the sender to the receiver.
+ * Creates an encrypted payload from the sender, to the receiver.
  * 
- * Todo: consider adding advanced options, like allowing the embedding of tuned scrypt parameters
+ * This code assumes both individuals are using the same parameters. 
+ * 
+ * @todo consider adding advanced options, like allowing the embedding of tuned scrypt parameters
  * on the exchange key.
  * 
  * The scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,
@@ -8012,7 +8051,7 @@ function open(receiver, data)
  * @param {Contact} receiver 
  * @param {*} msg
  */
-function exchange(sender, receiver, msg)
+/*export   */function exchange(sender, receiver, msg)
 {
     if (!(sender instanceof Promise))
     {
@@ -8072,158 +8111,180 @@ function exchange(sender, receiver, msg)
 }
 
 /**
- * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
- * using a given input key.
- * 
- * Uses the input key rather than a DH Exchange.
- * 
- * @param {String|Buffer|Array} inputKey 
- * @param {*} msg 
- * @param {Object=} scryptConfig 
+ * DiscreteCrypt Symmetric Utilities
+ * @hideconstructor
  */
-function symmetricEncrypt(inputKey, msg, scryptConfig)
+/*export   */class Symmetric 
 {
-    if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
-
-    if (typeof inputKey === "undefined")
+    /**
+     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
+     * using a given input key.
+     * 
+     * Uses the input key rather than a DH Exchange.
+     * 
+     * @param {String|Buffer|Array} inputKey 
+     * @param {*} msg 
+     * @param {Object=} scryptConfig 
+     */
+    static encrypt(inputKey, msg, scryptConfig)
     {
-        return Promise.reject('No input key provided.')
-    }
+        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
 
-    /* istanbul ignore else */
-    if (typeof inputKey === "string")
-    {
-        inputKey = Buffer.from(inputKey.normalize('NFKC'))
-    }
-
-    if (inputKey.length === 0)
-    {
-        return Promise.reject('Input key empty.')
-    }
-
-    let key = exports.randomBytes(32)
-    msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
-
-    let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
-    hmac.setHMACKey(key, 'ARRAYBUFFER')
-    hmac.update(msg)
-    hmac = hmac.getHMAC('HEX')
-
-    return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
-    {
-        let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
-
-        let ekey = ctr.encrypt(key)
-
-        ekey = aesjs.utils.hex.fromBytes(ekey)
-
-        let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))
-
-        let payload = ctr2.encrypt(msg)
-        payload = aesjs.utils.hex.fromBytes(payload)
-
-        return {
-            payload: payload,
-            key: ekey,
-            hmac: hmac
+        if (typeof inputKey === "undefined")
+        {
+            return Promise.reject('No input key provided.')
         }
-    })
-}
 
-/**
- * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
- * using a given input key.
- * 
- * Uses the input key rather than a DH Exchange.
- * 
- * @param {String|Buffer|Array} inputKey 
- * @param {Object} data 
- * @param {Object=} scryptConfig 
- */
-function symmetricDecrypt(inputKey, data, scryptConfig)
-{
-    if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+        /* istanbul ignore else */
+        if (typeof inputKey === "string")
+        {
+            inputKey = Buffer.from(inputKey.normalize('NFKC'))
+        }
 
-    if (typeof inputKey === "undefined")
-    {
-        return Promise.reject('No input key provided.')
-    }
+        if (inputKey.length === 0)
+        {
+            return Promise.reject('Input key empty.')
+        }
 
-    /* istanbul ignore else */
-    if (typeof inputKey === "string")
-    {
-        inputKey = Buffer.from(inputKey.normalize('NFKC'))
-    }
-
-    if (inputKey.length === 0)
-    {
-        return Promise.reject('Input key empty.')
-    }
-
-    return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
-    {
-        let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))
-
-        let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))
-
-        let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))
-
-        let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))
+        let key = exports.randomBytes(32)
+        msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
 
         let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
-        hmac.setHMACKey(ekey, 'ARRAYBUFFER')
-        hmac.update(payload)
-
+        hmac.setHMACKey(key, 'ARRAYBUFFER')
+        hmac.update(msg)
         hmac = hmac.getHMAC('HEX')
 
-        if (hmac === data.hmac)
+        return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
         {
-            payload = aesjs.utils.utf8.fromBytes(payload)
-            return JSON.parse(payload)
-        }
-        else
+            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
+
+            let ekey = ctr.encrypt(key)
+
+            ekey = aesjs.utils.hex.fromBytes(ekey)
+
+            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))
+
+            let payload = ctr2.encrypt(msg)
+            payload = aesjs.utils.hex.fromBytes(payload)
+
+            return {
+                payload: payload,
+                key: ekey,
+                hmac: hmac
+            }
+        })
+    }
+
+    /**
+     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
+     * using a given input key.
+     * 
+     * Uses the input key rather than a DH Exchange.
+     * 
+     * @param {String|Buffer|Array} inputKey 
+     * @param {Object} data 
+     * @param {Object=} scryptConfig 
+     */
+    static decrypt(inputKey, data, scryptConfig)
+    {
+        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+
+        if (typeof inputKey === "undefined")
         {
-            return Promise.reject('Decryption failed.')
+            return Promise.reject('No input key provided.')
         }
-    })
+
+        /* istanbul ignore else */
+        if (typeof inputKey === "string")
+        {
+            inputKey = Buffer.from(inputKey.normalize('NFKC'))
+        }
+
+        if (inputKey.length === 0)
+        {
+            return Promise.reject('Input key empty.')
+        }
+
+        return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
+        {
+            let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))
+
+            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))
+
+            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))
+
+            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))
+
+            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
+            hmac.setHMACKey(ekey, 'ARRAYBUFFER')
+            hmac.update(payload)
+
+            hmac = hmac.getHMAC('HEX')
+
+            if (hmac === data.hmac)
+            {
+                payload = aesjs.utils.utf8.fromBytes(payload)
+                return JSON.parse(payload)
+            }
+            else
+            {
+                return Promise.reject('Decryption failed.')
+            }
+        })
+    }
 }
-
-
-function params()
-{
-    return Object.freeze(DEFAULT_PARAMS)
-}
-
 
 /**
- * This Scrypt configuration is the default recommended scrypt configuration.
- * This is for securing highly sensitive data in worst case conditions.
+ * Provides sane defaults for use in DiscreteCrypt.js applications
  */
-function scryptConfig()
+/*export   */class defaults 
 {
-    return Object.freeze(DEFAULT_SCRYPT_CONFIG)    
-}
+    /**
+     * Returns the default parameters of DiscreteCrypt.js.
+     * @returns {Object}
+     */
+    static params()
+    {
+        return Object.freeze(DEFAULT_PARAMS)
+    }
 
-/**
- * This Scrypt Configuration should be applied when the keys are ephemeral.
- */
-function ephemeralScrypt() 
-{
-    return Object.freeze(EPHEMERAL_SCRYPT_CONFIG)
-}
+    /**
+     * 
+     * This Scrypt configuration is the default recommended scrypt configuration.
+     * This is for securing highly sensitive data in worst case conditions.
+     * @returns {Object}
+     */
+    static scrypt()
+    {
+        return Object.freeze(DEFAULT_SCRYPT_CONFIG)    
+    }
 
-/**
- * Should be applied for performance reasons when the author is willing to accept 
- * slightly reduced security for performance reasons. 
- * 
- * This can securely be applied in situations where password input is reasonably decent.
- * 
- * Consider it a healthy middle ground between the default (top-secret) and 
- * ephemeral.
- */
-function tunedScrypt()
-{
-    return Object.freeze(TUNED_SCRYPT_CONFIG)
+    /**
+     * This Scrypt Configuration should be applied when the keys are ephemeral.
+     * @returns {Object}
+     * 
+     */
+    static ephemeralScrypt() 
+    {
+        return Object.freeze(EPHEMERAL_SCRYPT_CONFIG)
+    }
+
+    /**
+     * 
+     * Should be applied for performance reasons when the author is willing to accept 
+     * slightly reduced security for performance reasons. 
+     * 
+     * This can securely be applied in situations where password input is reasonably decent.
+     * 
+     * Consider it a healthy middle ground between the default (top-secret) and 
+     * ephemeral.
+     * @returns {Object}
+     */
+    static tunedScrypt()
+    {
+        return Object.freeze(TUNED_SCRYPT_CONFIG)
+    }
+
 }
 
 exports.utils = {
@@ -8234,17 +8295,8 @@ exports.utils = {
     pohlig: pohlig
 }
 
-exports.defaults = {
-    params: params,
-    scrypt: scryptConfig,
-    ephemeralScrypt: ephemeralScrypt,
-    tunedScrypt: tunedScrypt
-}
-
-exports.Symmetric = {
-    encrypt: symmetricEncrypt,
-    decrypt: symmetricDecrypt
-}
+exports.defaults = defaults
+exports.Symmetric = Symmetric
 
 exports.clearCache = function()
 {

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | discretecrypt.js</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A very simple-to-use cryptosystem, designed to make security easy."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="discretecrypt.js"><meta property="twitter:description" content="A very simple-to-use cryptosystem, designed to make security easy."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/TotalTechGeek/DiscreteCrypt.js"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/discretecrypt.js~Contact.html">Contact</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/discretecrypt.js~ContactPromise.html">ContactPromise</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/discretecrypt.js~Symmetric.html">Symmetric</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/discretecrypt.js~defaults.html">defaults</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-exchange">exchange</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-open">open</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="discretecrypt-js">DiscreteCrypt.js</h1><p><a href="https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master"><img src="https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master" alt="Coverage Status"></a> <a href="https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE"><img src="https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg" alt="GitHub license"></a></p>
+<p><img src="https://svgshare.com/i/8D1.svg" alt="Shield"></p>
+<p>A project for simple &amp; secure data transmission, based on the DiscreteCrypt protocol (an alternative to PGP).</p>
+<h2 id="what--39-s-it-do-">What&apos;s it do?</h2><p>This library makes it quite easy to implement end-to-end encryption both in the web browser and in Node.js, and provides extra utilities to make it convenient to encrypt symmetrically as well.</p>
+<p>The library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from nspdh. </p>
+<p>A neat feature of this implementation is that a password can be used to quickly &amp; securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.</p>
+<p>You may alternatively generate keys ephemerally, and encrypt the generated &quot;contact&quot; symmetrically (like traditional cryptosystems).</p>
+<h2 id="how-do-i-use-it-">How do I use it?</h2><p>(More documentation necessary)</p>
+<p>In DiscreteCrypt, we refer to &quot;public keys&quot; as &quot;contacts,&quot; and they are generated asynchronously as promises. </p>
+<p>The create method returns a promise with a few helper functions tossed onto it, to make it slightly more convenient to use the library. </p>
+<p>All of the helper functions return a promise that execute the generated contact&apos;s function once it completes.</p>
+<h4 id="sending-and-opening-data">Sending and Opening Data</h4><pre><code class="lang-js"><code class="source-code prettyprint">const Contact = DiscreteCrypt.Contact
+
+// generates the contact ephemerally.
+let me = Contact.create()
+
+// the Contact.create().export() would happen on someone else&apos;s computer
+let you = Contact.import(Contact.create().export())
+
+// any JSON-serializable object can be passed into the &quot;send&quot; function.
+me.send(you, &apos;Hello, World!&apos;).then(encrypted =&gt;
+{
+    // code to send encrypted data to other user
+})</code>
+</code></pre>
+<p>Then to open the data, </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">you.open(encrypted).then(data =&gt;
+{
+    console.log(data) // Hello, World!
+}).catch(err =&gt;
+{
+    // the decryption didn&apos;t occur correctly.
+    console.error(err)
+})</code>
+</code></pre>
+<h4 id="creating-a-reusable-contact">Creating a Reusable Contact</h4><p>To create a re-usable contact for public-key cryptography (one you can import at a later date), do the following:</p>
+<p><strong>1 - Create the Contact</strong> </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// you can also pass in an Buffer or Uint8-like object for the password.
+let me = Contact.create(&apos;&lt;SuperSecurePassword&gt;&apos;)
+
+// creates the public contact, store this somewhere
+let pub = me.export()</code>
+</code></pre>
+<p><strong>2 - Import the Public Contact &amp; Compute (To turn it back into a private contact)</strong></p>
+<pre><code class="lang-js"><code class="source-code prettyprint">let me = Contact.import(pub).compute(&apos;&lt;SuperSecurePassword&gt;&apos;)</code>
+</code></pre>
+<p>And that&apos;s it! </p>
+<h4 id="symmetrically-encrypting-data">Symmetrically Encrypting Data</h4><p>Sometimes you&apos;ll want to encrypt data symmetrically. These methods use a slight reduction of the DiscreteCrypt protocol (removing the asymmetric steps) that allow you to securely store a payload.  </p>
+<p>Out of the box these methods perform data authenticity checks, and the necessary key stretching to keep your data safe. </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// key can be a string, buffer or uint8array-like structure.
+DiscreteCrypt.Symmetric.encrypt(key, data).then(encrypted =&gt;
+{
+    // store encrypted somewhere
+    // ... and then later on
+    DiscreteCrypt.Symmetric.decrypt(key, encrypted).then(decrypted =&gt;
+    {
+        console.log(decrypted)
+    })
+})</code>
+</code></pre>
+<h2 id="to-build--for-browser-">To Build (for browser)</h2><p>Run the following commands:</p>
+<pre><code><code class="source-code prettyprint">npm i
+npm run build</code>
+</code></pre><p>This will produce the necessary output.</p>
+<h2 id="dependencies">Dependencies</h2><p>The following libraries were used:</p>
+<ul>
+<li>aes-js</li>
+<li>bn.js </li>
+<li>buffer</li>
+<li>jsSHA</li>
+<li>scrypt-async</li>
+</ul>
+<h2 id="notes">Notes</h2><p>This library can leverage the new proposal for <a href="https://github.com/tc39/proposal-bigint">native BigInts</a> in JavaScript, achieving far greater performance.</p>
+<p>At the time of writing, Chrome is the only browser with support for this proposal.</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

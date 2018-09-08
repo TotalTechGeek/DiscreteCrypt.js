@@ -1,0 +1,2772 @@
+[
+  {
+    "__docId__": 1,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Infinity",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 2,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~NaN",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 3,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~undefined",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 4,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~null",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 5,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Object",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 6,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~object",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 7,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Function",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 8,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~function",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 9,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Boolean",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 10,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~boolean",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 11,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Symbol",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 12,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Error",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 13,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~EvalError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 14,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~InternalError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 15,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~RangeError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 16,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~ReferenceError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 17,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~SyntaxError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 18,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~TypeError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 19,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~URIError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 20,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Number",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 21,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~number",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 22,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Date",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 23,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~String",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 24,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~string",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 25,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~RegExp",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 26,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 27,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Int8Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 28,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint8Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 29,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint8ClampedArray",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 30,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Int16Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 31,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint16Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 32,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Int32Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 33,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint32Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 34,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Float32Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Float64Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Map",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 37,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Set",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 38,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~WeakMap",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~WeakSet",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~ArrayBuffer",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~DataView",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~JSON",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Promise",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Generator",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~GeneratorFunction",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Reflect",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Proxy",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "file",
+    "name": "src/discretecrypt.browser.js",
+    "content": "const Buffer = require('buffer').Buffer\r\n\r\n// Export everything.\r\nglobal.Buffer = Buffer\r\nglobal.DiscreteCrypt = require('./discretecrypt.js')",
+    "static": true,
+    "longname": "C:/Users/Jesse/Documents/Projects/DiscreteCrypt.js/src/discretecrypt.browser.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 49,
+    "kind": "variable",
+    "name": "Buffer",
+    "memberof": "src/discretecrypt.browser.js",
+    "static": true,
+    "longname": "src/discretecrypt.browser.js~Buffer",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.browser.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "file",
+    "name": "src/discretecrypt.js",
+    "content": "const scrypt = require('scrypt-async')\r\nconst bigInt = require('bn.js')\r\nconst aesjs = require('aes-js')\r\nconst jsSHA = require('jssha')\r\n\r\n// Applied in Password-Based cases.\r\nconst DEFAULT_SCRYPT_CONFIG = {\r\n    N: 1 << 14,\r\n    r: 10,\r\n    p: 3,\r\n    len: 64\r\n}\r\n\r\n// Should be applied for performance reasons when the author is willing to accept \r\n// slightly reduced security for performance reasons. \r\n// This can securely be applied in situations where password input is reasonably decent.\r\nconst TUNED_SCRYPT_CONFIG = {\r\n    N: 1 << 14, \r\n    r: 11, \r\n    p: 1,\r\n    len: 48\r\n}\r\n\r\n// This should be applied in cases where the key doesn't need much stretching. \r\n// Usually due to ephemeral keys\r\nconst EPHEMERAL_SCRYPT_CONFIG = {\r\n    N: 1 << 10, \r\n    r: 4, \r\n    p: 1,\r\n    len: 32\r\n}\r\n\r\n// Funnily enough, it seems the default params can have their pohlig found in 7.    \r\nconst DEFAULT_PARAMS = {\r\n    prime: '1236027852723267358067496240415081192016632901798652377386974104662393263762300791015297301419782476103015366958792837873764932552461292791165884073898812814414137342163134112441573878695866548152604326906481241134560091096795607547486746060322717834549300353793656273878542405925895784382400028374603183267116520399667622873636417533621785188753096887486165751218947390793886174932206305484313257628695734926449809428884085464402485504798782585345665225579018127843073619788513405272670558284073983759985451287742892999484270521626583252756445695489268987027078838378407733148367649564107237496006094048593708959670063677802988307113944522310326616125731276572628521088574537964296697257866765026848588469121515995674723869067535040253689232576404893685613618463095967906841853447414047313021676108205138971649482561844148237707440562831931089544088821151806962538015278155763187487878945694840272084274212918033049841007502061',\r\n    gen: '2'\r\n}\r\n\r\n/**\r\n * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). \r\n * @private\r\n * @param {BigInt|bigInt|string} prime\r\n * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)\r\n */\r\nfunction pohlig(prime, range)\r\n{\r\n    /* istanbul ignore if */\r\n    if (typeof BigInt !== \"undefined\")\r\n    {\r\n        /*\r\n         * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). \r\n         * @param {BigInt|bigInt|string} prime\r\n         * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)\r\n         */\r\n        function native_pohlig(prime, range)\r\n        {\r\n            if (typeof prime === \"string\") prime = BigInt(prime)\r\n            else if (typeof prime === \"object\") prime = BigInt(prime.toString())\r\n\r\n            prime -= BigInt(1)\r\n            let factors = BigInt(1)\r\n\r\n            let max = BigInt((range || (1 << 12)) + 1)\r\n\r\n            /* istanbul ignore next */\r\n            for (let i = BigInt(2); i < max; i++)\r\n            {\r\n                while (!(prime % i))\r\n                {\r\n                    prime /= i\r\n                    factors *= i\r\n                }\r\n            }\r\n\r\n            return [prime.toString(), factors.toString()]\r\n        }\r\n\r\n        return native_pohlig(prime, range)\r\n    }\r\n\r\n    if (!(prime instanceof bigInt)) prime = new bigInt(prime)\r\n\r\n    if(typeof range !== \"undefined\" && typeof range !== \"number\")\r\n    {\r\n        throw \"Only number types are allowed for the range parameter.\"\r\n    }\r\n\r\n    prime.isubn(1)\r\n    let factors = new bigInt(1)\r\n    let max = (range || (1 << 12)) + 1\r\n    for (let i = 2; i < max; i++)\r\n    {\r\n        while (!prime.modn(i))\r\n        {\r\n            prime.idivn(i)\r\n            factors.imuln(i)\r\n        }\r\n    }\r\n\r\n    return [prime.toString(), factors.toString()]\r\n}\r\n\r\n\r\n\r\n/**\r\n * @private\r\n * @param {Number|String|bigInt} a base\r\n * @param {Number|String|bigInt} b exponent\r\n * @param {Number|String|bigInt} c modulus\r\n * @returns {bigInt} result\r\n */\r\nfunction modPow(a, b, c)\r\n{\r\n    if (!(a instanceof bigInt)) a = new bigInt(a)\r\n    if (!(b instanceof bigInt)) b = new bigInt(b)\r\n    if (!(c instanceof bigInt)) c = new bigInt(c)\r\n\r\n    /* istanbul ignore if */\r\n    if (typeof BigInt !== \"undefined\")\r\n    {\r\n        function pow(a, b, c)\r\n        {\r\n            let one = BigInt(1)\r\n            let res = BigInt(1)\r\n            a = a % c;\r\n\r\n            while (b > 0)\r\n            {\r\n                if (b & one)\r\n                    res = (res * a) % c\r\n\r\n                b = b >> one\r\n                a = (a * a) % c\r\n            }\r\n\r\n            return res\r\n        }\r\n\r\n        a = BigInt(a.toString())\r\n        b = BigInt(b.toString())\r\n        c = BigInt(c.toString())\r\n\r\n        return new bigInt(pow(a, b, c).toString())\r\n    }\r\n    else\r\n    {\r\n        let red = bigInt.red(c)\r\n        return a.toRed(red).redPow(b).fromRed()\r\n    }\r\n}\r\n\r\n\r\n\r\n/* istanbul ignore next: Browser specific code */\r\nif(typeof window !== \"undefined\")\r\n{\r\n    if(window.crypto)\r\n    {    \r\n        exports.randomBytes = function(n)\r\n        {\r\n            let arr = new Uint8Array(n)\r\n            window.crypto.getRandomValues(arr)\r\n            return arr\r\n        }\r\n    }\r\n    else\r\n    {\r\n        let warning = false\r\n        exports.randomBytes = function(n)\r\n        {\r\n            if (!warning)\r\n            {\r\n                console.warn('Window.crypto not detected. This might be insecure, please override the exports.randomBytes function with a secure one.')\r\n                warning = true\r\n            }\r\n    \r\n            let arr = new Uint8Array(n)\r\n            for (var i = 0; i < arr.length; i++)\r\n            {\r\n                arr[i] = (Math.random() * 256) | 0\r\n            }\r\n            return arr\r\n        }\r\n    }\r\n\r\n    global.jsSHA = jsSHA\r\n    global.bigInt = bigInt\r\n    global.aesjs = aesjs\r\n}\r\n\r\n\r\n\r\n/**\r\n * Converts a byte array to a hex string\r\n * @private\r\n * @param {Array|Buffer|ArrayBuffer|Uint8Array} byteArray \r\n */\r\nfunction toHexString(byteArray)\r\n{\r\n    var s = '';\r\n    byteArray.forEach(byte =>\r\n    {\r\n        s += ('0' + (byte & 0xFF).toString(16)).slice(-2);\r\n    })\r\n    return s;\r\n}\r\n\r\n/**\r\n * Gets the scrypt value.\r\n * @private\r\n * @param {String|Buffer|Array} key \r\n * @param {String|Buffer|Array} salt \r\n * @param {Number=} N \r\n * @param {Number=} r \r\n * @param {Number=} p \r\n * @param {Number=} len \r\n * @returns {Promise.<Uint8Array|Buffer>} derived key\r\n */\r\nfunction scryptPromise(key, salt, N, r, p, len)\r\n{\r\n    if (typeof key === \"string\")\r\n    {\r\n        key = [...Buffer.from(key.normalize('NFKC'))]\r\n    }\r\n\r\n    if (typeof salt === \"string\") salt = Buffer.from(salt, 'hex')\r\n\r\n    N = N || DEFAULT_SCRYPT_CONFIG.N\r\n    r = r || DEFAULT_SCRYPT_CONFIG.r\r\n    p = p || DEFAULT_SCRYPT_CONFIG.p\r\n    len = len || DEFAULT_SCRYPT_CONFIG.len\r\n\r\n    return new Promise((resolve, reject) =>\r\n    {\r\n        scrypt(key, salt,\r\n        {\r\n            N: N,\r\n            r: r,\r\n            p: p,\r\n            dkLen: len,\r\n            interruptStep: exports.SCRYPT_PAUSE,\r\n            encoding: 'binary'\r\n        }, (key) =>\r\n        {\r\n            resolve(key)\r\n        })\r\n    })\r\n}\r\n\r\nconst PROMISE_TRICK = function()\r\n{\r\n    let arg = arguments\r\n    return Contact._modifyPromise(this[0].then(contact =>\r\n    {\r\n        return contact[this[1]].apply(contact, arg)\r\n    }))\r\n}\r\n\r\n/**\r\n * A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.\r\n */\r\nexport   class ContactPromise\r\n{\r\n    /**\r\n     * \r\n     * @param {Function} data\r\n     * @returns {ContactPromise}\r\n     */\r\n    then /* istanbul ignore next */ (data)\r\n    {\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {Function} err\r\n     * @returns {ContactPromise}      \r\n     */\r\n    catch /* istanbul ignore next */ (err)\r\n    {\r\n    }\r\n    \r\n    /**\r\n     * Signs data using the Contact, using the Schnorr Signature algorithm.    \r\n     * This is not how DiscreteCrypt  (C++) does it,\r\n     * but it will be modified to match this approach.\r\n     * @param {*} data \r\n     * @param {Boolean} bundle\r\n     * @returns {ContactPromise}\r\n     */\r\n    sign /* istanbul ignore next */ (data, bundle)\r\n    {\r\n\r\n    }\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact} recipient \r\n     * @param {*} data \r\n     * @returns {Promise.<Object>}\r\n     * \r\n     */\r\n    open /* istanbul ignore next */ (data)\r\n    {\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact} recipient \r\n     * @param {*} data \r\n     * @returns {Promise.<Object>}\r\n     */\r\n    send /* istanbul ignore next */ (recipient, data)\r\n    {\r\n\r\n    }\r\n\r\n    /**\r\n     * Used to export the (safe) JSON for the Contact\r\n     * @param {Object} extra \r\n     * @returns {ContactPromise}\r\n     * \r\n     */\r\n    export /* istanbul ignore next */ (extra)\r\n    {\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * Verifies the signed data.\r\n\r\n     * @param {Object|Promise.<Object>=} data      \r\n     * @param {Object|Promise.<Object>=} source      \r\n     * @returns {ContactPromise}\r\n     */\r\n    verify /* istanbul ignore next */ (data, source)\r\n    {\r\n\r\n    }\r\n\r\n     /**\r\n      * Returns the public key\r\n     * @returns {ContactPromise.<bigInt>}\r\n     */\r\n    publicKey /* istanbul ignore next */ ()\r\n    {\r\n\r\n    }\r\n\r\n     /**\r\n      * Returns the private key\r\n     * @returns {ContactPromise.<bigInt>}\r\n     */\r\n    privateKey /* istanbul ignore next */ ()\r\n    {\r\n\r\n    }\r\n\r\n    \r\n    /**\r\n     * Computes the private key for a contact from an input key.\r\n     * @param {String|Buffer|Array} key \r\n     * @returns {ContactPromise}\r\n     */\r\n    compute /* istanbul ignore next */ (key)\r\n    {\r\n\r\n    }\r\n\r\n    \r\n    /**\r\n     * \r\n     * @param {*} extra \r\n     * @returns {ContactPromise}\r\n     * \r\n     */\r\n    clean /* istanbul ignore next */ (extra)\r\n    {\r\n\r\n    }\r\n\r\n}\r\n\r\n/**\r\n * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.\r\n */\r\nexport   class Contact\r\n{\r\n    /**\r\n     * Returns the public key\r\n     * @returns {bigInt} public key\r\n     */\r\n    publicKey()\r\n    {\r\n        if (!this.public)\r\n        {\r\n            throw \"Public key not set.\"\r\n        }\r\n\r\n        return new bigInt(this.public)\r\n    }\r\n\r\n    /**\r\n     * Returns the private key\r\n     * @returns {bigInt} private key\r\n     */\r\n    privateKey()\r\n    {\r\n        if (!this.private)\r\n        {\r\n            throw \"Private key not set.\"\r\n        }\r\n\r\n        return new bigInt(this.private)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} params \r\n     * @protected\r\n     * @returns {Contact} Contact\r\n     */\r\n    setParams(params)\r\n    {\r\n        this.params = {\r\n            prime: params.prime.toString(),\r\n            gen: params.gen.toString()\r\n        }\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} scryptConfig\r\n     * @protected\r\n     * @returns {Contact} Contact\r\n     */\r\n    setScrypt(scryptConfig)\r\n    {\r\n        this.scryptConfig = scryptConfig\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * Alias for fromJSON\r\n     * @see fromJSON\r\n     * @param {String|Object} json\r\n     * @returns {ContactPromise|Contact} \r\n     */\r\n    static\r\n    import(json, sync)\r\n    {\r\n        return this.fromJSON(json, sync)\r\n    }\r\n\r\n    /**\r\n     * Imports the asynchronous version of a DiscreteCrypt Contact\r\n     * @private\r\n     * @param {String|Object|Promise} json \r\n     */\r\n    static _fromJSONAsync(json)\r\n    {\r\n        if (!(json instanceof Promise))\r\n        {\r\n            json = Promise.resolve(json)\r\n        }\r\n\r\n        let contact = json.then(json =>\r\n        {\r\n            return Contact._fromJSONSync(json)\r\n        })\r\n\r\n        return this._modifyPromise(contact)\r\n    }\r\n\r\n    /**\r\n     * Imports the synchronous version of a DiscreteCrypt Contact\r\n     * @private\r\n     * @param {String|Object} json \r\n     */\r\n    static _fromJSONSync(json)\r\n    {\r\n        if (typeof json === \"string\")\r\n        {\r\n            json = JSON.parse(json)\r\n        }\r\n\r\n        let contact = new Contact()\r\n        for (var prop in json)\r\n        {\r\n            contact[prop] = json[prop]\r\n        }\r\n\r\n        return contact\r\n    }\r\n\r\n    /**\r\n     * Processes a JSON string or object, and converts it into a Contact class. \r\n     * \r\n     * @param {String|Object|Promise} json\r\n     * @param {Boolean=} sync Determines whether this returns a synchronous contact or asynchronous.\r\n     * If true, the input must be synchronous.\r\n     *  @returns {ContactPromise} \r\n     */\r\n    static fromJSON(json, sync)\r\n    {\r\n        if (sync)\r\n        {\r\n            return Contact._fromJSONSync(json)\r\n        }\r\n\r\n        return Contact._fromJSONAsync(json)\r\n    }\r\n\r\n    /**\r\n     * Used to export the (safe) JSON for the Contact for sharing.\r\n     * @param {Object} extra \r\n     * @returns {Object} An object that is safe to share with others\r\n     */\r\n    export (extra)\r\n    {\r\n        let res = Object.assign(\r\n        {}, this)\r\n\r\n        delete res.private\r\n\r\n        if (extra)\r\n        {\r\n            if (extra.params || extra.all)\r\n            {\r\n                delete res.params\r\n            }\r\n\r\n            if (extra.scryptConfig || extra.all || extra.scrypt)\r\n            {\r\n                delete res.scryptConfig\r\n            }\r\n        }\r\n\r\n        return JSON.stringify(res)\r\n    }\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact|ContactPromise} recipient \r\n     * @param {*} data\r\n     * @returns {Promise.<Object>} Encrypted data\r\n     */\r\n    send(recipient, data)\r\n    {\r\n        return exchange(this, recipient, data)\r\n    }\r\n\r\n    /**\r\n     * Opens an encrypted payload for the contact.\r\n     * @param {*} data \r\n     * @returns {Promise.<Object>} Decrypted data\r\n     */\r\n    open(data)\r\n    {\r\n        return open(this, data)\r\n    }\r\n\r\n    /**\r\n     * Signs data using the Contact, using the Schnorr Signature algorithm.\r\n     * \r\n     * This is not how DiscreteCrypt (C++) currently handles signatures,\r\n     * but that will be changed.\r\n     * \r\n     * @param {*} data \r\n     * @param {Object|Promise.<Object>} data \r\n     * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.\r\n     * @returns {Promise.<Object>} Signature\r\n     */\r\n    sign(data, bundle)\r\n    {\r\n        // Performs the Schnorr Signature Algorithm\r\n\r\n        // constants for the Scrypt step of the signature. \r\n        // this computes K deterministically, (similar to what is recommended in DSA)\r\n        // in such a way that protects the upper bits of the private key.\r\n        // I would've used an HMAC, but I didn't want any information to leak about the private key (by dividing out the hash).\r\n        // These values can likely be tweaked quite freely.\r\n        const N = 1 << 5\r\n        const r = 4\r\n        const p = 1\r\n\r\n        // gets the private key \r\n        let priv = this.privateKey()\r\n\r\n        /*\r\n         * the following line will need to be altered based on the hash algorithm.\r\n         * please do not forget this. it's the length of the output in bytes.\r\n         * ensuring K > (private.length + hash.length) prevents an attacker from learning information about the private key.\r\n         */\r\n        const HASH_LENGTH = 32\r\n        const len = (priv.bitLength() / 8) + HASH_LENGTH + 1\r\n\r\n        // Allows asynchronous input\r\n        if (!(data instanceof Promise))\r\n        {\r\n            data = Promise.resolve(data)\r\n        }\r\n        \r\n        // computes the signature\r\n        return data.then(data =>\r\n        {\r\n            let d = Buffer.from(JSON.stringify(data))\r\n            \r\n            // scrypt is used to create the K value deterministically\r\n            return scryptPromise(d, Buffer.from(priv.toString(16), 'hex'), N, r, p, len).then(k_derived =>\r\n            {\r\n                let K = new bigInt(toHexString(k_derived), 16)       \r\n                \r\n                // K is used to generate R\r\n                let R = Buffer.from(modPow(this.params.gen, K, this.params.prime).toString(16), 'hex')\r\n    \r\n                // compute a public hash\r\n                let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n                hash.update(R)\r\n                hash.update(d)\r\n                hash = hash.getHash('HEX')\r\n                \r\n                // computes the signature values\r\n                let e = new bigInt(hash, 16)\r\n                let s = K.sub(priv.mul(e))\r\n\r\n                let result = { s: s.toString(16), e: e.toString(16) }\r\n                \r\n                if(bundle) result.data = data\r\n\r\n                return result\r\n            })\r\n        })\r\n    }\r\n\r\n    /**\r\n     * Verifies the signed data.\r\n     * @param {Object|Promise.<Object>} data\r\n     * @param {Object|Promise.<Object>=} source      \r\n     * @returns {Promise.<Boolean>} \r\n     */\r\n    verify(data, source)\r\n    {\r\n        if (!(data instanceof Promise))\r\n        {\r\n            data = Promise.resolve(data)\r\n        }\r\n\r\n        if (!(source instanceof Promise))\r\n        {\r\n            source = Promise.resolve(source)\r\n        }\r\n\r\n        return Promise.all([data, source]).then(([data, source]) =>\r\n        {\r\n            if (!data.s || !data.e) return Promise.reject('Signature Not Verified')\r\n            \r\n            let d = Buffer.from(JSON.stringify(source || data.data))\r\n            \r\n            // Gets the e & s bignums\r\n            let s = new bigInt(data.s, 16)\r\n            let e = new bigInt(data.e, 16)\r\n\r\n            // computes the values\r\n            let gs = modPow(this.params.gen, s, this.params.prime)\r\n            let ye = modPow(this.publicKey(), e, this.params.prime)\r\n            \r\n            // multiplies them together to get R (for the hash) \r\n            let R = Buffer.from(gs.mul(ye).mod(new bigInt(this.params.prime)).toString(16), 'hex')\r\n\r\n            // compute the hash\r\n            let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hash.update(R)\r\n            hash.update(d)\r\n            hash = hash.getHash('HEX')\r\n\r\n            // get it as a bigint\r\n            let ev = new bigInt(hash, 16)\r\n\r\n            if(ev.eq(e)) return source || data.data\r\n\r\n            return Promise.reject('Signature Not Verified')\r\n        })\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} extra \r\n     * @returns {Contact}\r\n     */\r\n    clean(extra)\r\n    {\r\n        delete this.private\r\n\r\n        /* istanbul ignore else */\r\n        if (extra)\r\n        {\r\n            if (extra.params || extra.all)\r\n            {\r\n                delete this.params\r\n            }\r\n\r\n            if (extra.scryptConfig || extra.scrypt || extra.all)\r\n            {\r\n                delete this.scryptConfig\r\n            }\r\n        }\r\n\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * Converts the object to the fully asynchronous Contact\r\n     * @returns {ContactPromise}\r\n     */\r\n    async ()\r\n    {\r\n        return Contact._modifyPromise(Promise.resolve(this))\r\n    }\r\n\r\n    static _modifyPromise(prom)\r\n    {\r\n        [\r\n            'sign',\r\n            'open',\r\n            'send',\r\n            'export',\r\n            'verify',\r\n            'publicKey',\r\n            'privateKey',\r\n            'compute',\r\n            'clean'\r\n        ].forEach(func =>\r\n        {\r\n            prom[func] = PROMISE_TRICK.bind([prom, func])\r\n        })\r\n\r\n        prom['async'] = () => prom\r\n\r\n        return prom\r\n    }\r\n\r\n    /**\r\n     * Computes the private key for a contact from an input key.\r\n     * @param {String|Buffer|Array} key \r\n     * @returns {ContactPromise}\r\n     */\r\n    compute(key)\r\n    {\r\n        let salt = Buffer.from(this.salt, 'hex')\r\n\r\n        /* istanbul ignore else : I'm trusting the user input on this one. scrypt will throw an error otherwise */\r\n        if (typeof key === \"string\")\r\n        {\r\n            key = Buffer.from(key.normalize('NFKC'))\r\n        }\r\n\r\n        let scryptProm = scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>\r\n        {\r\n            this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()\r\n\r\n            let publicTest = modPow(this.params.gen, this.privateKey(), this.params.prime).toString()\r\n\r\n            if (this.public !== publicTest) return Promise.reject(\"Incorrect Key\")\r\n\r\n            return this\r\n        })\r\n\r\n        return Contact._modifyPromise(scryptProm)\r\n    }\r\n\r\n    /**\r\n     * Creates a contact from the given key / salt. \r\n     * \r\n     * \r\n     * @param {String|Buffer|Array=} key Key, can be passed in as a string or Buffer-like object.\r\n     * @param {*=} salt Salt, can be passed in as a hex string or Buffer-like object.\r\n     * @param {Object=} scryptConfig Configuration for Scrypt\r\n     * @param {Object=} params Discrete Log Parameters\r\n     * @returns {ContactPromise}\r\n     */\r\n    static create(key, salt, scryptConfig, params)\r\n    {\r\n        let contact = new Contact()\r\n\r\n        // if there is no defined scrypt config, and no key, automatically switch to ephemeral scrypt settings.\r\n        if(typeof key === \"undefined\" && typeof scryptConfig === \"undefined\") scryptConfig = EPHEMERAL_SCRYPT_CONFIG\r\n\r\n        scryptConfig = scryptConfig || DEFAULT_SCRYPT_CONFIG\r\n        params = params || DEFAULT_PARAMS\r\n\r\n        function getKeyPair(key, salt)\r\n        {\r\n            if (typeof key === \"string\")\r\n            {\r\n                key = Buffer.from(key.normalize('NFKC'))\r\n            }\r\n            else if (typeof key === \"undefined\")\r\n            {\r\n                key = exports.randomBytes(32)\r\n            } \r\n\r\n            /* istanbul ignore else: not necessary. I'm trusting that it is an array like object. */\r\n            if (typeof salt === \"string\")\r\n                salt = Buffer.from(salt, 'hex')\r\n\r\n            return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>\r\n            {\r\n                key = new bigInt(toHexString(key), 16)\r\n                let pub = modPow(params.gen, key, params.prime)\r\n                return [key, pub]\r\n            })\r\n        }\r\n\r\n        if (salt)\r\n        {\r\n            contact.salt = salt\r\n        }\r\n        else\r\n        {\r\n            contact.salt = toHexString(exports.randomBytes(16))\r\n        }\r\n\r\n        contact.setScrypt(scryptConfig).setParams(params)\r\n\r\n        let keyPairPromise = getKeyPair(key, contact.salt).then(([priv, pub]) =>\r\n        {\r\n            contact.private = priv.toString()\r\n            contact.public = pub.toString()\r\n            return contact\r\n        })\r\n\r\n        return Contact._modifyPromise(keyPairPromise)\r\n    }\r\n}\r\n\r\nlet remember = {}\r\n\r\nfunction truncate(x, len)\r\n{\r\n    if (x.length > len)\r\n    {\r\n        return x.substring(0, len)\r\n    }\r\n    return x\r\n}\r\n\r\n// Todo: add some sort of cache cleaner for remember, to prevent memory bloat\r\n\r\n/**\r\n * Opens an encrypted payload\r\n * @param {Contact|ContactPromise} receiver \r\n * @param {*} data \r\n */\r\nexport   function open(receiver, data)\r\n{\r\n    if (!(receiver instanceof Promise))\r\n    {\r\n        receiver = Promise.resolve(receiver)\r\n    }\r\n\r\n    if (!(data instanceof Promise))\r\n    {\r\n        data = Promise.resolve(data)\r\n    }\r\n\r\n    return Promise.all([receiver, data]).then(([receiver, data]) =>\r\n    {\r\n        if (!remember[data.public + ',' + receiver.public])\r\n        {\r\n            remember[data.public + ',' + receiver.public] = modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)\r\n        }\r\n\r\n        let dhexchange = remember[data.public + ',' + receiver.public]\r\n\r\n        return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))\r\n\r\n            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hmac.setHMACKey(ekey, 'ARRAYBUFFER')\r\n            hmac.update(payload)\r\n\r\n            hmac = hmac.getHMAC('HEX')\r\n\r\n            if (hmac === data.hmac)\r\n            {\r\n                payload = aesjs.utils.utf8.fromBytes(payload)\r\n                return JSON.parse(payload)\r\n            }\r\n            else\r\n            {\r\n                return Promise.reject('Decryption failed.')\r\n            }\r\n        })\r\n    })\r\n}\r\n\r\n/**\r\n * Creates an encrypted payload from the sender, to the receiver.\r\n * \r\n * This code assumes both individuals are using the same parameters. \r\n * \r\n * @todo consider adding advanced options, like allowing the embedding of tuned scrypt parameters\r\n * on the exchange key.\r\n * \r\n * The scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,\r\n * but the speed is not as important in this step. \r\n * \r\n * @param {Contact} sender \r\n * @param {Contact} receiver \r\n * @param {*} msg\r\n */\r\nexport   function exchange(sender, receiver, msg)\r\n{\r\n    if (!(sender instanceof Promise))\r\n    {\r\n        sender = Promise.resolve(sender)\r\n    }\r\n\r\n    if (!(receiver instanceof Promise))\r\n    {\r\n        receiver = Promise.resolve(receiver)\r\n    }\r\n\r\n    if (!(msg instanceof Promise))\r\n    {\r\n        msg = Promise.resolve(msg)\r\n    }\r\n\r\n    return Promise.all([sender, receiver, msg]).then(([sender, receiver, msg]) =>\r\n    {\r\n        if (!remember[sender.public + ',' + receiver.public])\r\n        {\r\n            remember[sender.public + ',' + receiver.public] = modPow(receiver.publicKey(), sender.privateKey(), sender.params.prime).toString(16)\r\n        }\r\n\r\n        msg = JSON.stringify(msg)\r\n\r\n        let dhexchange = remember[sender.public + ',' + receiver.public]\r\n        let key = exports.randomBytes(32)\r\n        msg = aesjs.utils.utf8.toBytes(msg)\r\n\r\n        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n        hmac.setHMACKey(key, 'ARRAYBUFFER')\r\n        hmac.update(msg)\r\n\r\n        hmac = hmac.getHMAC('HEX')\r\n\r\n        return scryptPromise([...Buffer.from(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.encrypt(key)\r\n\r\n            ekey = aesjs.utils.hex.fromBytes(ekey)\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.encrypt(msg)\r\n            payload = aesjs.utils.hex.fromBytes(payload)\r\n\r\n            return {\r\n                payload: payload,\r\n                key: ekey,\r\n                hmac: hmac,\r\n                public: sender.publicKey().toString(16)\r\n            }\r\n        })\r\n    })\r\n}\r\n\r\n/**\r\n * DiscreteCrypt Symmetric Utilities\r\n * @hideconstructor\r\n */\r\nexport   class Symmetric \r\n{\r\n    /**\r\n     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \r\n     * using a given input key.\r\n     * \r\n     * Uses the input key rather than a DH Exchange.\r\n     * \r\n     * @param {String|Buffer|Array} inputKey \r\n     * @param {*} msg \r\n     * @param {Object=} scryptConfig \r\n     */\r\n    static encrypt(inputKey, msg, scryptConfig)\r\n    {\r\n        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG\r\n\r\n        if (typeof inputKey === \"undefined\")\r\n        {\r\n            return Promise.reject('No input key provided.')\r\n        }\r\n\r\n        /* istanbul ignore else */\r\n        if (typeof inputKey === \"string\")\r\n        {\r\n            inputKey = Buffer.from(inputKey.normalize('NFKC'))\r\n        }\r\n\r\n        if (inputKey.length === 0)\r\n        {\r\n            return Promise.reject('Input key empty.')\r\n        }\r\n\r\n        let key = exports.randomBytes(32)\r\n        msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))\r\n\r\n        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n        hmac.setHMACKey(key, 'ARRAYBUFFER')\r\n        hmac.update(msg)\r\n        hmac = hmac.getHMAC('HEX')\r\n\r\n        return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.encrypt(key)\r\n\r\n            ekey = aesjs.utils.hex.fromBytes(ekey)\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.encrypt(msg)\r\n            payload = aesjs.utils.hex.fromBytes(payload)\r\n\r\n            return {\r\n                payload: payload,\r\n                key: ekey,\r\n                hmac: hmac\r\n            }\r\n        })\r\n    }\r\n\r\n    /**\r\n     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \r\n     * using a given input key.\r\n     * \r\n     * Uses the input key rather than a DH Exchange.\r\n     * \r\n     * @param {String|Buffer|Array} inputKey \r\n     * @param {Object} data \r\n     * @param {Object=} scryptConfig \r\n     */\r\n    static decrypt(inputKey, data, scryptConfig)\r\n    {\r\n        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG\r\n\r\n        if (typeof inputKey === \"undefined\")\r\n        {\r\n            return Promise.reject('No input key provided.')\r\n        }\r\n\r\n        /* istanbul ignore else */\r\n        if (typeof inputKey === \"string\")\r\n        {\r\n            inputKey = Buffer.from(inputKey.normalize('NFKC'))\r\n        }\r\n\r\n        if (inputKey.length === 0)\r\n        {\r\n            return Promise.reject('Input key empty.')\r\n        }\r\n\r\n        return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))\r\n\r\n            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hmac.setHMACKey(ekey, 'ARRAYBUFFER')\r\n            hmac.update(payload)\r\n\r\n            hmac = hmac.getHMAC('HEX')\r\n\r\n            if (hmac === data.hmac)\r\n            {\r\n                payload = aesjs.utils.utf8.fromBytes(payload)\r\n                return JSON.parse(payload)\r\n            }\r\n            else\r\n            {\r\n                return Promise.reject('Decryption failed.')\r\n            }\r\n        })\r\n    }\r\n}\r\n\r\n/**\r\n * Provides sane defaults for use in DiscreteCrypt.js applications\r\n */\r\nexport   class defaults \r\n{\r\n    /**\r\n     * Returns the default parameters of DiscreteCrypt.js.\r\n     * @returns {Object}\r\n     */\r\n    static params()\r\n    {\r\n        return Object.freeze(DEFAULT_PARAMS)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * This Scrypt configuration is the default recommended scrypt configuration.\r\n     * This is for securing highly sensitive data in worst case conditions.\r\n     * @returns {Object}\r\n     */\r\n    static scrypt()\r\n    {\r\n        return Object.freeze(DEFAULT_SCRYPT_CONFIG)    \r\n    }\r\n\r\n    /**\r\n     * This Scrypt Configuration should be applied when the keys are ephemeral.\r\n     * @returns {Object}\r\n     * \r\n     */\r\n    static ephemeralScrypt() \r\n    {\r\n        return Object.freeze(EPHEMERAL_SCRYPT_CONFIG)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * Should be applied for performance reasons when the author is willing to accept \r\n     * slightly reduced security for performance reasons. \r\n     * \r\n     * This can securely be applied in situations where password input is reasonably decent.\r\n     * \r\n     * Consider it a healthy middle ground between the default (top-secret) and \r\n     * ephemeral.\r\n     * @returns {Object}\r\n     */\r\n    static tunedScrypt()\r\n    {\r\n        return Object.freeze(TUNED_SCRYPT_CONFIG)\r\n    }\r\n\r\n}\r\n\r\nexports.utils = {\r\n    modPow: modPow,\r\n    truncate: truncate,\r\n    scryptPromise: scryptPromise,\r\n    hex: toHexString,\r\n    pohlig: pohlig\r\n}\r\n\r\nexports.defaults = defaults\r\nexports.Symmetric = Symmetric\r\n\r\nexports.clearCache = function()\r\n{\r\n    remember = {}\r\n}\r\n\r\nexports.Contact = Contact\r\nexports.open = open\r\nexports.exchange = exchange\r\nexports.SCRYPT_PAUSE = 0",
+    "static": true,
+    "longname": "C:/Users/Jesse/Documents/Projects/DiscreteCrypt.js/src/discretecrypt.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 51,
+    "kind": "variable",
+    "name": "scrypt",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~scrypt",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "variable",
+    "name": "bigInt",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~bigInt",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "variable",
+    "name": "aesjs",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~aesjs",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "variable",
+    "name": "jsSHA",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~jsSHA",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "variable",
+    "name": "DEFAULT_SCRYPT_CONFIG",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~DEFAULT_SCRYPT_CONFIG",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"N\": *, \"r\": number, \"p\": number, \"len\": number}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "variable",
+    "name": "TUNED_SCRYPT_CONFIG",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~TUNED_SCRYPT_CONFIG",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"N\": *, \"r\": number, \"p\": number, \"len\": number}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "variable",
+    "name": "EPHEMERAL_SCRYPT_CONFIG",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~EPHEMERAL_SCRYPT_CONFIG",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"N\": *, \"r\": number, \"p\": number, \"len\": number}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "variable",
+    "name": "DEFAULT_PARAMS",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~DEFAULT_PARAMS",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 34,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"prime\": string, \"gen\": string}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "function",
+    "name": "pohlig",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~pohlig",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 45,
+    "undocument": true,
+    "params": [
+      {
+        "name": "prime",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "range",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "undefined[]"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "function",
+    "name": "modPow",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~modPow",
+    "access": "private",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": "",
+    "lineNumber": 112,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{bigInt} result"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Number",
+          "String",
+          "bigInt"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "a",
+        "description": "base"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number",
+          "String",
+          "bigInt"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "b",
+        "description": "exponent"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number",
+          "String",
+          "bigInt"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "c",
+        "description": "modulus"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "bigInt"
+      ],
+      "spread": false,
+      "description": "result"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "function",
+    "name": "toHexString",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~toHexString",
+    "access": "private",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": "Converts a byte array to a hex string",
+    "lineNumber": 198,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Array",
+          "Buffer",
+          "ArrayBuffer",
+          "Uint8Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "byteArray",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "function",
+    "name": "scryptPromise",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~scryptPromise",
+    "access": "private",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": "Gets the scrypt value.",
+    "lineNumber": 219,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Uint8Array|Buffer>} derived key"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "salt",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "N",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "r",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "p",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "len",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Uint8Array|Buffer>"
+      ],
+      "spread": false,
+      "description": "derived key"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "function",
+    "name": "PROMISE_TRICK",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~PROMISE_TRICK",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 250,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "class",
+    "name": "ContactPromise",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~ContactPromise",
+    "access": "public",
+    "export": true,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": "{ContactPromise}",
+    "description": "A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.",
+    "lineNumber": 262,
+    "interface": false
+  },
+  {
+    "__docId__": 65,
+    "kind": "method",
+    "name": "then",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#then",
+    "access": "public",
+    "description": "",
+    "lineNumber": 269,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "method",
+    "name": "catch",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#catch",
+    "access": "public",
+    "description": "",
+    "lineNumber": 278,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}      "
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "err",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "method",
+    "name": "sign",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#sign",
+    "access": "public",
+    "description": "Signs data using the Contact, using the Schnorr Signature algorithm.    \nThis is not how DiscreteCrypt  (C++) does it,\nbut it will be modified to match this approach.",
+    "lineNumber": 290,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "bundle",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "method",
+    "name": "open",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#open",
+    "access": "public",
+    "description": "Sends the data to the recipient, encrypted.",
+    "lineNumber": 302,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Object>}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Contact"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "recipient",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Object>"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "method",
+    "name": "send",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#send",
+    "access": "public",
+    "description": "Sends the data to the recipient, encrypted.",
+    "lineNumber": 314,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Object>}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Contact"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "recipient",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Object>"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "method",
+    "name": "export",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#export",
+    "access": "public",
+    "description": "Used to export the (safe) JSON for the Contact",
+    "lineNumber": 325,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "extra",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "method",
+    "name": "verify",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#verify",
+    "access": "public",
+    "description": "Verifies the signed data.",
+    "lineNumber": 338,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object",
+          "Promise.<Object>="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object",
+          "Promise.<Object>="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "source",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 72,
+    "kind": "method",
+    "name": "publicKey",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#publicKey",
+    "access": "public",
+    "description": "Returns the public key",
+    "lineNumber": 347,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise.<bigInt>}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise.<bigInt>"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 73,
+    "kind": "method",
+    "name": "privateKey",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#privateKey",
+    "access": "public",
+    "description": "Returns the private key",
+    "lineNumber": 356,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise.<bigInt>}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise.<bigInt>"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 74,
+    "kind": "method",
+    "name": "compute",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#compute",
+    "access": "public",
+    "description": "Computes the private key for a contact from an input key.",
+    "lineNumber": 367,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 75,
+    "kind": "method",
+    "name": "clean",
+    "memberof": "src/discretecrypt.js~ContactPromise",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~ContactPromise#clean",
+    "access": "public",
+    "description": "",
+    "lineNumber": 379,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "extra",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 76,
+    "kind": "class",
+    "name": "Contact",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact",
+    "access": "public",
+    "export": true,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": "{Contact}",
+    "description": "A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.",
+    "lineNumber": 389,
+    "interface": false
+  },
+  {
+    "__docId__": 77,
+    "kind": "method",
+    "name": "publicKey",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#publicKey",
+    "access": "public",
+    "description": "Returns the public key",
+    "lineNumber": 395,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{bigInt} public key"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "bigInt"
+      ],
+      "spread": false,
+      "description": "public key"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 78,
+    "kind": "method",
+    "name": "privateKey",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#privateKey",
+    "access": "public",
+    "description": "Returns the private key",
+    "lineNumber": 409,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{bigInt} private key"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "bigInt"
+      ],
+      "spread": false,
+      "description": "private key"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 79,
+    "kind": "method",
+    "name": "setParams",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#setParams",
+    "access": "protected",
+    "description": "",
+    "lineNumber": 425,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Contact} Contact"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Contact"
+      ],
+      "spread": false,
+      "description": "Contact"
+    }
+  },
+  {
+    "__docId__": 80,
+    "kind": "member",
+    "name": "params",
+    "memberof": "src/discretecrypt.js~Contact",
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#params",
+    "access": "public",
+    "description": null,
+    "lineNumber": 427,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"prime\": *, \"gen\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 81,
+    "kind": "method",
+    "name": "setScrypt",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#setScrypt",
+    "access": "protected",
+    "description": "",
+    "lineNumber": 440,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Contact} Contact"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "scryptConfig",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Contact"
+      ],
+      "spread": false,
+      "description": "Contact"
+    }
+  },
+  {
+    "__docId__": 82,
+    "kind": "member",
+    "name": "scryptConfig",
+    "memberof": "src/discretecrypt.js~Contact",
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#scryptConfig",
+    "access": "public",
+    "description": null,
+    "lineNumber": 442,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 83,
+    "kind": "method",
+    "name": "import",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact.import",
+    "access": "public",
+    "description": "Alias for fromJSON",
+    "see": [
+      "fromJSON"
+    ],
+    "lineNumber": 452,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise|Contact} "
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "json",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise",
+        "Contact"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "method",
+    "name": "_fromJSONAsync",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact._fromJSONAsync",
+    "access": "private",
+    "description": "Imports the asynchronous version of a DiscreteCrypt Contact",
+    "lineNumber": 463,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Object",
+          "Promise"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "json",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "method",
+    "name": "_fromJSONSync",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact._fromJSONSync",
+    "access": "private",
+    "description": "Imports the synchronous version of a DiscreteCrypt Contact",
+    "lineNumber": 483,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "json",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 86,
+    "kind": "method",
+    "name": "fromJSON",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact.fromJSON",
+    "access": "public",
+    "description": "Processes a JSON string or object, and converts it into a Contact class. ",
+    "lineNumber": 507,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise} "
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Object",
+          "Promise"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "json",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Boolean="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "sync",
+        "description": "Determines whether this returns a synchronous contact or asynchronous.\nIf true, the input must be synchronous."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 87,
+    "kind": "method",
+    "name": "export",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#export",
+    "access": "public",
+    "description": "Used to export the (safe) JSON for the Contact for sharing.",
+    "lineNumber": 522,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Object} An object that is safe to share with others"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "extra",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": "An object that is safe to share with others"
+    }
+  },
+  {
+    "__docId__": 88,
+    "kind": "method",
+    "name": "send",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#send",
+    "access": "public",
+    "description": "Sends the data to the recipient, encrypted.",
+    "lineNumber": 551,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Object>} Encrypted data"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Contact",
+          "ContactPromise"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "recipient",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Object>"
+      ],
+      "spread": false,
+      "description": "Encrypted data"
+    }
+  },
+  {
+    "__docId__": 89,
+    "kind": "method",
+    "name": "open",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#open",
+    "access": "public",
+    "description": "Opens an encrypted payload for the contact.",
+    "lineNumber": 561,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Object>} Decrypted data"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Object>"
+      ],
+      "spread": false,
+      "description": "Decrypted data"
+    }
+  },
+  {
+    "__docId__": 90,
+    "kind": "method",
+    "name": "sign",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#sign",
+    "access": "public",
+    "description": "Signs data using the Contact, using the Schnorr Signature algorithm.\n\nThis is not how DiscreteCrypt (C++) currently handles signatures,\nbut that will be changed.",
+    "lineNumber": 577,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Object>} Signature"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object",
+          "Promise.<Object>"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "bundle",
+        "description": "allows you to specify whether the source data should be bundled in or not."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Object>"
+      ],
+      "spread": false,
+      "description": "Signature"
+    }
+  },
+  {
+    "__docId__": 91,
+    "kind": "method",
+    "name": "verify",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#verify",
+    "access": "public",
+    "description": "Verifies the signed data.",
+    "lineNumber": 645,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise.<Boolean>} "
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object",
+          "Promise.<Object>"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object",
+          "Promise.<Object>="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "source",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise.<Boolean>"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 92,
+    "kind": "method",
+    "name": "clean",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#clean",
+    "access": "public",
+    "description": "",
+    "lineNumber": 694,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Contact}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "extra",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Contact"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 93,
+    "kind": "method",
+    "name": "async",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#async",
+    "access": "public",
+    "description": "Converts the object to the fully asynchronous Contact",
+    "lineNumber": 719,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 94,
+    "kind": "method",
+    "name": "_modifyPromise",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact._modifyPromise",
+    "access": "private",
+    "description": null,
+    "lineNumber": 724,
+    "undocument": true,
+    "params": [
+      {
+        "name": "prom",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 95,
+    "kind": "method",
+    "name": "compute",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#compute",
+    "access": "public",
+    "description": "Computes the private key for a contact from an input key.",
+    "lineNumber": 751,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 96,
+    "kind": "member",
+    "name": "private",
+    "memberof": "src/discretecrypt.js~Contact",
+    "static": false,
+    "longname": "src/discretecrypt.js~Contact#private",
+    "access": "public",
+    "description": null,
+    "lineNumber": 763,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 97,
+    "kind": "method",
+    "name": "create",
+    "memberof": "src/discretecrypt.js~Contact",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Contact.create",
+    "access": "public",
+    "description": "Creates a contact from the given key / salt. ",
+    "lineNumber": 785,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{ContactPromise}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "Key, can be passed in as a string or Buffer-like object."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "salt",
+        "description": "Salt, can be passed in as a hex string or Buffer-like object."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "scryptConfig",
+        "description": "Configuration for Scrypt"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "params",
+        "description": "Discrete Log Parameters"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "ContactPromise"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 98,
+    "kind": "variable",
+    "name": "remember",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~remember",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 840,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 99,
+    "kind": "function",
+    "name": "truncate",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~truncate",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 842,
+    "undocument": true,
+    "params": [
+      {
+        "name": "x",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "len",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 100,
+    "kind": "function",
+    "name": "open",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~open",
+    "access": "public",
+    "export": true,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": "{open}",
+    "description": "Opens an encrypted payload",
+    "lineNumber": 858,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Contact",
+          "ContactPromise"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "receiver",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 101,
+    "kind": "function",
+    "name": "exchange",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~exchange",
+    "access": "public",
+    "export": true,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": "{exchange}",
+    "description": "Creates an encrypted payload from the sender, to the receiver.\n\nThis code assumes both individuals are using the same parameters. ",
+    "lineNumber": 923,
+    "todo": [
+      "consider adding advanced options, like allowing the embedding of tuned scrypt parameters\non the exchange key.\n\nThe scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,\nbut the speed is not as important in this step. "
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Contact"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "sender",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Contact"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "receiver",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "msg",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 102,
+    "kind": "class",
+    "name": "Symmetric",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~Symmetric",
+    "access": "public",
+    "export": true,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": "{Symmetric}",
+    "description": "DiscreteCrypt Symmetric Utilities",
+    "lineNumber": 986,
+    "unknown": [
+      {
+        "tagName": "@hideconstructor",
+        "tagValue": ""
+      }
+    ],
+    "interface": false
+  },
+  {
+    "__docId__": 103,
+    "kind": "method",
+    "name": "encrypt",
+    "memberof": "src/discretecrypt.js~Symmetric",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Symmetric.encrypt",
+    "access": "public",
+    "description": "Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \nusing a given input key.\n\nUses the input key rather than a DH Exchange.",
+    "lineNumber": 998,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "inputKey",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "msg",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "scryptConfig",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 104,
+    "kind": "method",
+    "name": "decrypt",
+    "memberof": "src/discretecrypt.js~Symmetric",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~Symmetric.decrypt",
+    "access": "public",
+    "description": "Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \nusing a given input key.\n\nUses the input key rather than a DH Exchange.",
+    "lineNumber": 1057,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "String",
+          "Buffer",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "inputKey",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object="
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "scryptConfig",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 105,
+    "kind": "class",
+    "name": "defaults",
+    "memberof": "src/discretecrypt.js",
+    "static": true,
+    "longname": "src/discretecrypt.js~defaults",
+    "access": "public",
+    "export": true,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": "{defaults}",
+    "description": "Provides sane defaults for use in DiscreteCrypt.js applications",
+    "lineNumber": 1109,
+    "interface": false
+  },
+  {
+    "__docId__": 106,
+    "kind": "method",
+    "name": "params",
+    "memberof": "src/discretecrypt.js~defaults",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~defaults.params",
+    "access": "public",
+    "description": "Returns the default parameters of DiscreteCrypt.js.",
+    "lineNumber": 1115,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Object}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 107,
+    "kind": "method",
+    "name": "scrypt",
+    "memberof": "src/discretecrypt.js~defaults",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~defaults.scrypt",
+    "access": "public",
+    "description": "\nThis Scrypt configuration is the default recommended scrypt configuration.\nThis is for securing highly sensitive data in worst case conditions.",
+    "lineNumber": 1126,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Object}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 108,
+    "kind": "method",
+    "name": "ephemeralScrypt",
+    "memberof": "src/discretecrypt.js~defaults",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~defaults.ephemeralScrypt",
+    "access": "public",
+    "description": "This Scrypt Configuration should be applied when the keys are ephemeral.",
+    "lineNumber": 1136,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Object}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 109,
+    "kind": "method",
+    "name": "tunedScrypt",
+    "memberof": "src/discretecrypt.js~defaults",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~defaults.tunedScrypt",
+    "access": "public",
+    "description": "\nShould be applied for performance reasons when the author is willing to accept \nslightly reduced security for performance reasons. \n\nThis can securely be applied in situations where password input is reasonably decent.\n\nConsider it a healthy middle ground between the default (top-secret) and \nephemeral.",
+    "lineNumber": 1152,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Object}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 110,
+    "kind": "function",
+    "name": "clearCache",
+    "memberof": "src/discretecrypt.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/discretecrypt.js~clearCache",
+    "access": "public",
+    "export": false,
+    "importPath": "discretecrypt.js/src/discretecrypt.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1170,
+    "undocument": true,
+    "params": [],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "kind": "index",
+    "content": "# DiscreteCrypt.js\r\n\r\n[![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master) [![GitHub license](https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg)](https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE)\r\n\r\n![Shield](https://svgshare.com/i/8D1.svg)\r\n\r\nA project for simple & secure data transmission, based on the DiscreteCrypt protocol (an alternative to PGP).\r\n\r\n\r\n## What's it do?\r\n\r\nThis library makes it quite easy to implement end-to-end encryption both in the web browser and in Node.js, and provides extra utilities to make it convenient to encrypt symmetrically as well.\r\n\r\nThe library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from nspdh. \r\n\r\nA neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.\r\n\r\nYou may alternatively generate keys ephemerally, and encrypt the generated \"contact\" symmetrically (like traditional cryptosystems).\r\n\r\n## How do I use it?\r\n\r\n(More documentation necessary)\r\n\r\nIn DiscreteCrypt, we refer to \"public keys\" as \"contacts,\" and they are generated asynchronously as promises. \r\n\r\nThe create method returns a promise with a few helper functions tossed onto it, to make it slightly more convenient to use the library. \r\n\r\nAll of the helper functions return a promise that execute the generated contact's function once it completes.\r\n\r\n\r\n#### Sending and Opening Data\r\n\r\n```js\r\nconst Contact = DiscreteCrypt.Contact\r\n\r\n// generates the contact ephemerally.\r\nlet me = Contact.create()\r\n\r\n// the Contact.create().export() would happen on someone else's computer\r\nlet you = Contact.import(Contact.create().export())\r\n\r\n// any JSON-serializable object can be passed into the \"send\" function.\r\nme.send(you, 'Hello, World!').then(encrypted =>\r\n{\r\n    // code to send encrypted data to other user\r\n})\r\n```\r\n\r\n\r\nThen to open the data, \r\n\r\n```js \r\nyou.open(encrypted).then(data =>\r\n{\r\n    console.log(data) // Hello, World!\r\n}).catch(err =>\r\n{\r\n    // the decryption didn't occur correctly.\r\n    console.error(err)\r\n})\r\n```\r\n\r\n\r\n#### Creating a Reusable Contact \r\n\r\nTo create a re-usable contact for public-key cryptography (one you can import at a later date), do the following:\r\n\r\n**1 - Create the Contact** \r\n\r\n```js\r\n// you can also pass in an Buffer or Uint8-like object for the password.\r\nlet me = Contact.create('<SuperSecurePassword>')\r\n\r\n// creates the public contact, store this somewhere\r\nlet pub = me.export()\r\n```\r\n\r\n\r\n**2 - Import the Public Contact & Compute (To turn it back into a private contact)**\r\n\r\n```js\r\nlet me = Contact.import(pub).compute('<SuperSecurePassword>')\r\n```\r\n\r\nAnd that's it! \r\n\r\n\r\n#### Symmetrically Encrypting Data\r\n\r\nSometimes you'll want to encrypt data symmetrically. These methods use a slight reduction of the DiscreteCrypt protocol (removing the asymmetric steps) that allow you to securely store a payload.  \r\n\r\nOut of the box these methods perform data authenticity checks, and the necessary key stretching to keep your data safe. \r\n\r\n```js\r\n// key can be a string, buffer or uint8array-like structure.\r\nDiscreteCrypt.Symmetric.encrypt(key, data).then(encrypted =>\r\n{\r\n    // store encrypted somewhere\r\n    // ... and then later on\r\n    DiscreteCrypt.Symmetric.decrypt(key, encrypted).then(decrypted =>\r\n    {\r\n        console.log(decrypted)\r\n    })\r\n})\r\n```\r\n\r\n\r\n## To Build (for browser)\r\n\r\nRun the following commands:\r\n```\r\nnpm i\r\nnpm run build\r\n```\r\n\r\nThis will produce the necessary output.\r\n\r\n\r\n## Dependencies\r\n\r\nThe following libraries were used:\r\n- aes-js\r\n- bn.js \r\n- buffer\r\n- jsSHA\r\n- scrypt-async\r\n\r\n## Notes\r\n\r\nThis library can leverage the new proposal for [native BigInts](https://github.com/tc39/proposal-bigint) in JavaScript, achieving far greater performance.\r\n\r\nAt the time of writing, Chrome is the only browser with support for this proposal.\r\n",
+    "longname": "C:\\Users\\Jesse\\Documents\\Projects\\DiscreteCrypt.js\\README.md",
+    "name": "./README.md",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "packageJSON",
+    "content": "{\n  \"name\": \"discretecrypt.js\",\n  \"version\": \"0.0.28\",\n  \"description\": \"A very simple-to-use cryptosystem, designed to make security easy.\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"nyc mocha\",\n    \"doc\": \"esdoc\",\n    \"coverage\": \"nyc report --reporter=text-lcov | coveralls\",\n    \"build\": \"mkdirp build && browserify src/discretecrypt.browser.js -o build/discretecrypt.js && minify build/discretecrypt.js -o build/discretecrypt.min.js\"\n  },\n  \"keywords\": [\n    \"crypto\",\n    \"discretecrypt\",\n    \"security\",\n    \"easy\",\n    \"encryption\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/TotalTechGeek/DiscreteCrypt.js\"\n  },\n  \"author\": \"Jesse Daniel Mitchell\",\n  \"license\": \"BSD-2-Clause\",\n  \"dependencies\": {\n    \"aes-js\": \"^3.1.1\",\n    \"bn.js\": \"^4.11.8\",\n    \"jssha\": \"^2.3.1\",\n    \"scrypt-async\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"babel-minify\": \"^0.2.0\",\n    \"browserify\": \"^16.2.2\",\n    \"buffer\": \"^5.2.0\",\n    \"coveralls\": \"^3.0.2\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"mkdirp\": \"^0.5.1\",\n    \"mocha\": \"^5.2.0\",\n    \"nyc\": \"^13.0.1\"\n  }\n}\n",
+    "longname": "C:\\Users\\Jesse\\Documents\\Projects\\DiscreteCrypt.js\\package.json",
+    "name": "package.json",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "manualIndex",
+    "content": "# Getting Started\r\n\r\nWelcome to DiscreteCrypt.js! \r\n\r\nFirst, I feel like we need to clarify what the term \"Contact\" means in DiscreteCrypt. It is an object-oriented abstraction of public key cryptography, to make it easier to think about the flow of data.\r\n\r\nYou can create a personal contact (private key), or you can receive other people's contacts (public keys).\r\n\r\n## Creating an Ephemeral Contact\r\n\r\nLet's start by creating an ephemeral contact.\r\n\r\nThis is a type of contact that is not meant to be recovered, and is good for one-off sessions.\r\n\r\n```js\r\nlet me = DiscreteCrypt.Contact.create()\r\n\r\nme.export().then(contact =>\r\n{\r\n    // send the \"contact\" variable to someone else, over Ajax or websocket.\r\n}) \r\n```\r\n\r\n## Importing Someone's Contact \r\n\r\nHere is how one should import an exported contact.\r\n\r\n```js\r\nlet you = DiscreteCrypt.Contact.import(receivedContact)\r\n```\r\n\r\n## Encrypting Data for a Contact\r\n\r\nLet's encrypt data for someone's contact. This uses asymmetric cryptography to ensure only the intended recipient can open the message.\r\n\r\n```js\r\nme.send(you, \"Hey, this is a secret message\").then(encrypted =>\r\n{\r\n    // send the \"encrypted\" variable over ajax or websocket\r\n})\r\n```\r\n\r\nYou are not limited to strings. You can send any other JSON-serializable type using DiscreteCrypt.js (like Numbers, Booleans, Arrays, Objects)\r\n\r\n\r\n## Opening Encrypted Data \r\n\r\nTo open received data, just do the following: \r\n\r\n```js\r\nme.open(dataFromYou).then(data =>\r\n{\r\n    // Hey! we decrypted this and got the data back :)\r\n    console.log(data)\r\n}).catch(err =>\r\n{\r\n    // Oh no! It didn't decrypt properly. \r\n    console.error(err)\r\n})\r\n```\r\n\r\n## Creating a Long-Term Contact\r\n\r\nNow we're getting into PGP/GPG territory. This is a contact that you intend to use over a longer period of time, and not just for a one-off chat session with someone. \r\n\r\nTo do this, all you need to do is pass in a key in the \"Create\" method.\r\n\r\n```js\r\n// the key doesn't have to be a string. You can actually use any Uint8Array or Buffer-like structure.\r\nlet me = DiscreteCrypt.Contact.create(\"SuperSecurePassword\")\r\n```\r\n\r\nTo store it, you'll need to export it (which you need to do anyway for other people to \"contact\" you).\r\n\r\n```js\r\nme.export().then(contact =>\r\n{\r\n    // store contact somewhere, in a database or in a json file or something.\r\n})\r\n```\r\n\r\nThen you can load it back in by importing it and executing the \"compute\" method, restoring your \"personal\"/private access. \r\n\r\n```js\r\n// me_stored is your exported contact loaded in from a file\r\nlet me = DiscreteCrypt.Contact.import(me_stored).compute(\"SuperSecurePassword\")\r\n```\r\n\r\nIn crypto-terms: This allows you to easily recover your private key from your public key. This is only possible because your private key is derived using scrypt (which makes brute-force exceptionally difficult). \r\n\r\nThese long-term contacts can be used for a variety of things, like securing communication of nodes in a cloud cluster, or allowing you to create a really modern end-to-end encrypted chat app.  \r\n\r\n\r\n\r\n# Symmetric \r\n\r\nYou can also use DiscreteCrypt.js to encrypt data symmetrically. This can be done in two ways:\r\n\r\n## Using Contacts\r\n\r\nYou could in theory send data to your own contact.\r\n\r\n```js\r\n\r\n// creates a long term contact to store\r\nlet me = DiscreteCrypt.Contact.Create('some pass')\r\n\r\nme.export().then(contact_to_store =>\r\n{\r\n    // store it somewhere\r\n})\r\n\r\nme.send(me, { a: 'Secret Data' }).then(encrypted =>\r\n{\r\n    // encrypted data only your contact file can open\r\n})\r\n```\r\n\r\n\r\n## Using Symmetric Utilities\r\n\r\nBy removing the key exchange steps of the DiscreteCrypt protocol, the scheme can be simplified to a convenient symmetric authenticated encryption scheme.\r\n\r\n\r\n### Encrypt\r\n\r\nTo encrypt:\r\n\r\n```js\r\nDiscreteCrypt.Symmetric.encrypt('password', data).then(encrypted_data =>\r\n{\r\n    // do something with the encrypted data, like store it\r\n})\r\n```\r\n\r\n### Decrypt\r\n\r\nAnd decrypting is very similar:\r\n\r\n```js\r\nDiscreteCrypt.Symmetric.decrypt('password', encrypted_data).then(decrypted_data =>\r\n{\r\n    // do something with the decrypted data,\r\n    console.log(decrypted_data)\r\n})\r\n```\r\n\r\n# Signatures\r\n\r\nSome might want to be able to use their contacts to \"sign\" data. Here's how:\r\n\r\n## Signing\r\n\r\nHere is how to sign data:\r\n\r\n```js\r\n// assuming \"me\" is a contact\r\n\r\nme.sign(data).then(sig =>\r\n{\r\n    // <code to send the signature somewhere>\r\n})\r\n```\r\n\r\n## Verifying \r\n\r\n```js\r\nme.verify(sig, data).then(data =>\r\n{\r\n    // the data verified against is passed to then\r\n}).catch(err =>\r\n{\r\n    // rejects if not verified\r\n})\r\n```\r\n\r\n\r\n## Signature Bundling\r\n\r\nYou are also able to bundle in the source data with the signature itself. This might be useful if you plan to release the data along with the signature anyway.\r\n\r\n### Signing\r\n\r\n```js\r\nme.sign(data, true).then(sig =>\r\n{\r\n    // the data is bundled in with the signature.\r\n    // <code to send the bundled signature somewhere>\r\n\r\n})\r\n```\r\n\r\n### Verifying\r\n\r\n```js\r\nme.verify(sig).then(data =>\r\n{\r\n    // returns the data that was verified by the signature\r\n}).catch(err =>\r\n{\r\n\r\n})\r\n```\r\n\r\n\r\n# Advanced\r\n\r\n## Tuning Scrypt Performance\r\n\r\nDiscreteCrypt's various functions will allow you to manually tune their performance based on security thresholds you feel comfortable with.\r\n\r\nBy default, DiscreteCrypt is tuned to its strictest security parameters (though DiscreteCrypt automatically optimizes the performance of ephemeral contacts). These parameters are tuned in an attempt to guarantee their lifetimes will outlast your own.\r\n\r\nWe offer three sane defaults for Scrypt Parameters:\r\n\r\nType | Method | Explanation\r\n-- | -- |  --\r\nDefault | `DiscreteCrypt.defaults.scrypt()` | Strict. Makes it extremely difficult to bruteforce the key-space. Should protect passwords rated at least 40-48 bits in zxcvbn. (Decent Performance)\r\nTuned | `DiscreteCrypt.defaults.tunedScrypt()` | Makes it difficult to bruteforce the key-space. Should protect passwords rated at least 60 bits in zxcvbn. (Great Performance)\r\nEphemeral | `DiscreteCrypt.defaults.ephemeralScrypt()` | Used for contacts where you can either guarantee that the key will have quite a bit of entropy, or will be completely random. (Best Performance)\r\n\r\nKeep in mind that the tuning for Ephemeral is above what GPG was using as its key derivation algorithm by default until quite recently.\r\n\r\n\r\nExample Calls:\r\n\r\n```js\r\n// create fully random key manually, rather than letting DiscreteCrypt do it.  \r\nlet key = crypto.randomBytes(32)\r\nlet me = DiscreteCrypt.Contact.create(key, null, DiscreteCrypt.defaults.ephemeralScrypt())\r\n```\r\n\r\n```js\r\nDiscreteCrypt.Symmetric.encrypt('Some really long and secure password', { organization: 1, txt: 'Hello' }, DiscreteCrypt.defaults.tunedScrypt())\r\n```\r\n\r\n\r\n# Upcoming\r\n\r\n### Alternative Formats \r\n\r\nThe current format is based mostly on hexadecimal values stored as JSON. This is not optimal. \r\n\r\nI will be implementing binary (and base64) formats that will improve the space efficiency of the data produced by DiscreteCrypt.js.\r\n\r\n### DiscreteCrypt (C++) Compatibility\r\n\r\nThis is not the first iteration of DiscreteCrypt, there is a C++ tool that is much more powerful, but much more difficult to use.\r\n\r\nOnce I improve the C++ implementation, I aim to make the C++ version capable of interacting with the JS version, and vice versa.\r\n\r\n### Multi-Recipient Encryption\r\n\r\nThe DiscreteCrypt protocol was designed to allow for multi-recipient encryption, support for this is planned in DiscreteCrypt.js \r\n\r\n### Multi-Signatures\r\n\r\nDiscreteCrypt.js implements Schnorr's algorithm, which allows for space-efficient multi-party signatures.\r\n\r\nThis will be supported in later versions of the library.\r\n\r\n### Proof-Of-Work \r\n\r\nI will eventually implement a proof-of-work utility, just to make it easier to implement your security.\r\n\r\n### More\r\n\r\nThere are a few other things I'm planning on supporting that are a bit difficult to describe.",
+    "longname": "C:\\Users\\Jesse\\Documents\\Projects\\DiscreteCrypt.js\\manual\\index.md",
+    "name": "./manual/index.md",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "manual",
+    "longname": "C:\\Users\\Jesse\\Documents\\Projects\\DiscreteCrypt.js\\manual\\index.md",
+    "name": "./manual/index.md",
+    "content": "# Getting Started\r\n\r\nWelcome to DiscreteCrypt.js! \r\n\r\nFirst, I feel like we need to clarify what the term \"Contact\" means in DiscreteCrypt. It is an object-oriented abstraction of public key cryptography, to make it easier to think about the flow of data.\r\n\r\nYou can create a personal contact (private key), or you can receive other people's contacts (public keys).\r\n\r\n## Creating an Ephemeral Contact\r\n\r\nLet's start by creating an ephemeral contact.\r\n\r\nThis is a type of contact that is not meant to be recovered, and is good for one-off sessions.\r\n\r\n```js\r\nlet me = DiscreteCrypt.Contact.create()\r\n\r\nme.export().then(contact =>\r\n{\r\n    // send the \"contact\" variable to someone else, over Ajax or websocket.\r\n}) \r\n```\r\n\r\n## Importing Someone's Contact \r\n\r\nHere is how one should import an exported contact.\r\n\r\n```js\r\nlet you = DiscreteCrypt.Contact.import(receivedContact)\r\n```\r\n\r\n## Encrypting Data for a Contact\r\n\r\nLet's encrypt data for someone's contact. This uses asymmetric cryptography to ensure only the intended recipient can open the message.\r\n\r\n```js\r\nme.send(you, \"Hey, this is a secret message\").then(encrypted =>\r\n{\r\n    // send the \"encrypted\" variable over ajax or websocket\r\n})\r\n```\r\n\r\nYou are not limited to strings. You can send any other JSON-serializable type using DiscreteCrypt.js (like Numbers, Booleans, Arrays, Objects)\r\n\r\n\r\n## Opening Encrypted Data \r\n\r\nTo open received data, just do the following: \r\n\r\n```js\r\nme.open(dataFromYou).then(data =>\r\n{\r\n    // Hey! we decrypted this and got the data back :)\r\n    console.log(data)\r\n}).catch(err =>\r\n{\r\n    // Oh no! It didn't decrypt properly. \r\n    console.error(err)\r\n})\r\n```\r\n\r\n## Creating a Long-Term Contact\r\n\r\nNow we're getting into PGP/GPG territory. This is a contact that you intend to use over a longer period of time, and not just for a one-off chat session with someone. \r\n\r\nTo do this, all you need to do is pass in a key in the \"Create\" method.\r\n\r\n```js\r\n// the key doesn't have to be a string. You can actually use any Uint8Array or Buffer-like structure.\r\nlet me = DiscreteCrypt.Contact.create(\"SuperSecurePassword\")\r\n```\r\n\r\nTo store it, you'll need to export it (which you need to do anyway for other people to \"contact\" you).\r\n\r\n```js\r\nme.export().then(contact =>\r\n{\r\n    // store contact somewhere, in a database or in a json file or something.\r\n})\r\n```\r\n\r\nThen you can load it back in by importing it and executing the \"compute\" method, restoring your \"personal\"/private access. \r\n\r\n```js\r\n// me_stored is your exported contact loaded in from a file\r\nlet me = DiscreteCrypt.Contact.import(me_stored).compute(\"SuperSecurePassword\")\r\n```\r\n\r\nIn crypto-terms: This allows you to easily recover your private key from your public key. This is only possible because your private key is derived using scrypt (which makes brute-force exceptionally difficult). \r\n\r\nThese long-term contacts can be used for a variety of things, like securing communication of nodes in a cloud cluster, or allowing you to create a really modern end-to-end encrypted chat app.  \r\n\r\n\r\n\r\n# Symmetric \r\n\r\nYou can also use DiscreteCrypt.js to encrypt data symmetrically. This can be done in two ways:\r\n\r\n## Using Contacts\r\n\r\nYou could in theory send data to your own contact.\r\n\r\n```js\r\n\r\n// creates a long term contact to store\r\nlet me = DiscreteCrypt.Contact.Create('some pass')\r\n\r\nme.export().then(contact_to_store =>\r\n{\r\n    // store it somewhere\r\n})\r\n\r\nme.send(me, { a: 'Secret Data' }).then(encrypted =>\r\n{\r\n    // encrypted data only your contact file can open\r\n})\r\n```\r\n\r\n\r\n## Using Symmetric Utilities\r\n\r\nBy removing the key exchange steps of the DiscreteCrypt protocol, the scheme can be simplified to a convenient symmetric authenticated encryption scheme.\r\n\r\n\r\n### Encrypt\r\n\r\nTo encrypt:\r\n\r\n```js\r\nDiscreteCrypt.Symmetric.encrypt('password', data).then(encrypted_data =>\r\n{\r\n    // do something with the encrypted data, like store it\r\n})\r\n```\r\n\r\n### Decrypt\r\n\r\nAnd decrypting is very similar:\r\n\r\n```js\r\nDiscreteCrypt.Symmetric.decrypt('password', encrypted_data).then(decrypted_data =>\r\n{\r\n    // do something with the decrypted data,\r\n    console.log(decrypted_data)\r\n})\r\n```\r\n\r\n# Signatures\r\n\r\nSome might want to be able to use their contacts to \"sign\" data. Here's how:\r\n\r\n## Signing\r\n\r\nHere is how to sign data:\r\n\r\n```js\r\n// assuming \"me\" is a contact\r\n\r\nme.sign(data).then(sig =>\r\n{\r\n    // <code to send the signature somewhere>\r\n})\r\n```\r\n\r\n## Verifying \r\n\r\n```js\r\nme.verify(sig, data).then(data =>\r\n{\r\n    // the data verified against is passed to then\r\n}).catch(err =>\r\n{\r\n    // rejects if not verified\r\n})\r\n```\r\n\r\n\r\n## Signature Bundling\r\n\r\nYou are also able to bundle in the source data with the signature itself. This might be useful if you plan to release the data along with the signature anyway.\r\n\r\n### Signing\r\n\r\n```js\r\nme.sign(data, true).then(sig =>\r\n{\r\n    // the data is bundled in with the signature.\r\n    // <code to send the bundled signature somewhere>\r\n\r\n})\r\n```\r\n\r\n### Verifying\r\n\r\n```js\r\nme.verify(sig).then(data =>\r\n{\r\n    // returns the data that was verified by the signature\r\n}).catch(err =>\r\n{\r\n\r\n})\r\n```\r\n\r\n\r\n# Advanced\r\n\r\n## Tuning Scrypt Performance\r\n\r\nDiscreteCrypt's various functions will allow you to manually tune their performance based on security thresholds you feel comfortable with.\r\n\r\nBy default, DiscreteCrypt is tuned to its strictest security parameters (though DiscreteCrypt automatically optimizes the performance of ephemeral contacts). These parameters are tuned in an attempt to guarantee their lifetimes will outlast your own.\r\n\r\nWe offer three sane defaults for Scrypt Parameters:\r\n\r\nType | Method | Explanation\r\n-- | -- |  --\r\nDefault | `DiscreteCrypt.defaults.scrypt()` | Strict. Makes it extremely difficult to bruteforce the key-space. Should protect passwords rated at least 40-48 bits in zxcvbn. (Decent Performance)\r\nTuned | `DiscreteCrypt.defaults.tunedScrypt()` | Makes it difficult to bruteforce the key-space. Should protect passwords rated at least 60 bits in zxcvbn. (Great Performance)\r\nEphemeral | `DiscreteCrypt.defaults.ephemeralScrypt()` | Used for contacts where you can either guarantee that the key will have quite a bit of entropy, or will be completely random. (Best Performance)\r\n\r\nKeep in mind that the tuning for Ephemeral is above what GPG was using as its key derivation algorithm by default until quite recently.\r\n\r\n\r\nExample Calls:\r\n\r\n```js\r\n// create fully random key manually, rather than letting DiscreteCrypt do it.  \r\nlet key = crypto.randomBytes(32)\r\nlet me = DiscreteCrypt.Contact.create(key, null, DiscreteCrypt.defaults.ephemeralScrypt())\r\n```\r\n\r\n```js\r\nDiscreteCrypt.Symmetric.encrypt('Some really long and secure password', { organization: 1, txt: 'Hello' }, DiscreteCrypt.defaults.tunedScrypt())\r\n```\r\n\r\n\r\n# Upcoming\r\n\r\n### Alternative Formats \r\n\r\nThe current format is based mostly on hexadecimal values stored as JSON. This is not optimal. \r\n\r\nI will be implementing binary (and base64) formats that will improve the space efficiency of the data produced by DiscreteCrypt.js.\r\n\r\n### DiscreteCrypt (C++) Compatibility\r\n\r\nThis is not the first iteration of DiscreteCrypt, there is a C++ tool that is much more powerful, but much more difficult to use.\r\n\r\nOnce I improve the C++ implementation, I aim to make the C++ version capable of interacting with the JS version, and vice versa.\r\n\r\n### Multi-Recipient Encryption\r\n\r\nThe DiscreteCrypt protocol was designed to allow for multi-recipient encryption, support for this is planned in DiscreteCrypt.js \r\n\r\n### Multi-Signatures\r\n\r\nDiscreteCrypt.js implements Schnorr's algorithm, which allows for space-efficient multi-party signatures.\r\n\r\nThis will be supported in later versions of the library.\r\n\r\n### Proof-Of-Work \r\n\r\nI will eventually implement a proof-of-work utility, just to make it easier to implement your security.\r\n\r\n### More\r\n\r\nThere are a few other things I'm planning on supporting that are a bit difficult to describe.",
+    "static": true,
+    "access": "public"
+  }
+]

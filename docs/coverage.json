@@ -1,0 +1,37 @@
+{
+  "coverage": "70.49%",
+  "expectCount": 61,
+  "actualCount": 43,
+  "files": {
+    "src/discretecrypt.browser.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        1
+      ]
+    },
+    "src/discretecrypt.js": {
+      "expectCount": 60,
+      "actualCount": 43,
+      "undocumentLines": [
+        1,
+        2,
+        3,
+        4,
+        7,
+        17,
+        26,
+        34,
+        45,
+        250,
+        427,
+        442,
+        724,
+        763,
+        840,
+        842,
+        1170
+      ]
+    }
+  }
+}

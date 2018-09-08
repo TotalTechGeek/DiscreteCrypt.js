@@ -9,11 +9,13 @@ const PW = 'Hello World'
 const SALT = '00'
 const TXT = 'Hello, World'
 
-let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt), contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
-let signedData = contact.sign(TXT)
-let signedData2 = contact.sign(Promise.resolve(TXT))
+let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt), contact2 = DiscreteCrypt.Contact.create()
+let signedData = contact.sign(TXT, true)
+let signedData2 = contact.sign(Promise.resolve(TXT), true)
+let signedData3 = contact.sign(TXT)
 
-let contact3 = DiscreteCrypt.Contact.create()
+
+let contact3 = DiscreteCrypt.Contact.create(PW)
 
 describe('DiscreteCrypt.Contact', () =>
 {
@@ -116,7 +118,7 @@ describe('DiscreteCrypt.Contact', () =>
 
     describe('#sign', () =>
     {
-        it('should output an object with r, s, and the data', (done) =>
+        it('bundled should output an object with s, e, and the data', (done) =>
         {
             signedData.then(data =>
             {
@@ -128,6 +130,18 @@ describe('DiscreteCrypt.Contact', () =>
                     }
                 }
 
+                return done(new Error())
+            })
+        })
+
+        it('unbundled should output an object with s, and e', (done) =>
+        {
+            signedData3.then(data =>
+            {
+                if(data.s && data.e)
+                {
+                    return done()
+                }
                 return done(new Error())
             })
         })
@@ -234,10 +248,40 @@ describe('DiscreteCrypt.Contact', () =>
     {
         it('should verify when the signature is real', (done) =>
         {
-            contact.verify(signedData).then(valid =>
+            contact.verify(signedData).then(data =>
             {
-                if(valid) return done()
-                return done(new Error())
+                return done()
+            }).catch(err =>
+            {
+                return done(new Error())                
+            })
+        })
+
+        it('should be able to verify an unbundled signature', (done) =>
+        {
+            signedData3.then(data =>
+            {
+                contact.verify(data, TXT).then(data =>
+                {
+                    return done()
+                }).catch(err =>
+                {
+                    return done(new Error())
+                })
+            })
+        })
+
+        it('should be able to verify an unbundled signature with an asynchronous source', (done) =>
+        {
+            signedData3.then(data =>
+            {
+                contact.verify(data, Promise.resolve(TXT)).then(data =>
+                {
+                    return done()
+                }).catch(err =>
+                {
+                    return done(new Error())
+                })
             })
         })
 
@@ -248,13 +292,12 @@ describe('DiscreteCrypt.Contact', () =>
                 // clone it
                 data = Object.assign({}, data)
                 data.s = '2'
-                contact.verify(data).then(valid =>
+                contact.verify(data).then(data =>
                 {
-                    if(!valid) return done()
                     return done(new Error())
                 }).catch(err =>
                 {
-                    return done(new Error())
+                    return done()
                 })
             })
         })
@@ -266,13 +309,12 @@ describe('DiscreteCrypt.Contact', () =>
                 // clone it
                 data = Object.assign({}, data)
                 data.e = '3'
-                contact.verify(data).then(valid =>
+                contact.verify(data).then(data =>
                 {
-                    if(!valid) return done()
                     return done(new Error())
                 }).catch(err =>
                 {
-                    return done(new Error())
+                    return done()
                 })
             })
         })
@@ -284,13 +326,12 @@ describe('DiscreteCrypt.Contact', () =>
                 // clone it
                 data = Object.assign({}, data)
                 data.e = 0
-                contact.verify(data).then(valid =>
+                contact.verify(data).then(data =>
                 {
-                    if(!valid) return done()
                     return done(new Error())
                 }).catch(err =>
                 {
-                    return done(new Error())
+                    return done()
                 })
             })
         })
@@ -303,13 +344,12 @@ describe('DiscreteCrypt.Contact', () =>
                 // clone it
                 data = Object.assign({}, data)
                 data.s = 0
-                contact.verify(data).then(valid =>
+                contact.verify(data).then(data =>
                 {
-                    if(!valid) return done()
                     return done(new Error())
                 }).catch(err =>
                 {
-                    return done(new Error())
+                    return done()
                 })
             })
         })
@@ -322,13 +362,12 @@ describe('DiscreteCrypt.Contact', () =>
                 data = Object.assign({}, data)
                 data.s = '2'
                 data.e = '3'
-                contact.verify(data).then(valid =>
+                contact.verify(data).then(data =>
                 {
-                    if(!valid) return done()
                     return done(new Error())
                 }).catch(err =>
                 {
-                    return done(new Error())
+                    return done()
                 })
             })
         })
