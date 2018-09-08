@@ -78,7 +78,12 @@ function pohlig(prime, range)
         return native_pohlig(prime, range)
     }
 
-    if (typeof prime === "string") prime = new bigInt(prime)
+    if (!(prime instanceof bigInt)) prime = new bigInt(prime)
+
+    if(typeof range !== "undefined" && typeof range !== "number")
+    {
+        throw "Only number types are allowed for the range parameter."
+    }
 
     prime.isubn(1)
     let factors = new bigInt(1)
@@ -104,9 +109,9 @@ function pohlig(prime, range)
  */
 function modPow(a, b, c)
 {
-    if (typeof a === "string") a = new bigInt(a)
-    if (typeof b === "string") b = new bigInt(b)
-    if (typeof c === "string") c = new bigInt(c)
+    if (!(a instanceof bigInt)) a = new bigInt(a)
+    if (!(b instanceof bigInt)) b = new bigInt(b)
+    if (!(c instanceof bigInt)) c = new bigInt(c)
 
     /* istanbul ignore if */
     if (typeof BigInt !== "undefined")
@@ -228,7 +233,7 @@ function scryptPromise(key, salt, N, r, p, len)
             encoding: 'binary'
         }, (key) =>
         {
-            if (key) resolve(key)
+            resolve(key)
         })
     })
 }
@@ -1091,6 +1096,7 @@ function tunedScrypt()
 }
 
 exports.utils = {
+    modPow: modPow,
     truncate: truncate,
     scryptPromise: scryptPromise,
     hex: toHexString,

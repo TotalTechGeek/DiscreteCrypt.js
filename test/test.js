@@ -1,5 +1,6 @@
 const assert = require('assert')
 const DiscreteCrypt = require('../index.js')
+const bigInt = require('bn.js')
 
  // scrypt tuned down for performance, since security isn't necessary here.
  let scrypt = DiscreteCrypt.defaults.ephemeralScrypt()
@@ -10,6 +11,9 @@ const TXT = 'Hello, World'
 
 let contact = DiscreteCrypt.Contact.create(PW, SALT, scrypt), contact2 = DiscreteCrypt.Contact.create(null, null, scrypt)
 let signedData = contact.sign(TXT)
+let signedData2 = contact.sign(Promise.resolve(TXT))
+
+let contact3 = DiscreteCrypt.Contact.create()
 
 describe('DiscreteCrypt.Contact', () =>
 {
@@ -32,6 +36,14 @@ describe('DiscreteCrypt.Contact', () =>
             contact.then(contact =>
             {
                 if(typeof contact === "undefined") return done(new Error())
+                return done()
+            })
+        })
+
+        it('should create a contact even without parameters (ephemeral test)', (done) =>
+        {
+            contact3.then(contact =>
+            {
                 return done()
             })
         })
@@ -119,6 +131,23 @@ describe('DiscreteCrypt.Contact', () =>
                 return done(new Error())
             })
         })
+
+        it('should be able to handle asynchronous input', (done) =>
+        {
+            signedData2.then(data =>
+            {
+                if(data.s && data.e && data.data)
+                {
+                    if(data.data === TXT)
+                    {
+                        return done()
+                    }
+                }
+
+                return done(new Error())
+            })
+        })
+
     })
 
     describe('#privateKey', () =>
@@ -212,11 +241,13 @@ describe('DiscreteCrypt.Contact', () =>
             })
         })
 
-        it('should not verify when the signature is false', (done) =>
+        it('should not verify when the signature is false (modify s)', (done) =>
         {
             signedData.then(data =>
             {
-                data.s = '1234567'
+                // clone it
+                data = Object.assign({}, data)
+                data.s = '2'
                 contact.verify(data).then(valid =>
                 {
                     if(!valid) return done()
@@ -226,9 +257,81 @@ describe('DiscreteCrypt.Contact', () =>
                     return done(new Error())
                 })
             })
-
         })
 
+        it('should not verify when the signature is false (modify e)', (done) =>
+        {
+            signedData.then(data =>
+            {
+                // clone it
+                data = Object.assign({}, data)
+                data.e = '3'
+                contact.verify(data).then(valid =>
+                {
+                    if(!valid) return done()
+                    return done(new Error())
+                }).catch(err =>
+                {
+                    return done(new Error())
+                })
+            })
+        })
+
+        it('should not verify e=0, or non-existent', (done) =>
+        {
+            signedData.then(data =>
+            {
+                // clone it
+                data = Object.assign({}, data)
+                data.e = 0
+                contact.verify(data).then(valid =>
+                {
+                    if(!valid) return done()
+                    return done(new Error())
+                }).catch(err =>
+                {
+                    return done(new Error())
+                })
+            })
+        })
+
+
+        it('should not verify s=0, or non-existent', (done) =>
+        {
+            signedData.then(data =>
+            {
+                // clone it
+                data = Object.assign({}, data)
+                data.s = 0
+                contact.verify(data).then(valid =>
+                {
+                    if(!valid) return done()
+                    return done(new Error())
+                }).catch(err =>
+                {
+                    return done(new Error())
+                })
+            })
+        })
+
+        it('should not verify when the signature is false (modify s & e)', (done) =>
+        {
+            signedData.then(data =>
+            {
+                // clone it
+                data = Object.assign({}, data)
+                data.s = '2'
+                data.e = '3'
+                contact.verify(data).then(valid =>
+                {
+                    if(!valid) return done()
+                    return done(new Error())
+                }).catch(err =>
+                {
+                    return done(new Error())
+                })
+            })
+        })
     })
 
     // also tests the import code.
@@ -410,6 +513,83 @@ describe('DiscreteCrypt', () =>
                 if(val == 420) return done()
                 return done(new Error())
             })
+
+            it('should be able to process various input types for the prime', (done) =>
+            {
+                let val = DiscreteCrypt.utils.pohlig(1556393, 400)[0]
+                if(val != 757) return done(new Error())
+                
+                val = DiscreteCrypt.utils.pohlig('1556393', 400)[0]
+                if(val != 757) return done(new Error()) 
+
+                val = DiscreteCrypt.utils.pohlig(new bigInt('1556393'), 400)[0]
+                if(val != 757) return done(new Error())
+
+                return done()
+            })
+
+
+            it('should throw an exception with a non-number range (if not undefined)', (done) =>
+            {
+                try{
+                    val = DiscreteCrypt.utils.pohlig(new bigInt('1556393'), '400')[0]
+
+                }
+                catch(ex)
+                {
+                    return done()
+                }
+
+                return done(new Error())
+            })
+
+        })
+
+
+
+
+        describe('#modPow', () =>
+        {
+            // thoroughly test modpow
+
+            function typeFrom(num, type)
+            {
+                if(type == 0)
+                {
+                    return parseInt(num)
+                }
+                else if (type == 1)
+                {
+                    return num.toString()
+                }
+                else
+                {
+                    return new bigInt(num)
+                }
+            }
+
+            it('should be able to receive numbers, strings, and bigInts', (done) =>
+            {
+                for(let a = 0; a < 3; a++)
+                {
+                    for(let b = 0; b < 3; b++)
+                    {
+                        for(let c = 0; c < 3; c++)
+                        {
+                            let d = typeFrom(25, a)
+                            let e = typeFrom(20, b)
+                            let f = typeFrom(1700, c)
+
+                           let x = DiscreteCrypt.utils.modPow(d, e, f).toString()
+                           if(x != '1325')
+                           {
+                               return done(new Error())
+                           }
+                        }
+                    }
+                }
+                return done()
+            })
         })
 
         describe('#scryptPromise', () =>
@@ -422,6 +602,18 @@ describe('DiscreteCrypt', () =>
                 scryptP.then(data =>
                 {
                     return done()
+                })
+            })
+
+
+            it('should be able to deal with optional parameters', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromise(TXT, '00').then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
                 })
             })
 
