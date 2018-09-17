@@ -231,6 +231,9 @@ function scryptPromise(key, salt, N, r, p, len)
     p = p || DEFAULT_SCRYPT_CONFIG.p
     len = len || DEFAULT_SCRYPT_CONFIG.len
 
+    if(!Number.isInteger(len)) 
+        return Promise.reject('Length is not a number.')    
+
     return new Promise((resolve, reject) =>
     {
         scrypt(key, salt,
@@ -597,7 +600,7 @@ const PROMISE_TRICK = function()
          * ensuring K > (private.length + hash.length) prevents an attacker from learning information about the private key.
          */
         const HASH_LENGTH = 32
-        const len = (priv.bitLength() / 8) + HASH_LENGTH + 1
+        const len = Math.round((priv.bitLength() / 8) + HASH_LENGTH + 1)
 
         // Allows asynchronous input
         if (!(data instanceof Promise))

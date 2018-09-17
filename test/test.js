@@ -662,6 +662,19 @@ describe('DiscreteCrypt', () =>
                 })
             })
 
+
+            // todo: add tests for other inputs, but length seemed most important (because it had an actual bug associated)
+            it('should reject when the length is not an integer', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromise(TXT, '00', scrypt.N, scrypt.r, scrypt.p, 32.5).then(() =>
+                {
+                    return done(new Error())
+                }).catch(() =>
+                {
+                    return done()
+                })
+            })
+
             it('should be able to process keys longer than 64 bytes (string)', (done) =>
             {
                 DiscreteCrypt.utils.scryptPromise('1'.repeat(65), '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>

@@ -27,6 +27,9 @@ if(crypto.scrypt)
         r = r || DEFAULT_SCRYPT_CONFIG.r
         p = p || DEFAULT_SCRYPT_CONFIG.p
         len = len || DEFAULT_SCRYPT_CONFIG.len
+    
+        if(!Number.isInteger(len)) 
+            return Promise.reject('Length is not a number.')    
 
         return new Promise((resolve, reject) =>
         {
