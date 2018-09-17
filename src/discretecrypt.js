@@ -44,6 +44,12 @@ const DEFAULT_PARAMS = {
  */
 function pohlig(prime, range)
 {
+    // checks the range
+    if(typeof range !== "undefined" && typeof range !== "number")
+    {
+        throw "Only number types are allowed for the range parameter."
+    }
+
     /* istanbul ignore if */
     if (typeof BigInt !== "undefined")
     {
@@ -55,7 +61,7 @@ function pohlig(prime, range)
         function native_pohlig(prime, range)
         {
             if (typeof prime === "string") prime = BigInt(prime)
-            else if (typeof prime === "object") prime = BigInt(prime.toString())
+            else if (typeof prime !== "bigint") prime = BigInt(prime.toString())
 
             prime -= BigInt(1)
             let factors = BigInt(1)
@@ -79,11 +85,6 @@ function pohlig(prime, range)
     }
 
     if (!(prime instanceof bigInt)) prime = new bigInt(prime)
-
-    if(typeof range !== "undefined" && typeof range !== "number")
-    {
-        throw "Only number types are allowed for the range parameter."
-    }
 
     prime.isubn(1)
     let factors = new bigInt(1)

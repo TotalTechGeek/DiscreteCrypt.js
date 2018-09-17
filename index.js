@@ -1,5 +1,6 @@
-let DiscreteCrypt = require('./src/discretecrypt.js')
+// Node 10.x seems to run the tests ~4x quicker.
 
+let DiscreteCrypt = require('./src/discretecrypt.js')
 
 const crypto = require('crypto')
 DiscreteCrypt.randomBytes = function(n)
@@ -7,27 +8,38 @@ DiscreteCrypt.randomBytes = function(n)
     return crypto.randomBytes(n)
 }
 
-/*
-// Efficient Native Implementation -- Need to write tests prior to adding it.
-// The next step would be to add a new solution for more efficient big ints for Node 8.x
-const scrypt = require('scrypt')
 const DEFAULT_SCRYPT_CONFIG = DiscreteCrypt.defaults.scrypt()
-DiscreteCrypt.utils.scryptPromise = function(key, salt, N, r, p, len)
+
+// Efficient Native Implementation -- Need to write tests prior to adding it.
+/* istanbul ignore if: this code actually has been tested, but I need to develop toggles */
+if(crypto.scrypt)
 {
-    if (typeof key === "string")
+    DiscreteCrypt.utils.scryptPromise = function(key, salt, N, r, p, len)
     {
-        key = Buffer.from(key.normalize('NFKC'))
-    } 
-    
-    if (typeof salt === "string") salt = Buffer.from(salt, 'hex')
+        if (typeof key === "string")
+        {
+            key = Buffer.from(key.normalize('NFKC'))
+        } 
 
-    N = N || DEFAULT_SCRYPT_CONFIG.N
-    r = r || DEFAULT_SCRYPT_CONFIG.r
-    p = p || DEFAULT_SCRYPT_CONFIG.p
-    len = len || DEFAULT_SCRYPT_CONFIG.len
+        if (typeof salt === "string") salt = Buffer.from(salt, 'hex')
 
-    return scrypt.hash(key, { N: N, r: r, p: p }, len, salt)
+        N = N || DEFAULT_SCRYPT_CONFIG.N
+        r = r || DEFAULT_SCRYPT_CONFIG.r
+        p = p || DEFAULT_SCRYPT_CONFIG.p
+        len = len || DEFAULT_SCRYPT_CONFIG.len
+
+        return new Promise((resolve, reject) =>
+        {
+            crypto.scrypt(key, salt, len, {
+                N: N,
+                r: r,
+                p: p
+            }, (err, derived) =>
+            {
+                if(err) return reject(err)
+                return resolve(derived)
+            })
+        })
+    }
 }
-*/
-
 module.exports = DiscreteCrypt

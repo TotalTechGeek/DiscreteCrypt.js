@@ -7183,6 +7183,12 @@ const DEFAULT_PARAMS = {
  */
 function pohlig(prime, range)
 {
+    // checks the range
+    if(typeof range !== "undefined" && typeof range !== "number")
+    {
+        throw "Only number types are allowed for the range parameter."
+    }
+
     /* istanbul ignore if */
     if (typeof BigInt !== "undefined")
     {
@@ -7194,7 +7200,7 @@ function pohlig(prime, range)
         function native_pohlig(prime, range)
         {
             if (typeof prime === "string") prime = BigInt(prime)
-            else if (typeof prime === "object") prime = BigInt(prime.toString())
+            else if (typeof prime !== "bigint") prime = BigInt(prime.toString())
 
             prime -= BigInt(1)
             let factors = BigInt(1)
@@ -7218,11 +7224,6 @@ function pohlig(prime, range)
     }
 
     if (!(prime instanceof bigInt)) prime = new bigInt(prime)
-
-    if(typeof range !== "undefined" && typeof range !== "number")
-    {
-        throw "Only number types are allowed for the range parameter."
-    }
 
     prime.isubn(1)
     let factors = new bigInt(1)
@@ -7749,7 +7750,7 @@ const PROMISE_TRICK = function()
             let d = Buffer.from(JSON.stringify(data))
             
             // scrypt is used to create the K value deterministically
-            return scryptPromise(d, Buffer.from(priv.toString(16), 'hex'), N, r, p, len).then(k_derived =>
+            return exports.utils.scryptPromise(d, Buffer.from(priv.toString(16), 'hex'), N, r, p, len).then(k_derived =>
             {
                 let K = new bigInt(toHexString(k_derived), 16)       
                 
@@ -7897,7 +7898,7 @@ const PROMISE_TRICK = function()
             key = Buffer.from(key.normalize('NFKC'))
         }
 
-        let scryptProm = scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>
+        let scryptProm = exports.utils.scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>
         {
             this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()
 
@@ -7954,7 +7955,7 @@ const PROMISE_TRICK = function()
             if (typeof salt === "string")
                 salt = Buffer.from(salt, 'hex')
 
-            return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
+            return exports.utils.scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>
             {
                 key = new bigInt(toHexString(key), 16)
                 let pub = modPow(params.gen, key, params.prime)
@@ -8023,7 +8024,7 @@ function truncate(x, len)
 
         let dhexchange = remember[data.public + ',' + receiver.public]
 
-        return scryptPromise(Buffer.from(dhexchange, 'hex'), data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return exports.utils.scryptPromise(Buffer.from(dhexchange, 'hex'), data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))
 
@@ -8103,7 +8104,7 @@ function truncate(x, len)
 
         hmac = hmac.getHMAC('HEX')
 
-        return scryptPromise(Buffer.from(dhexchange, 'hex'), hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
+        return exports.utils.scryptPromise(Buffer.from(dhexchange, 'hex'), hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
 
@@ -8170,7 +8171,7 @@ function truncate(x, len)
         hmac.update(msg)
         hmac = hmac.getHMAC('HEX')
 
-        return scryptPromise(inputKey, hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
+        return exports.utils.scryptPromise(inputKey, hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
 
@@ -8221,7 +8222,7 @@ function truncate(x, len)
             return Promise.reject('Input key empty.')
         }
 
-        return scryptPromise(inputKey, data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
+        return exports.utils.scryptPromise(inputKey, data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))
 
