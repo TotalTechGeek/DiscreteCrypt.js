@@ -822,8 +822,12 @@ describe('DiscreteCrypt', () =>
         const SYM_KEY = 'Hello, World!'
         const WRONG_KEY = 'Wrong, Key!'
         const MESSAGE = 'This is the message.'
-        let encryption = DiscreteCrypt.Symmetric.encrypt(SYM_KEY, MESSAGE, DiscreteCrypt.defaults.ephemeralScrypt()) 
-        let decryption = encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(SYM_KEY, i, DiscreteCrypt.defaults.ephemeralScrypt()))
+        const RAW_MESSAGE = Buffer.from('CAFEBABE', 'hex')
+        let encryption = DiscreteCrypt.Symmetric.encrypt(SYM_KEY, MESSAGE, { scrypt: DiscreteCrypt.defaults.ephemeralScrypt() }) 
+        let decryption = encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(SYM_KEY, i, { scrypt: DiscreteCrypt.defaults.ephemeralScrypt() }))
+
+        let encryptionRaw = DiscreteCrypt.Symmetric.encrypt(SYM_KEY, RAW_MESSAGE, { raw: true })
+        let decryptionRaw = encryptionRaw.then(e => DiscreteCrypt.Symmetric.decrypt(SYM_KEY, e, { raw: true }))
 
         describe('#encrypt', () =>
         {
@@ -872,6 +876,21 @@ describe('DiscreteCrypt', () =>
                 })
             })
 
+            it('should decrypt properly raw', (done) =>
+            {
+                decryptionRaw.then(data => 
+                {
+                    if(Buffer.from(data).toString('hex').toLowerCase() === 'cafebabe')
+                    return done()
+                    else return done(new Error())
+                }).catch(err =>
+                {
+                    console.log(err)
+                    return done(new Error())
+                })
+
+            })
+
             it('should reject upon no key', (done) =>
             {
                 DiscreteCrypt.Symmetric.decrypt(undefined, MESSAGE).then(() =>
@@ -898,7 +917,7 @@ describe('DiscreteCrypt', () =>
 
             it('should reject upon failed decryption', (done) =>
             {
-                encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(WRONG_KEY, i, scrypt)).then(result =>
+                encryption.then(i=>DiscreteCrypt.Symmetric.decrypt(WRONG_KEY, i, { scrypt: scrypt })).then(result =>
                 {
                     return done(new Error())
                 }).catch(error =>

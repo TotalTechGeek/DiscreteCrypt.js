@@ -1,6 +1,6 @@
 {
   "name": "discretecrypt.js",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "description": "A very simple-to-use cryptosystem, designed to make security easy.",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "babel-minify": "^0.2.0",
-    "browserify": "^16.2.2",
+    "browserify": "^16.2.3",
     "buffer": "^5.2.1",
     "coveralls": "^3.0.2",
     "esdoc": "^1.1.0",

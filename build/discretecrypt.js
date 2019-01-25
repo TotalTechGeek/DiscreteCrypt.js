@@ -8144,11 +8144,13 @@ function truncate(x, len)
      * 
      * @param {String|Buffer|Array} inputKey 
      * @param {*} msg 
-     * @param {Object=} scryptConfig 
+     * @param {Object=} options 
      */
-    static encrypt(inputKey, msg, scryptConfig)
+    static encrypt(inputKey, msg, options)
     {
-        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+        if (!options) options = {}
+
+        if (!options.scrypt) options.scrypt = DEFAULT_SCRYPT_CONFIG
 
         if (typeof inputKey === "undefined")
         {
@@ -8167,14 +8169,18 @@ function truncate(x, len)
         }
 
         let key = exports.randomBytes(32)
-        msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
+
+        if(!options.raw)
+        {
+            msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
+        }
 
         let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')
         hmac.setHMACKey(key, 'ARRAYBUFFER')
         hmac.update(msg)
         hmac = hmac.getHMAC('HEX')
 
-        return exports.utils.scryptPromise(inputKey, hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>
+        return exports.utils.scryptPromise(inputKey, hmac, options.scrypt.N, options.scrypt.r, options.scrypt.p, 32).then(dhkey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))
 
@@ -8203,11 +8209,12 @@ function truncate(x, len)
      * 
      * @param {String|Buffer|Array} inputKey 
      * @param {Object} data 
-     * @param {Object=} scryptConfig 
+     * @param {Object=} options 
      */
-    static decrypt(inputKey, data, scryptConfig)
+    static decrypt(inputKey, data, options)
     {
-        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+        if (!options) options = {}
+        if (!options.scrypt) options.scrypt = DEFAULT_SCRYPT_CONFIG
 
         if (typeof inputKey === "undefined")
         {
@@ -8225,7 +8232,7 @@ function truncate(x, len)
             return Promise.reject('Input key empty.')
         }
 
-        return exports.utils.scryptPromise(inputKey, data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>
+        return exports.utils.scryptPromise(inputKey, data.hmac, options.scrypt.N, options.scrypt.r, options.scrypt.p, 32).then(ikey =>
         {
             let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))
 
@@ -8243,8 +8250,15 @@ function truncate(x, len)
 
             if (hmac === data.hmac)
             {
-                payload = aesjs.utils.utf8.fromBytes(payload)
-                return JSON.parse(payload)
+                if(!options.raw)
+                {
+                    payload = aesjs.utils.utf8.fromBytes(payload)
+                    return JSON.parse(payload)
+                }
+                else
+                {
+                    return payload
+                }
             }
             else
             {
