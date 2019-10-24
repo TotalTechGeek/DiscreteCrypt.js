@@ -86,6 +86,12 @@ const DEFAULT_PARAMS = {
  */
 function pohlig(prime, range)
 {
+    // checks the range
+    if(typeof range !== &quot;undefined&quot; &amp;&amp; typeof range !== &quot;number&quot;)
+    {
+        throw &quot;Only number types are allowed for the range parameter.&quot;
+    }
+
     /* istanbul ignore if */
     if (typeof BigInt !== &quot;undefined&quot;)
     {
@@ -97,7 +103,7 @@ function pohlig(prime, range)
         function native_pohlig(prime, range)
         {
             if (typeof prime === &quot;string&quot;) prime = BigInt(prime)
-            else if (typeof prime === &quot;object&quot;) prime = BigInt(prime.toString())
+            else if (typeof prime !== &quot;bigint&quot;) prime = BigInt(prime.toString())
 
             prime -= BigInt(1)
             let factors = BigInt(1)
@@ -121,11 +127,6 @@ function pohlig(prime, range)
     }
 
     if (!(prime instanceof bigInt)) prime = new bigInt(prime)
-
-    if(typeof range !== &quot;undefined&quot; &amp;&amp; typeof range !== &quot;number&quot;)
-    {
-        throw &quot;Only number types are allowed for the range parameter.&quot;
-    }
 
     prime.isubn(1)
     let factors = new bigInt(1)
@@ -262,15 +263,18 @@ function scryptPromise(key, salt, N, r, p, len)
 {
     if (typeof key === &quot;string&quot;)
     {
-        key = [...Buffer.from(key.normalize(&apos;NFKC&apos;))]
-    }
-
+        key = Buffer.from(key.normalize(&apos;NFKC&apos;))
+    } 
+    
     if (typeof salt === &quot;string&quot;) salt = Buffer.from(salt, &apos;hex&apos;)
 
     N = N || DEFAULT_SCRYPT_CONFIG.N
     r = r || DEFAULT_SCRYPT_CONFIG.r
     p = p || DEFAULT_SCRYPT_CONFIG.p
     len = len || DEFAULT_SCRYPT_CONFIG.len
+
+    if(!Number.isInteger(len)) 
+        return Promise.reject(&apos;Length is not a number.&apos;)    
 
     return new Promise((resolve, reject) =&gt;
     {
@@ -301,7 +305,7 @@ const PROMISE_TRICK = function()
 /**
  * A stub class that doesn&apos;t actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.
  */
-export   class ContactPromise
+export class ContactPromise
 {
     /**
      * 
@@ -336,7 +340,6 @@ export   class ContactPromise
 
     /**
      * Sends the data to the recipient, encrypted.
-     * @param {Contact} recipient 
      * @param {*} data 
      * @returns {Promise.&lt;Object&gt;}
      * 
@@ -428,7 +431,7 @@ export   class ContactPromise
 /**
  * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.
  */
-export   class Contact
+export class Contact
 {
     /**
      * Returns the public key
@@ -489,6 +492,7 @@ export   class Contact
      * Alias for fromJSON
      * @see fromJSON
      * @param {String|Object} json
+     * @param {Boolean} sync Specifies whether this should be synchronous or not
      * @returns {ContactPromise|Contact} 
      */
     static
@@ -611,7 +615,6 @@ export   class Contact
      * This is not how DiscreteCrypt (C++) currently handles signatures,
      * but that will be changed.
      * 
-     * @param {*} data 
      * @param {Object|Promise.&lt;Object&gt;} data 
      * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.
      * @returns {Promise.&lt;Object&gt;} Signature
@@ -638,7 +641,7 @@ export   class Contact
          * ensuring K &gt; (private.length + hash.length) prevents an attacker from learning information about the private key.
          */
         const HASH_LENGTH = 32
-        const len = (priv.bitLength() / 8) + HASH_LENGTH + 1
+        const len = Math.round((priv.bitLength() / 8) + HASH_LENGTH + 1)
 
         // Allows asynchronous input
         if (!(data instanceof Promise))
@@ -652,7 +655,7 @@ export   class Contact
             let d = Buffer.from(JSON.stringify(data))
             
             // scrypt is used to create the K value deterministically
-            return scryptPromise(d, Buffer.from(priv.toString(16), &apos;hex&apos;), N, r, p, len).then(k_derived =&gt;
+            return exports.utils.scryptPromise(d, Buffer.from(priv.toString(16), &apos;hex&apos;), N, r, p, len).then(k_derived =&gt;
             {
                 let K = new bigInt(toHexString(k_derived), 16)       
                 
@@ -800,7 +803,7 @@ export   class Contact
             key = Buffer.from(key.normalize(&apos;NFKC&apos;))
         }
 
-        let scryptProm = scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =&gt;
+        let scryptProm = exports.utils.scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =&gt;
         {
             this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()
 
@@ -817,9 +820,8 @@ export   class Contact
     /**
      * Creates a contact from the given key / salt. 
      * 
-     * 
-     * @param {String|Buffer|Array=} key Key, can be passed in as a string or Buffer-like object.
-     * @param {*=} salt Salt, can be passed in as a hex string or Buffer-like object.
+     * @param {String|Buffer|Uint8Array|Array=} key Key, can be passed in as a string or Buffer-like object.
+     * @param {String|Buffer|Uint8Array|Array=} salt Salt, can be passed in as a hex string or Buffer-like object.
      * @param {Object=} scryptConfig Configuration for Scrypt
      * @param {Object=} params Discrete Log Parameters
      * @returns {ContactPromise}
@@ -829,18 +831,27 @@ export   class Contact
         let contact = new Contact()
 
         // if there is no defined scrypt config, and no key, automatically switch to ephemeral scrypt settings.
-        if(typeof key === &quot;undefined&quot; &amp;&amp; typeof scryptConfig === &quot;undefined&quot;) scryptConfig = EPHEMERAL_SCRYPT_CONFIG
+        if(!key &amp;&amp; typeof scryptConfig === &quot;undefined&quot;) scryptConfig = EPHEMERAL_SCRYPT_CONFIG
 
         scryptConfig = scryptConfig || DEFAULT_SCRYPT_CONFIG
         params = params || DEFAULT_PARAMS
 
         function getKeyPair(key, salt)
         {
+            // numbers get converted to a string
+            if(typeof key === &quot;number&quot;)
+            {
+                key = key.toString()
+            }
+
+            // strings get converted to buffers (after normalization)
             if (typeof key === &quot;string&quot;)
             {
                 key = Buffer.from(key.normalize(&apos;NFKC&apos;))
             }
-            else if (typeof key === &quot;undefined&quot;)
+            
+            // empty key or no key get one randomly generated
+            if (!key || !key.length)
             {
                 key = exports.randomBytes(32)
             } 
@@ -849,7 +860,7 @@ export   class Contact
             if (typeof salt === &quot;string&quot;)
                 salt = Buffer.from(salt, &apos;hex&apos;)
 
-            return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =&gt;
+            return exports.utils.scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =&gt;
             {
                 key = new bigInt(toHexString(key), 16)
                 let pub = modPow(params.gen, key, params.prime)
@@ -897,7 +908,7 @@ function truncate(x, len)
  * @param {Contact|ContactPromise} receiver 
  * @param {*} data 
  */
-export   function open(receiver, data)
+export function open(receiver, data)
 {
     if (!(receiver instanceof Promise))
     {
@@ -918,7 +929,7 @@ export   function open(receiver, data)
 
         let dhexchange = remember[data.public + &apos;,&apos; + receiver.public]
 
-        return scryptPromise([...Buffer.from(dhexchange, &apos;hex&apos;)], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =&gt;
+        return exports.utils.scryptPromise(Buffer.from(dhexchange, &apos;hex&apos;), data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =&gt;
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), &apos;hex&apos;))
 
@@ -962,7 +973,7 @@ export   function open(receiver, data)
  * @param {Contact} receiver 
  * @param {*} msg
  */
-export   function exchange(sender, receiver, msg)
+export function exchange(sender, receiver, msg)
 {
     if (!(sender instanceof Promise))
     {
@@ -998,7 +1009,7 @@ export   function exchange(sender, receiver, msg)
 
         hmac = hmac.getHMAC(&apos;HEX&apos;)
 
-        return scryptPromise([...Buffer.from(dhexchange, &apos;hex&apos;)], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =&gt;
+        return exports.utils.scryptPromise(Buffer.from(dhexchange, &apos;hex&apos;), hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =&gt;
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), &apos;hex&apos;))
 
@@ -1025,7 +1036,7 @@ export   function exchange(sender, receiver, msg)
  * DiscreteCrypt Symmetric Utilities
  * @hideconstructor
  */
-export   class Symmetric 
+export class Symmetric 
 {
     /**
      * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
@@ -1035,11 +1046,13 @@ export   class Symmetric
      * 
      * @param {String|Buffer|Array} inputKey 
      * @param {*} msg 
-     * @param {Object=} scryptConfig 
+     * @param {Object=} options 
      */
-    static encrypt(inputKey, msg, scryptConfig)
+    static encrypt(inputKey, msg, options)
     {
-        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+        if (!options) options = {}
+
+        if (!options.scrypt) options.scrypt = DEFAULT_SCRYPT_CONFIG
 
         if (typeof inputKey === &quot;undefined&quot;)
         {
@@ -1058,14 +1071,18 @@ export   class Symmetric
         }
 
         let key = exports.randomBytes(32)
-        msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
+
+        if(!options.raw)
+        {
+            msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))
+        }
 
         let hmac = new jsSHA(&apos;SHA-256&apos;, &apos;ARRAYBUFFER&apos;)
         hmac.setHMACKey(key, &apos;ARRAYBUFFER&apos;)
         hmac.update(msg)
         hmac = hmac.getHMAC(&apos;HEX&apos;)
 
-        return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =&gt;
+        return exports.utils.scryptPromise(inputKey, hmac, options.scrypt.N, options.scrypt.r, options.scrypt.p, 32).then(dhkey =&gt;
         {
             let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), &apos;hex&apos;))
 
@@ -1094,11 +1111,12 @@ export   class Symmetric
      * 
      * @param {String|Buffer|Array} inputKey 
      * @param {Object} data 
-     * @param {Object=} scryptConfig 
+     * @param {Object=} options 
      */
-    static decrypt(inputKey, data, scryptConfig)
+    static decrypt(inputKey, data, options)
     {
-        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG
+        if (!options) options = {}
+        if (!options.scrypt) options.scrypt = DEFAULT_SCRYPT_CONFIG
 
         if (typeof inputKey === &quot;undefined&quot;)
         {
@@ -1116,7 +1134,7 @@ export   class Symmetric
             return Promise.reject(&apos;Input key empty.&apos;)
         }
 
-        return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =&gt;
+        return exports.utils.scryptPromise(inputKey, data.hmac, options.scrypt.N, options.scrypt.r, options.scrypt.p, 32).then(ikey =&gt;
         {
             let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), &apos;hex&apos;))
 
@@ -1134,8 +1152,15 @@ export   class Symmetric
 
             if (hmac === data.hmac)
             {
-                payload = aesjs.utils.utf8.fromBytes(payload)
-                return JSON.parse(payload)
+                if(!options.raw)
+                {
+                    payload = aesjs.utils.utf8.fromBytes(payload)
+                    return JSON.parse(payload)
+                }
+                else
+                {
+                    return payload
+                }
             }
             else
             {
@@ -1148,7 +1173,7 @@ export   class Symmetric
 /**
  * Provides sane defaults for use in DiscreteCrypt.js applications
  */
-export   class defaults 
+export class defaults 
 {
     /**
      * Returns the default parameters of DiscreteCrypt.js.

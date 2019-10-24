@@ -599,7 +599,7 @@
     "__docId__": 50,
     "kind": "file",
     "name": "src/discretecrypt.js",
-    "content": "const scrypt = require('scrypt-async')\r\nconst bigInt = require('bn.js')\r\nconst aesjs = require('aes-js')\r\nconst jsSHA = require('jssha')\r\n\r\n// Applied in Password-Based cases.\r\nconst DEFAULT_SCRYPT_CONFIG = {\r\n    N: 1 << 14,\r\n    r: 10,\r\n    p: 3,\r\n    len: 64\r\n}\r\n\r\n// Should be applied for performance reasons when the author is willing to accept \r\n// slightly reduced security for performance reasons. \r\n// This can securely be applied in situations where password input is reasonably decent.\r\nconst TUNED_SCRYPT_CONFIG = {\r\n    N: 1 << 14, \r\n    r: 11, \r\n    p: 1,\r\n    len: 48\r\n}\r\n\r\n// This should be applied in cases where the key doesn't need much stretching. \r\n// Usually due to ephemeral keys\r\nconst EPHEMERAL_SCRYPT_CONFIG = {\r\n    N: 1 << 10, \r\n    r: 4, \r\n    p: 1,\r\n    len: 32\r\n}\r\n\r\n// Funnily enough, it seems the default params can have their pohlig found in 7.    \r\nconst DEFAULT_PARAMS = {\r\n    prime: '1236027852723267358067496240415081192016632901798652377386974104662393263762300791015297301419782476103015366958792837873764932552461292791165884073898812814414137342163134112441573878695866548152604326906481241134560091096795607547486746060322717834549300353793656273878542405925895784382400028374603183267116520399667622873636417533621785188753096887486165751218947390793886174932206305484313257628695734926449809428884085464402485504798782585345665225579018127843073619788513405272670558284073983759985451287742892999484270521626583252756445695489268987027078838378407733148367649564107237496006094048593708959670063677802988307113944522310326616125731276572628521088574537964296697257866765026848588469121515995674723869067535040253689232576404893685613618463095967906841853447414047313021676108205138971649482561844148237707440562831931089544088821151806962538015278155763187487878945694840272084274212918033049841007502061',\r\n    gen: '2'\r\n}\r\n\r\n/**\r\n * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). \r\n * @private\r\n * @param {BigInt|bigInt|string} prime\r\n * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)\r\n */\r\nfunction pohlig(prime, range)\r\n{\r\n    /* istanbul ignore if */\r\n    if (typeof BigInt !== \"undefined\")\r\n    {\r\n        /*\r\n         * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). \r\n         * @param {BigInt|bigInt|string} prime\r\n         * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)\r\n         */\r\n        function native_pohlig(prime, range)\r\n        {\r\n            if (typeof prime === \"string\") prime = BigInt(prime)\r\n            else if (typeof prime === \"object\") prime = BigInt(prime.toString())\r\n\r\n            prime -= BigInt(1)\r\n            let factors = BigInt(1)\r\n\r\n            let max = BigInt((range || (1 << 12)) + 1)\r\n\r\n            /* istanbul ignore next */\r\n            for (let i = BigInt(2); i < max; i++)\r\n            {\r\n                while (!(prime % i))\r\n                {\r\n                    prime /= i\r\n                    factors *= i\r\n                }\r\n            }\r\n\r\n            return [prime.toString(), factors.toString()]\r\n        }\r\n\r\n        return native_pohlig(prime, range)\r\n    }\r\n\r\n    if (!(prime instanceof bigInt)) prime = new bigInt(prime)\r\n\r\n    if(typeof range !== \"undefined\" && typeof range !== \"number\")\r\n    {\r\n        throw \"Only number types are allowed for the range parameter.\"\r\n    }\r\n\r\n    prime.isubn(1)\r\n    let factors = new bigInt(1)\r\n    let max = (range || (1 << 12)) + 1\r\n    for (let i = 2; i < max; i++)\r\n    {\r\n        while (!prime.modn(i))\r\n        {\r\n            prime.idivn(i)\r\n            factors.imuln(i)\r\n        }\r\n    }\r\n\r\n    return [prime.toString(), factors.toString()]\r\n}\r\n\r\n\r\n\r\n/**\r\n * @private\r\n * @param {Number|String|bigInt} a base\r\n * @param {Number|String|bigInt} b exponent\r\n * @param {Number|String|bigInt} c modulus\r\n * @returns {bigInt} result\r\n */\r\nfunction modPow(a, b, c)\r\n{\r\n    if (!(a instanceof bigInt)) a = new bigInt(a)\r\n    if (!(b instanceof bigInt)) b = new bigInt(b)\r\n    if (!(c instanceof bigInt)) c = new bigInt(c)\r\n\r\n    /* istanbul ignore if */\r\n    if (typeof BigInt !== \"undefined\")\r\n    {\r\n        function pow(a, b, c)\r\n        {\r\n            let one = BigInt(1)\r\n            let res = BigInt(1)\r\n            a = a % c;\r\n\r\n            while (b > 0)\r\n            {\r\n                if (b & one)\r\n                    res = (res * a) % c\r\n\r\n                b = b >> one\r\n                a = (a * a) % c\r\n            }\r\n\r\n            return res\r\n        }\r\n\r\n        a = BigInt(a.toString())\r\n        b = BigInt(b.toString())\r\n        c = BigInt(c.toString())\r\n\r\n        return new bigInt(pow(a, b, c).toString())\r\n    }\r\n    else\r\n    {\r\n        let red = bigInt.red(c)\r\n        return a.toRed(red).redPow(b).fromRed()\r\n    }\r\n}\r\n\r\n\r\n\r\n/* istanbul ignore next: Browser specific code */\r\nif(typeof window !== \"undefined\")\r\n{\r\n    if(window.crypto)\r\n    {    \r\n        exports.randomBytes = function(n)\r\n        {\r\n            let arr = new Uint8Array(n)\r\n            window.crypto.getRandomValues(arr)\r\n            return arr\r\n        }\r\n    }\r\n    else\r\n    {\r\n        let warning = false\r\n        exports.randomBytes = function(n)\r\n        {\r\n            if (!warning)\r\n            {\r\n                console.warn('Window.crypto not detected. This might be insecure, please override the exports.randomBytes function with a secure one.')\r\n                warning = true\r\n            }\r\n    \r\n            let arr = new Uint8Array(n)\r\n            for (var i = 0; i < arr.length; i++)\r\n            {\r\n                arr[i] = (Math.random() * 256) | 0\r\n            }\r\n            return arr\r\n        }\r\n    }\r\n\r\n    global.jsSHA = jsSHA\r\n    global.bigInt = bigInt\r\n    global.aesjs = aesjs\r\n}\r\n\r\n\r\n\r\n/**\r\n * Converts a byte array to a hex string\r\n * @private\r\n * @param {Array|Buffer|ArrayBuffer|Uint8Array} byteArray \r\n */\r\nfunction toHexString(byteArray)\r\n{\r\n    var s = '';\r\n    byteArray.forEach(byte =>\r\n    {\r\n        s += ('0' + (byte & 0xFF).toString(16)).slice(-2);\r\n    })\r\n    return s;\r\n}\r\n\r\n/**\r\n * Gets the scrypt value.\r\n * @private\r\n * @param {String|Buffer|Array} key \r\n * @param {String|Buffer|Array} salt \r\n * @param {Number=} N \r\n * @param {Number=} r \r\n * @param {Number=} p \r\n * @param {Number=} len \r\n * @returns {Promise.<Uint8Array|Buffer>} derived key\r\n */\r\nfunction scryptPromise(key, salt, N, r, p, len)\r\n{\r\n    if (typeof key === \"string\")\r\n    {\r\n        key = [...Buffer.from(key.normalize('NFKC'))]\r\n    }\r\n\r\n    if (typeof salt === \"string\") salt = Buffer.from(salt, 'hex')\r\n\r\n    N = N || DEFAULT_SCRYPT_CONFIG.N\r\n    r = r || DEFAULT_SCRYPT_CONFIG.r\r\n    p = p || DEFAULT_SCRYPT_CONFIG.p\r\n    len = len || DEFAULT_SCRYPT_CONFIG.len\r\n\r\n    return new Promise((resolve, reject) =>\r\n    {\r\n        scrypt(key, salt,\r\n        {\r\n            N: N,\r\n            r: r,\r\n            p: p,\r\n            dkLen: len,\r\n            interruptStep: exports.SCRYPT_PAUSE,\r\n            encoding: 'binary'\r\n        }, (key) =>\r\n        {\r\n            resolve(key)\r\n        })\r\n    })\r\n}\r\n\r\nconst PROMISE_TRICK = function()\r\n{\r\n    let arg = arguments\r\n    return Contact._modifyPromise(this[0].then(contact =>\r\n    {\r\n        return contact[this[1]].apply(contact, arg)\r\n    }))\r\n}\r\n\r\n/**\r\n * A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.\r\n */\r\nexport   class ContactPromise\r\n{\r\n    /**\r\n     * \r\n     * @param {Function} data\r\n     * @returns {ContactPromise}\r\n     */\r\n    then /* istanbul ignore next */ (data)\r\n    {\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {Function} err\r\n     * @returns {ContactPromise}      \r\n     */\r\n    catch /* istanbul ignore next */ (err)\r\n    {\r\n    }\r\n    \r\n    /**\r\n     * Signs data using the Contact, using the Schnorr Signature algorithm.    \r\n     * This is not how DiscreteCrypt  (C++) does it,\r\n     * but it will be modified to match this approach.\r\n     * @param {*} data \r\n     * @param {Boolean} bundle\r\n     * @returns {ContactPromise}\r\n     */\r\n    sign /* istanbul ignore next */ (data, bundle)\r\n    {\r\n\r\n    }\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact} recipient \r\n     * @param {*} data \r\n     * @returns {Promise.<Object>}\r\n     * \r\n     */\r\n    open /* istanbul ignore next */ (data)\r\n    {\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact} recipient \r\n     * @param {*} data \r\n     * @returns {Promise.<Object>}\r\n     */\r\n    send /* istanbul ignore next */ (recipient, data)\r\n    {\r\n\r\n    }\r\n\r\n    /**\r\n     * Used to export the (safe) JSON for the Contact\r\n     * @param {Object} extra \r\n     * @returns {ContactPromise}\r\n     * \r\n     */\r\n    export /* istanbul ignore next */ (extra)\r\n    {\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * Verifies the signed data.\r\n\r\n     * @param {Object|Promise.<Object>=} data      \r\n     * @param {Object|Promise.<Object>=} source      \r\n     * @returns {ContactPromise}\r\n     */\r\n    verify /* istanbul ignore next */ (data, source)\r\n    {\r\n\r\n    }\r\n\r\n     /**\r\n      * Returns the public key\r\n     * @returns {ContactPromise.<bigInt>}\r\n     */\r\n    publicKey /* istanbul ignore next */ ()\r\n    {\r\n\r\n    }\r\n\r\n     /**\r\n      * Returns the private key\r\n     * @returns {ContactPromise.<bigInt>}\r\n     */\r\n    privateKey /* istanbul ignore next */ ()\r\n    {\r\n\r\n    }\r\n\r\n    \r\n    /**\r\n     * Computes the private key for a contact from an input key.\r\n     * @param {String|Buffer|Array} key \r\n     * @returns {ContactPromise}\r\n     */\r\n    compute /* istanbul ignore next */ (key)\r\n    {\r\n\r\n    }\r\n\r\n    \r\n    /**\r\n     * \r\n     * @param {*} extra \r\n     * @returns {ContactPromise}\r\n     * \r\n     */\r\n    clean /* istanbul ignore next */ (extra)\r\n    {\r\n\r\n    }\r\n\r\n}\r\n\r\n/**\r\n * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.\r\n */\r\nexport   class Contact\r\n{\r\n    /**\r\n     * Returns the public key\r\n     * @returns {bigInt} public key\r\n     */\r\n    publicKey()\r\n    {\r\n        if (!this.public)\r\n        {\r\n            throw \"Public key not set.\"\r\n        }\r\n\r\n        return new bigInt(this.public)\r\n    }\r\n\r\n    /**\r\n     * Returns the private key\r\n     * @returns {bigInt} private key\r\n     */\r\n    privateKey()\r\n    {\r\n        if (!this.private)\r\n        {\r\n            throw \"Private key not set.\"\r\n        }\r\n\r\n        return new bigInt(this.private)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} params \r\n     * @protected\r\n     * @returns {Contact} Contact\r\n     */\r\n    setParams(params)\r\n    {\r\n        this.params = {\r\n            prime: params.prime.toString(),\r\n            gen: params.gen.toString()\r\n        }\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} scryptConfig\r\n     * @protected\r\n     * @returns {Contact} Contact\r\n     */\r\n    setScrypt(scryptConfig)\r\n    {\r\n        this.scryptConfig = scryptConfig\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * Alias for fromJSON\r\n     * @see fromJSON\r\n     * @param {String|Object} json\r\n     * @returns {ContactPromise|Contact} \r\n     */\r\n    static\r\n    import(json, sync)\r\n    {\r\n        return this.fromJSON(json, sync)\r\n    }\r\n\r\n    /**\r\n     * Imports the asynchronous version of a DiscreteCrypt Contact\r\n     * @private\r\n     * @param {String|Object|Promise} json \r\n     */\r\n    static _fromJSONAsync(json)\r\n    {\r\n        if (!(json instanceof Promise))\r\n        {\r\n            json = Promise.resolve(json)\r\n        }\r\n\r\n        let contact = json.then(json =>\r\n        {\r\n            return Contact._fromJSONSync(json)\r\n        })\r\n\r\n        return this._modifyPromise(contact)\r\n    }\r\n\r\n    /**\r\n     * Imports the synchronous version of a DiscreteCrypt Contact\r\n     * @private\r\n     * @param {String|Object} json \r\n     */\r\n    static _fromJSONSync(json)\r\n    {\r\n        if (typeof json === \"string\")\r\n        {\r\n            json = JSON.parse(json)\r\n        }\r\n\r\n        let contact = new Contact()\r\n        for (var prop in json)\r\n        {\r\n            contact[prop] = json[prop]\r\n        }\r\n\r\n        return contact\r\n    }\r\n\r\n    /**\r\n     * Processes a JSON string or object, and converts it into a Contact class. \r\n     * \r\n     * @param {String|Object|Promise} json\r\n     * @param {Boolean=} sync Determines whether this returns a synchronous contact or asynchronous.\r\n     * If true, the input must be synchronous.\r\n     *  @returns {ContactPromise} \r\n     */\r\n    static fromJSON(json, sync)\r\n    {\r\n        if (sync)\r\n        {\r\n            return Contact._fromJSONSync(json)\r\n        }\r\n\r\n        return Contact._fromJSONAsync(json)\r\n    }\r\n\r\n    /**\r\n     * Used to export the (safe) JSON for the Contact for sharing.\r\n     * @param {Object} extra \r\n     * @returns {Object} An object that is safe to share with others\r\n     */\r\n    export (extra)\r\n    {\r\n        let res = Object.assign(\r\n        {}, this)\r\n\r\n        delete res.private\r\n\r\n        if (extra)\r\n        {\r\n            if (extra.params || extra.all)\r\n            {\r\n                delete res.params\r\n            }\r\n\r\n            if (extra.scryptConfig || extra.all || extra.scrypt)\r\n            {\r\n                delete res.scryptConfig\r\n            }\r\n        }\r\n\r\n        return JSON.stringify(res)\r\n    }\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact|ContactPromise} recipient \r\n     * @param {*} data\r\n     * @returns {Promise.<Object>} Encrypted data\r\n     */\r\n    send(recipient, data)\r\n    {\r\n        return exchange(this, recipient, data)\r\n    }\r\n\r\n    /**\r\n     * Opens an encrypted payload for the contact.\r\n     * @param {*} data \r\n     * @returns {Promise.<Object>} Decrypted data\r\n     */\r\n    open(data)\r\n    {\r\n        return open(this, data)\r\n    }\r\n\r\n    /**\r\n     * Signs data using the Contact, using the Schnorr Signature algorithm.\r\n     * \r\n     * This is not how DiscreteCrypt (C++) currently handles signatures,\r\n     * but that will be changed.\r\n     * \r\n     * @param {*} data \r\n     * @param {Object|Promise.<Object>} data \r\n     * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.\r\n     * @returns {Promise.<Object>} Signature\r\n     */\r\n    sign(data, bundle)\r\n    {\r\n        // Performs the Schnorr Signature Algorithm\r\n\r\n        // constants for the Scrypt step of the signature. \r\n        // this computes K deterministically, (similar to what is recommended in DSA)\r\n        // in such a way that protects the upper bits of the private key.\r\n        // I would've used an HMAC, but I didn't want any information to leak about the private key (by dividing out the hash).\r\n        // These values can likely be tweaked quite freely.\r\n        const N = 1 << 5\r\n        const r = 4\r\n        const p = 1\r\n\r\n        // gets the private key \r\n        let priv = this.privateKey()\r\n\r\n        /*\r\n         * the following line will need to be altered based on the hash algorithm.\r\n         * please do not forget this. it's the length of the output in bytes.\r\n         * ensuring K > (private.length + hash.length) prevents an attacker from learning information about the private key.\r\n         */\r\n        const HASH_LENGTH = 32\r\n        const len = (priv.bitLength() / 8) + HASH_LENGTH + 1\r\n\r\n        // Allows asynchronous input\r\n        if (!(data instanceof Promise))\r\n        {\r\n            data = Promise.resolve(data)\r\n        }\r\n        \r\n        // computes the signature\r\n        return data.then(data =>\r\n        {\r\n            let d = Buffer.from(JSON.stringify(data))\r\n            \r\n            // scrypt is used to create the K value deterministically\r\n            return scryptPromise(d, Buffer.from(priv.toString(16), 'hex'), N, r, p, len).then(k_derived =>\r\n            {\r\n                let K = new bigInt(toHexString(k_derived), 16)       \r\n                \r\n                // K is used to generate R\r\n                let R = Buffer.from(modPow(this.params.gen, K, this.params.prime).toString(16), 'hex')\r\n    \r\n                // compute a public hash\r\n                let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n                hash.update(R)\r\n                hash.update(d)\r\n                hash = hash.getHash('HEX')\r\n                \r\n                // computes the signature values\r\n                let e = new bigInt(hash, 16)\r\n                let s = K.sub(priv.mul(e))\r\n\r\n                let result = { s: s.toString(16), e: e.toString(16) }\r\n                \r\n                if(bundle) result.data = data\r\n\r\n                return result\r\n            })\r\n        })\r\n    }\r\n\r\n    /**\r\n     * Verifies the signed data.\r\n     * @param {Object|Promise.<Object>} data\r\n     * @param {Object|Promise.<Object>=} source      \r\n     * @returns {Promise.<Boolean>} \r\n     */\r\n    verify(data, source)\r\n    {\r\n        if (!(data instanceof Promise))\r\n        {\r\n            data = Promise.resolve(data)\r\n        }\r\n\r\n        if (!(source instanceof Promise))\r\n        {\r\n            source = Promise.resolve(source)\r\n        }\r\n\r\n        return Promise.all([data, source]).then(([data, source]) =>\r\n        {\r\n            if (!data.s || !data.e) return Promise.reject('Signature Not Verified')\r\n            \r\n            let d = Buffer.from(JSON.stringify(source || data.data))\r\n            \r\n            // Gets the e & s bignums\r\n            let s = new bigInt(data.s, 16)\r\n            let e = new bigInt(data.e, 16)\r\n\r\n            // computes the values\r\n            let gs = modPow(this.params.gen, s, this.params.prime)\r\n            let ye = modPow(this.publicKey(), e, this.params.prime)\r\n            \r\n            // multiplies them together to get R (for the hash) \r\n            let R = Buffer.from(gs.mul(ye).mod(new bigInt(this.params.prime)).toString(16), 'hex')\r\n\r\n            // compute the hash\r\n            let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hash.update(R)\r\n            hash.update(d)\r\n            hash = hash.getHash('HEX')\r\n\r\n            // get it as a bigint\r\n            let ev = new bigInt(hash, 16)\r\n\r\n            if(ev.eq(e)) return source || data.data\r\n\r\n            return Promise.reject('Signature Not Verified')\r\n        })\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} extra \r\n     * @returns {Contact}\r\n     */\r\n    clean(extra)\r\n    {\r\n        delete this.private\r\n\r\n        /* istanbul ignore else */\r\n        if (extra)\r\n        {\r\n            if (extra.params || extra.all)\r\n            {\r\n                delete this.params\r\n            }\r\n\r\n            if (extra.scryptConfig || extra.scrypt || extra.all)\r\n            {\r\n                delete this.scryptConfig\r\n            }\r\n        }\r\n\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * Converts the object to the fully asynchronous Contact\r\n     * @returns {ContactPromise}\r\n     */\r\n    async ()\r\n    {\r\n        return Contact._modifyPromise(Promise.resolve(this))\r\n    }\r\n\r\n    static _modifyPromise(prom)\r\n    {\r\n        [\r\n            'sign',\r\n            'open',\r\n            'send',\r\n            'export',\r\n            'verify',\r\n            'publicKey',\r\n            'privateKey',\r\n            'compute',\r\n            'clean'\r\n        ].forEach(func =>\r\n        {\r\n            prom[func] = PROMISE_TRICK.bind([prom, func])\r\n        })\r\n\r\n        prom['async'] = () => prom\r\n\r\n        return prom\r\n    }\r\n\r\n    /**\r\n     * Computes the private key for a contact from an input key.\r\n     * @param {String|Buffer|Array} key \r\n     * @returns {ContactPromise}\r\n     */\r\n    compute(key)\r\n    {\r\n        let salt = Buffer.from(this.salt, 'hex')\r\n\r\n        /* istanbul ignore else : I'm trusting the user input on this one. scrypt will throw an error otherwise */\r\n        if (typeof key === \"string\")\r\n        {\r\n            key = Buffer.from(key.normalize('NFKC'))\r\n        }\r\n\r\n        let scryptProm = scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>\r\n        {\r\n            this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()\r\n\r\n            let publicTest = modPow(this.params.gen, this.privateKey(), this.params.prime).toString()\r\n\r\n            if (this.public !== publicTest) return Promise.reject(\"Incorrect Key\")\r\n\r\n            return this\r\n        })\r\n\r\n        return Contact._modifyPromise(scryptProm)\r\n    }\r\n\r\n    /**\r\n     * Creates a contact from the given key / salt. \r\n     * \r\n     * \r\n     * @param {String|Buffer|Array=} key Key, can be passed in as a string or Buffer-like object.\r\n     * @param {*=} salt Salt, can be passed in as a hex string or Buffer-like object.\r\n     * @param {Object=} scryptConfig Configuration for Scrypt\r\n     * @param {Object=} params Discrete Log Parameters\r\n     * @returns {ContactPromise}\r\n     */\r\n    static create(key, salt, scryptConfig, params)\r\n    {\r\n        let contact = new Contact()\r\n\r\n        // if there is no defined scrypt config, and no key, automatically switch to ephemeral scrypt settings.\r\n        if(typeof key === \"undefined\" && typeof scryptConfig === \"undefined\") scryptConfig = EPHEMERAL_SCRYPT_CONFIG\r\n\r\n        scryptConfig = scryptConfig || DEFAULT_SCRYPT_CONFIG\r\n        params = params || DEFAULT_PARAMS\r\n\r\n        function getKeyPair(key, salt)\r\n        {\r\n            if (typeof key === \"string\")\r\n            {\r\n                key = Buffer.from(key.normalize('NFKC'))\r\n            }\r\n            else if (typeof key === \"undefined\")\r\n            {\r\n                key = exports.randomBytes(32)\r\n            } \r\n\r\n            /* istanbul ignore else: not necessary. I'm trusting that it is an array like object. */\r\n            if (typeof salt === \"string\")\r\n                salt = Buffer.from(salt, 'hex')\r\n\r\n            return scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>\r\n            {\r\n                key = new bigInt(toHexString(key), 16)\r\n                let pub = modPow(params.gen, key, params.prime)\r\n                return [key, pub]\r\n            })\r\n        }\r\n\r\n        if (salt)\r\n        {\r\n            contact.salt = salt\r\n        }\r\n        else\r\n        {\r\n            contact.salt = toHexString(exports.randomBytes(16))\r\n        }\r\n\r\n        contact.setScrypt(scryptConfig).setParams(params)\r\n\r\n        let keyPairPromise = getKeyPair(key, contact.salt).then(([priv, pub]) =>\r\n        {\r\n            contact.private = priv.toString()\r\n            contact.public = pub.toString()\r\n            return contact\r\n        })\r\n\r\n        return Contact._modifyPromise(keyPairPromise)\r\n    }\r\n}\r\n\r\nlet remember = {}\r\n\r\nfunction truncate(x, len)\r\n{\r\n    if (x.length > len)\r\n    {\r\n        return x.substring(0, len)\r\n    }\r\n    return x\r\n}\r\n\r\n// Todo: add some sort of cache cleaner for remember, to prevent memory bloat\r\n\r\n/**\r\n * Opens an encrypted payload\r\n * @param {Contact|ContactPromise} receiver \r\n * @param {*} data \r\n */\r\nexport   function open(receiver, data)\r\n{\r\n    if (!(receiver instanceof Promise))\r\n    {\r\n        receiver = Promise.resolve(receiver)\r\n    }\r\n\r\n    if (!(data instanceof Promise))\r\n    {\r\n        data = Promise.resolve(data)\r\n    }\r\n\r\n    return Promise.all([receiver, data]).then(([receiver, data]) =>\r\n    {\r\n        if (!remember[data.public + ',' + receiver.public])\r\n        {\r\n            remember[data.public + ',' + receiver.public] = modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)\r\n        }\r\n\r\n        let dhexchange = remember[data.public + ',' + receiver.public]\r\n\r\n        return scryptPromise([...Buffer.from(dhexchange, 'hex')], data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))\r\n\r\n            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hmac.setHMACKey(ekey, 'ARRAYBUFFER')\r\n            hmac.update(payload)\r\n\r\n            hmac = hmac.getHMAC('HEX')\r\n\r\n            if (hmac === data.hmac)\r\n            {\r\n                payload = aesjs.utils.utf8.fromBytes(payload)\r\n                return JSON.parse(payload)\r\n            }\r\n            else\r\n            {\r\n                return Promise.reject('Decryption failed.')\r\n            }\r\n        })\r\n    })\r\n}\r\n\r\n/**\r\n * Creates an encrypted payload from the sender, to the receiver.\r\n * \r\n * This code assumes both individuals are using the same parameters. \r\n * \r\n * @todo consider adding advanced options, like allowing the embedding of tuned scrypt parameters\r\n * on the exchange key.\r\n * \r\n * The scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,\r\n * but the speed is not as important in this step. \r\n * \r\n * @param {Contact} sender \r\n * @param {Contact} receiver \r\n * @param {*} msg\r\n */\r\nexport   function exchange(sender, receiver, msg)\r\n{\r\n    if (!(sender instanceof Promise))\r\n    {\r\n        sender = Promise.resolve(sender)\r\n    }\r\n\r\n    if (!(receiver instanceof Promise))\r\n    {\r\n        receiver = Promise.resolve(receiver)\r\n    }\r\n\r\n    if (!(msg instanceof Promise))\r\n    {\r\n        msg = Promise.resolve(msg)\r\n    }\r\n\r\n    return Promise.all([sender, receiver, msg]).then(([sender, receiver, msg]) =>\r\n    {\r\n        if (!remember[sender.public + ',' + receiver.public])\r\n        {\r\n            remember[sender.public + ',' + receiver.public] = modPow(receiver.publicKey(), sender.privateKey(), sender.params.prime).toString(16)\r\n        }\r\n\r\n        msg = JSON.stringify(msg)\r\n\r\n        let dhexchange = remember[sender.public + ',' + receiver.public]\r\n        let key = exports.randomBytes(32)\r\n        msg = aesjs.utils.utf8.toBytes(msg)\r\n\r\n        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n        hmac.setHMACKey(key, 'ARRAYBUFFER')\r\n        hmac.update(msg)\r\n\r\n        hmac = hmac.getHMAC('HEX')\r\n\r\n        return scryptPromise([...Buffer.from(dhexchange, 'hex')], hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.encrypt(key)\r\n\r\n            ekey = aesjs.utils.hex.fromBytes(ekey)\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.encrypt(msg)\r\n            payload = aesjs.utils.hex.fromBytes(payload)\r\n\r\n            return {\r\n                payload: payload,\r\n                key: ekey,\r\n                hmac: hmac,\r\n                public: sender.publicKey().toString(16)\r\n            }\r\n        })\r\n    })\r\n}\r\n\r\n/**\r\n * DiscreteCrypt Symmetric Utilities\r\n * @hideconstructor\r\n */\r\nexport   class Symmetric \r\n{\r\n    /**\r\n     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \r\n     * using a given input key.\r\n     * \r\n     * Uses the input key rather than a DH Exchange.\r\n     * \r\n     * @param {String|Buffer|Array} inputKey \r\n     * @param {*} msg \r\n     * @param {Object=} scryptConfig \r\n     */\r\n    static encrypt(inputKey, msg, scryptConfig)\r\n    {\r\n        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG\r\n\r\n        if (typeof inputKey === \"undefined\")\r\n        {\r\n            return Promise.reject('No input key provided.')\r\n        }\r\n\r\n        /* istanbul ignore else */\r\n        if (typeof inputKey === \"string\")\r\n        {\r\n            inputKey = Buffer.from(inputKey.normalize('NFKC'))\r\n        }\r\n\r\n        if (inputKey.length === 0)\r\n        {\r\n            return Promise.reject('Input key empty.')\r\n        }\r\n\r\n        let key = exports.randomBytes(32)\r\n        msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))\r\n\r\n        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n        hmac.setHMACKey(key, 'ARRAYBUFFER')\r\n        hmac.update(msg)\r\n        hmac = hmac.getHMAC('HEX')\r\n\r\n        return scryptPromise([...inputKey], hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.encrypt(key)\r\n\r\n            ekey = aesjs.utils.hex.fromBytes(ekey)\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.encrypt(msg)\r\n            payload = aesjs.utils.hex.fromBytes(payload)\r\n\r\n            return {\r\n                payload: payload,\r\n                key: ekey,\r\n                hmac: hmac\r\n            }\r\n        })\r\n    }\r\n\r\n    /**\r\n     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \r\n     * using a given input key.\r\n     * \r\n     * Uses the input key rather than a DH Exchange.\r\n     * \r\n     * @param {String|Buffer|Array} inputKey \r\n     * @param {Object} data \r\n     * @param {Object=} scryptConfig \r\n     */\r\n    static decrypt(inputKey, data, scryptConfig)\r\n    {\r\n        if (!scryptConfig) scryptConfig = DEFAULT_SCRYPT_CONFIG\r\n\r\n        if (typeof inputKey === \"undefined\")\r\n        {\r\n            return Promise.reject('No input key provided.')\r\n        }\r\n\r\n        /* istanbul ignore else */\r\n        if (typeof inputKey === \"string\")\r\n        {\r\n            inputKey = Buffer.from(inputKey.normalize('NFKC'))\r\n        }\r\n\r\n        if (inputKey.length === 0)\r\n        {\r\n            return Promise.reject('Input key empty.')\r\n        }\r\n\r\n        return scryptPromise([...inputKey], data.hmac, scryptConfig.N, scryptConfig.r, scryptConfig.p, 32).then(ikey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))\r\n\r\n            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hmac.setHMACKey(ekey, 'ARRAYBUFFER')\r\n            hmac.update(payload)\r\n\r\n            hmac = hmac.getHMAC('HEX')\r\n\r\n            if (hmac === data.hmac)\r\n            {\r\n                payload = aesjs.utils.utf8.fromBytes(payload)\r\n                return JSON.parse(payload)\r\n            }\r\n            else\r\n            {\r\n                return Promise.reject('Decryption failed.')\r\n            }\r\n        })\r\n    }\r\n}\r\n\r\n/**\r\n * Provides sane defaults for use in DiscreteCrypt.js applications\r\n */\r\nexport   class defaults \r\n{\r\n    /**\r\n     * Returns the default parameters of DiscreteCrypt.js.\r\n     * @returns {Object}\r\n     */\r\n    static params()\r\n    {\r\n        return Object.freeze(DEFAULT_PARAMS)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * This Scrypt configuration is the default recommended scrypt configuration.\r\n     * This is for securing highly sensitive data in worst case conditions.\r\n     * @returns {Object}\r\n     */\r\n    static scrypt()\r\n    {\r\n        return Object.freeze(DEFAULT_SCRYPT_CONFIG)    \r\n    }\r\n\r\n    /**\r\n     * This Scrypt Configuration should be applied when the keys are ephemeral.\r\n     * @returns {Object}\r\n     * \r\n     */\r\n    static ephemeralScrypt() \r\n    {\r\n        return Object.freeze(EPHEMERAL_SCRYPT_CONFIG)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * Should be applied for performance reasons when the author is willing to accept \r\n     * slightly reduced security for performance reasons. \r\n     * \r\n     * This can securely be applied in situations where password input is reasonably decent.\r\n     * \r\n     * Consider it a healthy middle ground between the default (top-secret) and \r\n     * ephemeral.\r\n     * @returns {Object}\r\n     */\r\n    static tunedScrypt()\r\n    {\r\n        return Object.freeze(TUNED_SCRYPT_CONFIG)\r\n    }\r\n\r\n}\r\n\r\nexports.utils = {\r\n    modPow: modPow,\r\n    truncate: truncate,\r\n    scryptPromise: scryptPromise,\r\n    hex: toHexString,\r\n    pohlig: pohlig\r\n}\r\n\r\nexports.defaults = defaults\r\nexports.Symmetric = Symmetric\r\n\r\nexports.clearCache = function()\r\n{\r\n    remember = {}\r\n}\r\n\r\nexports.Contact = Contact\r\nexports.open = open\r\nexports.exchange = exchange\r\nexports.SCRYPT_PAUSE = 0",
+    "content": "const scrypt = require('scrypt-async')\r\nconst bigInt = require('bn.js')\r\nconst aesjs = require('aes-js')\r\nconst jsSHA = require('jssha')\r\n\r\n// Applied in Password-Based cases.\r\nconst DEFAULT_SCRYPT_CONFIG = {\r\n    N: 1 << 14,\r\n    r: 10,\r\n    p: 3,\r\n    len: 64\r\n}\r\n\r\n// Should be applied for performance reasons when the author is willing to accept \r\n// slightly reduced security for performance reasons. \r\n// This can securely be applied in situations where password input is reasonably decent.\r\nconst TUNED_SCRYPT_CONFIG = {\r\n    N: 1 << 14, \r\n    r: 11, \r\n    p: 1,\r\n    len: 48\r\n}\r\n\r\n// This should be applied in cases where the key doesn't need much stretching. \r\n// Usually due to ephemeral keys\r\nconst EPHEMERAL_SCRYPT_CONFIG = {\r\n    N: 1 << 10, \r\n    r: 4, \r\n    p: 1,\r\n    len: 32\r\n}\r\n\r\n// Funnily enough, it seems the default params can have their pohlig found in 7.    \r\nconst DEFAULT_PARAMS = {\r\n    prime: '1236027852723267358067496240415081192016632901798652377386974104662393263762300791015297301419782476103015366958792837873764932552461292791165884073898812814414137342163134112441573878695866548152604326906481241134560091096795607547486746060322717834549300353793656273878542405925895784382400028374603183267116520399667622873636417533621785188753096887486165751218947390793886174932206305484313257628695734926449809428884085464402485504798782585345665225579018127843073619788513405272670558284073983759985451287742892999484270521626583252756445695489268987027078838378407733148367649564107237496006094048593708959670063677802988307113944522310326616125731276572628521088574537964296697257866765026848588469121515995674723869067535040253689232576404893685613618463095967906841853447414047313021676108205138971649482561844148237707440562831931089544088821151806962538015278155763187487878945694840272084274212918033049841007502061',\r\n    gen: '2'\r\n}\r\n\r\n/**\r\n * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). \r\n * @private\r\n * @param {BigInt|bigInt|string} prime\r\n * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)\r\n */\r\nfunction pohlig(prime, range)\r\n{\r\n    // checks the range\r\n    if(typeof range !== \"undefined\" && typeof range !== \"number\")\r\n    {\r\n        throw \"Only number types are allowed for the range parameter.\"\r\n    }\r\n\r\n    /* istanbul ignore if */\r\n    if (typeof BigInt !== \"undefined\")\r\n    {\r\n        /*\r\n         * This assumes that this is a Nearly Safe Prime, with factors under 4096 (default). \r\n         * @param {BigInt|bigInt|string} prime\r\n         * @param {Number=} range The largest allowed prime factor (aside from the pohlig itself)\r\n         */\r\n        function native_pohlig(prime, range)\r\n        {\r\n            if (typeof prime === \"string\") prime = BigInt(prime)\r\n            else if (typeof prime !== \"bigint\") prime = BigInt(prime.toString())\r\n\r\n            prime -= BigInt(1)\r\n            let factors = BigInt(1)\r\n\r\n            let max = BigInt((range || (1 << 12)) + 1)\r\n\r\n            /* istanbul ignore next */\r\n            for (let i = BigInt(2); i < max; i++)\r\n            {\r\n                while (!(prime % i))\r\n                {\r\n                    prime /= i\r\n                    factors *= i\r\n                }\r\n            }\r\n\r\n            return [prime.toString(), factors.toString()]\r\n        }\r\n\r\n        return native_pohlig(prime, range)\r\n    }\r\n\r\n    if (!(prime instanceof bigInt)) prime = new bigInt(prime)\r\n\r\n    prime.isubn(1)\r\n    let factors = new bigInt(1)\r\n    let max = (range || (1 << 12)) + 1\r\n    for (let i = 2; i < max; i++)\r\n    {\r\n        while (!prime.modn(i))\r\n        {\r\n            prime.idivn(i)\r\n            factors.imuln(i)\r\n        }\r\n    }\r\n\r\n    return [prime.toString(), factors.toString()]\r\n}\r\n\r\n\r\n\r\n/**\r\n * @private\r\n * @param {Number|String|bigInt} a base\r\n * @param {Number|String|bigInt} b exponent\r\n * @param {Number|String|bigInt} c modulus\r\n * @returns {bigInt} result\r\n */\r\nfunction modPow(a, b, c)\r\n{\r\n    if (!(a instanceof bigInt)) a = new bigInt(a)\r\n    if (!(b instanceof bigInt)) b = new bigInt(b)\r\n    if (!(c instanceof bigInt)) c = new bigInt(c)\r\n\r\n    /* istanbul ignore if */\r\n    if (typeof BigInt !== \"undefined\")\r\n    {\r\n        function pow(a, b, c)\r\n        {\r\n            let one = BigInt(1)\r\n            let res = BigInt(1)\r\n            a = a % c;\r\n\r\n            while (b > 0)\r\n            {\r\n                if (b & one)\r\n                    res = (res * a) % c\r\n\r\n                b = b >> one\r\n                a = (a * a) % c\r\n            }\r\n\r\n            return res\r\n        }\r\n\r\n        a = BigInt(a.toString())\r\n        b = BigInt(b.toString())\r\n        c = BigInt(c.toString())\r\n\r\n        return new bigInt(pow(a, b, c).toString())\r\n    }\r\n    else\r\n    {\r\n        let red = bigInt.red(c)\r\n        return a.toRed(red).redPow(b).fromRed()\r\n    }\r\n}\r\n\r\n\r\n\r\n/* istanbul ignore next: Browser specific code */\r\nif(typeof window !== \"undefined\")\r\n{\r\n    if(window.crypto)\r\n    {    \r\n        exports.randomBytes = function(n)\r\n        {\r\n            let arr = new Uint8Array(n)\r\n            window.crypto.getRandomValues(arr)\r\n            return arr\r\n        }\r\n    }\r\n    else\r\n    {\r\n        let warning = false\r\n        exports.randomBytes = function(n)\r\n        {\r\n            if (!warning)\r\n            {\r\n                console.warn('Window.crypto not detected. This might be insecure, please override the exports.randomBytes function with a secure one.')\r\n                warning = true\r\n            }\r\n    \r\n            let arr = new Uint8Array(n)\r\n            for (var i = 0; i < arr.length; i++)\r\n            {\r\n                arr[i] = (Math.random() * 256) | 0\r\n            }\r\n            return arr\r\n        }\r\n    }\r\n\r\n    global.jsSHA = jsSHA\r\n    global.bigInt = bigInt\r\n    global.aesjs = aesjs\r\n}\r\n\r\n\r\n\r\n/**\r\n * Converts a byte array to a hex string\r\n * @private\r\n * @param {Array|Buffer|ArrayBuffer|Uint8Array} byteArray \r\n */\r\nfunction toHexString(byteArray)\r\n{\r\n    var s = '';\r\n    byteArray.forEach(byte =>\r\n    {\r\n        s += ('0' + (byte & 0xFF).toString(16)).slice(-2);\r\n    })\r\n    return s;\r\n}\r\n\r\n/**\r\n * Gets the scrypt value.\r\n * @private\r\n * @param {String|Buffer|Array} key \r\n * @param {String|Buffer|Array} salt \r\n * @param {Number=} N \r\n * @param {Number=} r \r\n * @param {Number=} p \r\n * @param {Number=} len \r\n * @returns {Promise.<Uint8Array|Buffer>} derived key\r\n */\r\nfunction scryptPromise(key, salt, N, r, p, len)\r\n{\r\n    if (typeof key === \"string\")\r\n    {\r\n        key = Buffer.from(key.normalize('NFKC'))\r\n    } \r\n    \r\n    if (typeof salt === \"string\") salt = Buffer.from(salt, 'hex')\r\n\r\n    N = N || DEFAULT_SCRYPT_CONFIG.N\r\n    r = r || DEFAULT_SCRYPT_CONFIG.r\r\n    p = p || DEFAULT_SCRYPT_CONFIG.p\r\n    len = len || DEFAULT_SCRYPT_CONFIG.len\r\n\r\n    if(!Number.isInteger(len)) \r\n        return Promise.reject('Length is not a number.')    \r\n\r\n    return new Promise((resolve, reject) =>\r\n    {\r\n        scrypt(key, salt,\r\n        {\r\n            N: N,\r\n            r: r,\r\n            p: p,\r\n            dkLen: len,\r\n            interruptStep: exports.SCRYPT_PAUSE,\r\n            encoding: 'binary'\r\n        }, (key) =>\r\n        {\r\n            resolve(key)\r\n        })\r\n    })\r\n}\r\n\r\nconst PROMISE_TRICK = function()\r\n{\r\n    let arg = arguments\r\n    return Contact._modifyPromise(this[0].then(contact =>\r\n    {\r\n        return contact[this[1]].apply(contact, arg)\r\n    }))\r\n}\r\n\r\n/**\r\n * A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.\r\n */\r\nexport class ContactPromise\r\n{\r\n    /**\r\n     * \r\n     * @param {Function} data\r\n     * @returns {ContactPromise}\r\n     */\r\n    then /* istanbul ignore next */ (data)\r\n    {\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {Function} err\r\n     * @returns {ContactPromise}      \r\n     */\r\n    catch /* istanbul ignore next */ (err)\r\n    {\r\n    }\r\n    \r\n    /**\r\n     * Signs data using the Contact, using the Schnorr Signature algorithm.    \r\n     * This is not how DiscreteCrypt  (C++) does it,\r\n     * but it will be modified to match this approach.\r\n     * @param {*} data \r\n     * @param {Boolean} bundle\r\n     * @returns {ContactPromise}\r\n     */\r\n    sign /* istanbul ignore next */ (data, bundle)\r\n    {\r\n\r\n    }\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {*} data \r\n     * @returns {Promise.<Object>}\r\n     * \r\n     */\r\n    open /* istanbul ignore next */ (data)\r\n    {\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact} recipient \r\n     * @param {*} data \r\n     * @returns {Promise.<Object>}\r\n     */\r\n    send /* istanbul ignore next */ (recipient, data)\r\n    {\r\n\r\n    }\r\n\r\n    /**\r\n     * Used to export the (safe) JSON for the Contact\r\n     * @param {Object} extra \r\n     * @returns {ContactPromise}\r\n     * \r\n     */\r\n    export /* istanbul ignore next */ (extra)\r\n    {\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * Verifies the signed data.\r\n\r\n     * @param {Object|Promise.<Object>=} data      \r\n     * @param {Object|Promise.<Object>=} source      \r\n     * @returns {ContactPromise}\r\n     */\r\n    verify /* istanbul ignore next */ (data, source)\r\n    {\r\n\r\n    }\r\n\r\n     /**\r\n      * Returns the public key\r\n     * @returns {ContactPromise.<bigInt>}\r\n     */\r\n    publicKey /* istanbul ignore next */ ()\r\n    {\r\n\r\n    }\r\n\r\n     /**\r\n      * Returns the private key\r\n     * @returns {ContactPromise.<bigInt>}\r\n     */\r\n    privateKey /* istanbul ignore next */ ()\r\n    {\r\n\r\n    }\r\n\r\n    \r\n    /**\r\n     * Computes the private key for a contact from an input key.\r\n     * @param {String|Buffer|Array} key \r\n     * @returns {ContactPromise}\r\n     */\r\n    compute /* istanbul ignore next */ (key)\r\n    {\r\n\r\n    }\r\n\r\n    \r\n    /**\r\n     * \r\n     * @param {*} extra \r\n     * @returns {ContactPromise}\r\n     * \r\n     */\r\n    clean /* istanbul ignore next */ (extra)\r\n    {\r\n\r\n    }\r\n\r\n}\r\n\r\n/**\r\n * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.\r\n */\r\nexport class Contact\r\n{\r\n    /**\r\n     * Returns the public key\r\n     * @returns {bigInt} public key\r\n     */\r\n    publicKey()\r\n    {\r\n        if (!this.public)\r\n        {\r\n            throw \"Public key not set.\"\r\n        }\r\n\r\n        return new bigInt(this.public)\r\n    }\r\n\r\n    /**\r\n     * Returns the private key\r\n     * @returns {bigInt} private key\r\n     */\r\n    privateKey()\r\n    {\r\n        if (!this.private)\r\n        {\r\n            throw \"Private key not set.\"\r\n        }\r\n\r\n        return new bigInt(this.private)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} params \r\n     * @protected\r\n     * @returns {Contact} Contact\r\n     */\r\n    setParams(params)\r\n    {\r\n        this.params = {\r\n            prime: params.prime.toString(),\r\n            gen: params.gen.toString()\r\n        }\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} scryptConfig\r\n     * @protected\r\n     * @returns {Contact} Contact\r\n     */\r\n    setScrypt(scryptConfig)\r\n    {\r\n        this.scryptConfig = scryptConfig\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * Alias for fromJSON\r\n     * @see fromJSON\r\n     * @param {String|Object} json\r\n     * @param {Boolean} sync Specifies whether this should be synchronous or not\r\n     * @returns {ContactPromise|Contact} \r\n     */\r\n    static\r\n    import(json, sync)\r\n    {\r\n        return this.fromJSON(json, sync)\r\n    }\r\n\r\n    /**\r\n     * Imports the asynchronous version of a DiscreteCrypt Contact\r\n     * @private\r\n     * @param {String|Object|Promise} json \r\n     */\r\n    static _fromJSONAsync(json)\r\n    {\r\n        if (!(json instanceof Promise))\r\n        {\r\n            json = Promise.resolve(json)\r\n        }\r\n\r\n        let contact = json.then(json =>\r\n        {\r\n            return Contact._fromJSONSync(json)\r\n        })\r\n\r\n        return this._modifyPromise(contact)\r\n    }\r\n\r\n    /**\r\n     * Imports the synchronous version of a DiscreteCrypt Contact\r\n     * @private\r\n     * @param {String|Object} json \r\n     */\r\n    static _fromJSONSync(json)\r\n    {\r\n        if (typeof json === \"string\")\r\n        {\r\n            json = JSON.parse(json)\r\n        }\r\n\r\n        let contact = new Contact()\r\n        for (var prop in json)\r\n        {\r\n            contact[prop] = json[prop]\r\n        }\r\n\r\n        return contact\r\n    }\r\n\r\n    /**\r\n     * Processes a JSON string or object, and converts it into a Contact class. \r\n     * \r\n     * @param {String|Object|Promise} json\r\n     * @param {Boolean=} sync Determines whether this returns a synchronous contact or asynchronous.\r\n     * If true, the input must be synchronous.\r\n     *  @returns {ContactPromise} \r\n     */\r\n    static fromJSON(json, sync)\r\n    {\r\n        if (sync)\r\n        {\r\n            return Contact._fromJSONSync(json)\r\n        }\r\n\r\n        return Contact._fromJSONAsync(json)\r\n    }\r\n\r\n    /**\r\n     * Used to export the (safe) JSON for the Contact for sharing.\r\n     * @param {Object} extra \r\n     * @returns {Object} An object that is safe to share with others\r\n     */\r\n    export (extra)\r\n    {\r\n        let res = Object.assign(\r\n        {}, this)\r\n\r\n        delete res.private\r\n\r\n        if (extra)\r\n        {\r\n            if (extra.params || extra.all)\r\n            {\r\n                delete res.params\r\n            }\r\n\r\n            if (extra.scryptConfig || extra.all || extra.scrypt)\r\n            {\r\n                delete res.scryptConfig\r\n            }\r\n        }\r\n\r\n        return JSON.stringify(res)\r\n    }\r\n\r\n    /**\r\n     * Sends the data to the recipient, encrypted.\r\n     * @param {Contact|ContactPromise} recipient \r\n     * @param {*} data\r\n     * @returns {Promise.<Object>} Encrypted data\r\n     */\r\n    send(recipient, data)\r\n    {\r\n        return exchange(this, recipient, data)\r\n    }\r\n\r\n    /**\r\n     * Opens an encrypted payload for the contact.\r\n     * @param {*} data \r\n     * @returns {Promise.<Object>} Decrypted data\r\n     */\r\n    open(data)\r\n    {\r\n        return open(this, data)\r\n    }\r\n\r\n    /**\r\n     * Signs data using the Contact, using the Schnorr Signature algorithm.\r\n     * \r\n     * This is not how DiscreteCrypt (C++) currently handles signatures,\r\n     * but that will be changed.\r\n     * \r\n     * @param {Object|Promise.<Object>} data \r\n     * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.\r\n     * @returns {Promise.<Object>} Signature\r\n     */\r\n    sign(data, bundle)\r\n    {\r\n        // Performs the Schnorr Signature Algorithm\r\n\r\n        // constants for the Scrypt step of the signature. \r\n        // this computes K deterministically, (similar to what is recommended in DSA)\r\n        // in such a way that protects the upper bits of the private key.\r\n        // I would've used an HMAC, but I didn't want any information to leak about the private key (by dividing out the hash).\r\n        // These values can likely be tweaked quite freely.\r\n        const N = 1 << 5\r\n        const r = 4\r\n        const p = 1\r\n\r\n        // gets the private key \r\n        let priv = this.privateKey()\r\n\r\n        /*\r\n         * the following line will need to be altered based on the hash algorithm.\r\n         * please do not forget this. it's the length of the output in bytes.\r\n         * ensuring K > (private.length + hash.length) prevents an attacker from learning information about the private key.\r\n         */\r\n        const HASH_LENGTH = 32\r\n        const len = Math.round((priv.bitLength() / 8) + HASH_LENGTH + 1)\r\n\r\n        // Allows asynchronous input\r\n        if (!(data instanceof Promise))\r\n        {\r\n            data = Promise.resolve(data)\r\n        }\r\n        \r\n        // computes the signature\r\n        return data.then(data =>\r\n        {\r\n            let d = Buffer.from(JSON.stringify(data))\r\n            \r\n            // scrypt is used to create the K value deterministically\r\n            return exports.utils.scryptPromise(d, Buffer.from(priv.toString(16), 'hex'), N, r, p, len).then(k_derived =>\r\n            {\r\n                let K = new bigInt(toHexString(k_derived), 16)       \r\n                \r\n                // K is used to generate R\r\n                let R = Buffer.from(modPow(this.params.gen, K, this.params.prime).toString(16), 'hex')\r\n    \r\n                // compute a public hash\r\n                let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n                hash.update(R)\r\n                hash.update(d)\r\n                hash = hash.getHash('HEX')\r\n                \r\n                // computes the signature values\r\n                let e = new bigInt(hash, 16)\r\n                let s = K.sub(priv.mul(e))\r\n\r\n                let result = { s: s.toString(16), e: e.toString(16) }\r\n                \r\n                if(bundle) result.data = data\r\n\r\n                return result\r\n            })\r\n        })\r\n    }\r\n\r\n    /**\r\n     * Verifies the signed data.\r\n     * @param {Object|Promise.<Object>} data\r\n     * @param {Object|Promise.<Object>=} source      \r\n     * @returns {Promise.<Boolean>} \r\n     */\r\n    verify(data, source)\r\n    {\r\n        if (!(data instanceof Promise))\r\n        {\r\n            data = Promise.resolve(data)\r\n        }\r\n\r\n        if (!(source instanceof Promise))\r\n        {\r\n            source = Promise.resolve(source)\r\n        }\r\n\r\n        return Promise.all([data, source]).then(([data, source]) =>\r\n        {\r\n            if (!data.s || !data.e) return Promise.reject('Signature Not Verified')\r\n            \r\n            let d = Buffer.from(JSON.stringify(source || data.data))\r\n            \r\n            // Gets the e & s bignums\r\n            let s = new bigInt(data.s, 16)\r\n            let e = new bigInt(data.e, 16)\r\n\r\n            // computes the values\r\n            let gs = modPow(this.params.gen, s, this.params.prime)\r\n            let ye = modPow(this.publicKey(), e, this.params.prime)\r\n            \r\n            // multiplies them together to get R (for the hash) \r\n            let R = Buffer.from(gs.mul(ye).mod(new bigInt(this.params.prime)).toString(16), 'hex')\r\n\r\n            // compute the hash\r\n            let hash = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hash.update(R)\r\n            hash.update(d)\r\n            hash = hash.getHash('HEX')\r\n\r\n            // get it as a bigint\r\n            let ev = new bigInt(hash, 16)\r\n\r\n            if(ev.eq(e)) return source || data.data\r\n\r\n            return Promise.reject('Signature Not Verified')\r\n        })\r\n    }\r\n\r\n    /**\r\n     * \r\n     * @param {*} extra \r\n     * @returns {Contact}\r\n     */\r\n    clean(extra)\r\n    {\r\n        delete this.private\r\n\r\n        /* istanbul ignore else */\r\n        if (extra)\r\n        {\r\n            if (extra.params || extra.all)\r\n            {\r\n                delete this.params\r\n            }\r\n\r\n            if (extra.scryptConfig || extra.scrypt || extra.all)\r\n            {\r\n                delete this.scryptConfig\r\n            }\r\n        }\r\n\r\n        return this\r\n    }\r\n\r\n    /**\r\n     * Converts the object to the fully asynchronous Contact\r\n     * @returns {ContactPromise}\r\n     */\r\n    async ()\r\n    {\r\n        return Contact._modifyPromise(Promise.resolve(this))\r\n    }\r\n\r\n    static _modifyPromise(prom)\r\n    {\r\n        [\r\n            'sign',\r\n            'open',\r\n            'send',\r\n            'export',\r\n            'verify',\r\n            'publicKey',\r\n            'privateKey',\r\n            'compute',\r\n            'clean'\r\n        ].forEach(func =>\r\n        {\r\n            prom[func] = PROMISE_TRICK.bind([prom, func])\r\n        })\r\n\r\n        prom['async'] = () => prom\r\n\r\n        return prom\r\n    }\r\n\r\n    /**\r\n     * Computes the private key for a contact from an input key.\r\n     * @param {String|Buffer|Array} key \r\n     * @returns {ContactPromise}\r\n     */\r\n    compute(key)\r\n    {\r\n        let salt = Buffer.from(this.salt, 'hex')\r\n\r\n        /* istanbul ignore else : I'm trusting the user input on this one. scrypt will throw an error otherwise */\r\n        if (typeof key === \"string\")\r\n        {\r\n            key = Buffer.from(key.normalize('NFKC'))\r\n        }\r\n\r\n        let scryptProm = exports.utils.scryptPromise(key, salt, this.scryptConfig.N, this.scryptConfig.r, this.scryptConfig.p, this.scryptConfig.len).then(key =>\r\n        {\r\n            this.private = new bigInt(toHexString(key), 16).mod(new bigInt(this.params.prime)).toString()\r\n\r\n            let publicTest = modPow(this.params.gen, this.privateKey(), this.params.prime).toString()\r\n\r\n            if (this.public !== publicTest) return Promise.reject(\"Incorrect Key\")\r\n\r\n            return this\r\n        })\r\n\r\n        return Contact._modifyPromise(scryptProm)\r\n    }\r\n\r\n    /**\r\n     * Creates a contact from the given key / salt. \r\n     * \r\n     * @param {String|Buffer|Uint8Array|Array=} key Key, can be passed in as a string or Buffer-like object.\r\n     * @param {String|Buffer|Uint8Array|Array=} salt Salt, can be passed in as a hex string or Buffer-like object.\r\n     * @param {Object=} scryptConfig Configuration for Scrypt\r\n     * @param {Object=} params Discrete Log Parameters\r\n     * @returns {ContactPromise}\r\n     */\r\n    static create(key, salt, scryptConfig, params)\r\n    {\r\n        let contact = new Contact()\r\n\r\n        // if there is no defined scrypt config, and no key, automatically switch to ephemeral scrypt settings.\r\n        if(!key && typeof scryptConfig === \"undefined\") scryptConfig = EPHEMERAL_SCRYPT_CONFIG\r\n\r\n        scryptConfig = scryptConfig || DEFAULT_SCRYPT_CONFIG\r\n        params = params || DEFAULT_PARAMS\r\n\r\n        function getKeyPair(key, salt)\r\n        {\r\n            // numbers get converted to a string\r\n            if(typeof key === \"number\")\r\n            {\r\n                key = key.toString()\r\n            }\r\n\r\n            // strings get converted to buffers (after normalization)\r\n            if (typeof key === \"string\")\r\n            {\r\n                key = Buffer.from(key.normalize('NFKC'))\r\n            }\r\n            \r\n            // empty key or no key get one randomly generated\r\n            if (!key || !key.length)\r\n            {\r\n                key = exports.randomBytes(32)\r\n            } \r\n\r\n            /* istanbul ignore else: not necessary. I'm trusting that it is an array like object. */\r\n            if (typeof salt === \"string\")\r\n                salt = Buffer.from(salt, 'hex')\r\n\r\n            return exports.utils.scryptPromise(key, salt, scryptConfig.N, scryptConfig.r, scryptConfig.p, scryptConfig.len).then(key =>\r\n            {\r\n                key = new bigInt(toHexString(key), 16)\r\n                let pub = modPow(params.gen, key, params.prime)\r\n                return [key, pub]\r\n            })\r\n        }\r\n\r\n        if (salt)\r\n        {\r\n            contact.salt = salt\r\n        }\r\n        else\r\n        {\r\n            contact.salt = toHexString(exports.randomBytes(16))\r\n        }\r\n\r\n        contact.setScrypt(scryptConfig).setParams(params)\r\n\r\n        let keyPairPromise = getKeyPair(key, contact.salt).then(([priv, pub]) =>\r\n        {\r\n            contact.private = priv.toString()\r\n            contact.public = pub.toString()\r\n            return contact\r\n        })\r\n\r\n        return Contact._modifyPromise(keyPairPromise)\r\n    }\r\n}\r\n\r\nlet remember = {}\r\n\r\nfunction truncate(x, len)\r\n{\r\n    if (x.length > len)\r\n    {\r\n        return x.substring(0, len)\r\n    }\r\n    return x\r\n}\r\n\r\n// Todo: add some sort of cache cleaner for remember, to prevent memory bloat\r\n\r\n/**\r\n * Opens an encrypted payload\r\n * @param {Contact|ContactPromise} receiver \r\n * @param {*} data \r\n */\r\nexport function open(receiver, data)\r\n{\r\n    if (!(receiver instanceof Promise))\r\n    {\r\n        receiver = Promise.resolve(receiver)\r\n    }\r\n\r\n    if (!(data instanceof Promise))\r\n    {\r\n        data = Promise.resolve(data)\r\n    }\r\n\r\n    return Promise.all([receiver, data]).then(([receiver, data]) =>\r\n    {\r\n        if (!remember[data.public + ',' + receiver.public])\r\n        {\r\n            remember[data.public + ',' + receiver.public] = modPow(new bigInt(data.public, 16), receiver.privateKey(), receiver.params.prime).toString(16)\r\n        }\r\n\r\n        let dhexchange = remember[data.public + ',' + receiver.public]\r\n\r\n        return exports.utils.scryptPromise(Buffer.from(dhexchange, 'hex'), data.hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))\r\n\r\n            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hmac.setHMACKey(ekey, 'ARRAYBUFFER')\r\n            hmac.update(payload)\r\n\r\n            hmac = hmac.getHMAC('HEX')\r\n\r\n            if (hmac === data.hmac)\r\n            {\r\n                payload = aesjs.utils.utf8.fromBytes(payload)\r\n                return JSON.parse(payload)\r\n            }\r\n            else\r\n            {\r\n                return Promise.reject('Decryption failed.')\r\n            }\r\n        })\r\n    })\r\n}\r\n\r\n/**\r\n * Creates an encrypted payload from the sender, to the receiver.\r\n * \r\n * This code assumes both individuals are using the same parameters. \r\n * \r\n * @todo consider adding advanced options, like allowing the embedding of tuned scrypt parameters\r\n * on the exchange key.\r\n * \r\n * The scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,\r\n * but the speed is not as important in this step. \r\n * \r\n * @param {Contact} sender \r\n * @param {Contact} receiver \r\n * @param {*} msg\r\n */\r\nexport function exchange(sender, receiver, msg)\r\n{\r\n    if (!(sender instanceof Promise))\r\n    {\r\n        sender = Promise.resolve(sender)\r\n    }\r\n\r\n    if (!(receiver instanceof Promise))\r\n    {\r\n        receiver = Promise.resolve(receiver)\r\n    }\r\n\r\n    if (!(msg instanceof Promise))\r\n    {\r\n        msg = Promise.resolve(msg)\r\n    }\r\n\r\n    return Promise.all([sender, receiver, msg]).then(([sender, receiver, msg]) =>\r\n    {\r\n        if (!remember[sender.public + ',' + receiver.public])\r\n        {\r\n            remember[sender.public + ',' + receiver.public] = modPow(receiver.publicKey(), sender.privateKey(), sender.params.prime).toString(16)\r\n        }\r\n\r\n        msg = JSON.stringify(msg)\r\n\r\n        let dhexchange = remember[sender.public + ',' + receiver.public]\r\n        let key = exports.randomBytes(32)\r\n        msg = aesjs.utils.utf8.toBytes(msg)\r\n\r\n        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n        hmac.setHMACKey(key, 'ARRAYBUFFER')\r\n        hmac.update(msg)\r\n\r\n        hmac = hmac.getHMAC('HEX')\r\n\r\n        return exports.utils.scryptPromise(Buffer.from(dhexchange, 'hex'), hmac, receiver.scryptConfig.N, receiver.scryptConfig.r, receiver.scryptConfig.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.encrypt(key)\r\n\r\n            ekey = aesjs.utils.hex.fromBytes(ekey)\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.encrypt(msg)\r\n            payload = aesjs.utils.hex.fromBytes(payload)\r\n\r\n            return {\r\n                payload: payload,\r\n                key: ekey,\r\n                hmac: hmac,\r\n                public: sender.publicKey().toString(16)\r\n            }\r\n        })\r\n    })\r\n}\r\n\r\n/**\r\n * DiscreteCrypt Symmetric Utilities\r\n * @hideconstructor\r\n */\r\nexport class Symmetric \r\n{\r\n    /**\r\n     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \r\n     * using a given input key.\r\n     * \r\n     * Uses the input key rather than a DH Exchange.\r\n     * \r\n     * @param {String|Buffer|Array} inputKey \r\n     * @param {*} msg \r\n     * @param {Object=} options \r\n     */\r\n    static encrypt(inputKey, msg, options)\r\n    {\r\n        if (!options) options = {}\r\n\r\n        if (!options.scrypt) options.scrypt = DEFAULT_SCRYPT_CONFIG\r\n\r\n        if (typeof inputKey === \"undefined\")\r\n        {\r\n            return Promise.reject('No input key provided.')\r\n        }\r\n\r\n        /* istanbul ignore else */\r\n        if (typeof inputKey === \"string\")\r\n        {\r\n            inputKey = Buffer.from(inputKey.normalize('NFKC'))\r\n        }\r\n\r\n        if (inputKey.length === 0)\r\n        {\r\n            return Promise.reject('Input key empty.')\r\n        }\r\n\r\n        let key = exports.randomBytes(32)\r\n\r\n        if(!options.raw)\r\n        {\r\n            msg = aesjs.utils.utf8.toBytes(JSON.stringify(msg))\r\n        }\r\n\r\n        let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n        hmac.setHMACKey(key, 'ARRAYBUFFER')\r\n        hmac.update(msg)\r\n        hmac = hmac.getHMAC('HEX')\r\n\r\n        return exports.utils.scryptPromise(inputKey, hmac, options.scrypt.N, options.scrypt.r, options.scrypt.p, 32).then(dhkey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(dhkey, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.encrypt(key)\r\n\r\n            ekey = aesjs.utils.hex.fromBytes(ekey)\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(key, Buffer.from(truncate(hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.encrypt(msg)\r\n            payload = aesjs.utils.hex.fromBytes(payload)\r\n\r\n            return {\r\n                payload: payload,\r\n                key: ekey,\r\n                hmac: hmac\r\n            }\r\n        })\r\n    }\r\n\r\n    /**\r\n     * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \r\n     * using a given input key.\r\n     * \r\n     * Uses the input key rather than a DH Exchange.\r\n     * \r\n     * @param {String|Buffer|Array} inputKey \r\n     * @param {Object} data \r\n     * @param {Object=} options \r\n     */\r\n    static decrypt(inputKey, data, options)\r\n    {\r\n        if (!options) options = {}\r\n        if (!options.scrypt) options.scrypt = DEFAULT_SCRYPT_CONFIG\r\n\r\n        if (typeof inputKey === \"undefined\")\r\n        {\r\n            return Promise.reject('No input key provided.')\r\n        }\r\n\r\n        /* istanbul ignore else */\r\n        if (typeof inputKey === \"string\")\r\n        {\r\n            inputKey = Buffer.from(inputKey.normalize('NFKC'))\r\n        }\r\n\r\n        if (inputKey.length === 0)\r\n        {\r\n            return Promise.reject('Input key empty.')\r\n        }\r\n\r\n        return exports.utils.scryptPromise(inputKey, data.hmac, options.scrypt.N, options.scrypt.r, options.scrypt.p, 32).then(ikey =>\r\n        {\r\n            let ctr = new aesjs.ModeOfOperation.ctr(ikey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let ekey = ctr.decrypt(aesjs.utils.hex.toBytes(data.key))\r\n\r\n            let ctr2 = new aesjs.ModeOfOperation.ctr(ekey, Buffer.from(truncate(data.hmac, 32), 'hex'))\r\n\r\n            let payload = ctr2.decrypt(aesjs.utils.hex.toBytes(data.payload))\r\n\r\n            let hmac = new jsSHA('SHA-256', 'ARRAYBUFFER')\r\n            hmac.setHMACKey(ekey, 'ARRAYBUFFER')\r\n            hmac.update(payload)\r\n\r\n            hmac = hmac.getHMAC('HEX')\r\n\r\n            if (hmac === data.hmac)\r\n            {\r\n                if(!options.raw)\r\n                {\r\n                    payload = aesjs.utils.utf8.fromBytes(payload)\r\n                    return JSON.parse(payload)\r\n                }\r\n                else\r\n                {\r\n                    return payload\r\n                }\r\n            }\r\n            else\r\n            {\r\n                return Promise.reject('Decryption failed.')\r\n            }\r\n        })\r\n    }\r\n}\r\n\r\n/**\r\n * Provides sane defaults for use in DiscreteCrypt.js applications\r\n */\r\nexport class defaults \r\n{\r\n    /**\r\n     * Returns the default parameters of DiscreteCrypt.js.\r\n     * @returns {Object}\r\n     */\r\n    static params()\r\n    {\r\n        return Object.freeze(DEFAULT_PARAMS)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * This Scrypt configuration is the default recommended scrypt configuration.\r\n     * This is for securing highly sensitive data in worst case conditions.\r\n     * @returns {Object}\r\n     */\r\n    static scrypt()\r\n    {\r\n        return Object.freeze(DEFAULT_SCRYPT_CONFIG)    \r\n    }\r\n\r\n    /**\r\n     * This Scrypt Configuration should be applied when the keys are ephemeral.\r\n     * @returns {Object}\r\n     * \r\n     */\r\n    static ephemeralScrypt() \r\n    {\r\n        return Object.freeze(EPHEMERAL_SCRYPT_CONFIG)\r\n    }\r\n\r\n    /**\r\n     * \r\n     * Should be applied for performance reasons when the author is willing to accept \r\n     * slightly reduced security for performance reasons. \r\n     * \r\n     * This can securely be applied in situations where password input is reasonably decent.\r\n     * \r\n     * Consider it a healthy middle ground between the default (top-secret) and \r\n     * ephemeral.\r\n     * @returns {Object}\r\n     */\r\n    static tunedScrypt()\r\n    {\r\n        return Object.freeze(TUNED_SCRYPT_CONFIG)\r\n    }\r\n\r\n}\r\n\r\nexports.utils = {\r\n    modPow: modPow,\r\n    truncate: truncate,\r\n    scryptPromise: scryptPromise,\r\n    hex: toHexString,\r\n    pohlig: pohlig\r\n}\r\n\r\nexports.defaults = defaults\r\nexports.Symmetric = Symmetric\r\n\r\nexports.clearCache = function()\r\n{\r\n    remember = {}\r\n}\r\n\r\nexports.Contact = Contact\r\nexports.open = open\r\nexports.exchange = exchange\r\nexports.SCRYPT_PAUSE = 0",
     "static": true,
     "longname": "C:/Users/Jesse/Documents/Projects/DiscreteCrypt.js/src/discretecrypt.js",
     "access": "public",
@@ -825,7 +825,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": "",
-    "lineNumber": 112,
+    "lineNumber": 113,
     "unknown": [
       {
         "tagName": "@returns",
@@ -894,7 +894,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": "Converts a byte array to a hex string",
-    "lineNumber": 198,
+    "lineNumber": 199,
     "params": [
       {
         "nullable": null,
@@ -931,7 +931,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": "Gets the scrypt value.",
-    "lineNumber": 219,
+    "lineNumber": 220,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1028,7 +1028,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 250,
+    "lineNumber": 254,
     "undocument": true,
     "params": [],
     "return": {
@@ -1050,7 +1050,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": "{ContactPromise}",
     "description": "A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.",
-    "lineNumber": 262,
+    "lineNumber": 266,
     "interface": false
   },
   {
@@ -1064,7 +1064,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#then",
     "access": "public",
     "description": "",
-    "lineNumber": 269,
+    "lineNumber": 273,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1103,7 +1103,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#catch",
     "access": "public",
     "description": "",
-    "lineNumber": 278,
+    "lineNumber": 282,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1142,7 +1142,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#sign",
     "access": "public",
     "description": "Signs data using the Contact, using the Schnorr Signature algorithm.    \nThis is not how DiscreteCrypt  (C++) does it,\nbut it will be modified to match this approach.",
-    "lineNumber": 290,
+    "lineNumber": 294,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1191,7 +1191,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#open",
     "access": "public",
     "description": "Sends the data to the recipient, encrypted.",
-    "lineNumber": 302,
+    "lineNumber": 305,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1199,16 +1199,6 @@
       }
     ],
     "params": [
-      {
-        "nullable": null,
-        "types": [
-          "Contact"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "recipient",
-        "description": ""
-      },
       {
         "nullable": null,
         "types": [
@@ -1240,7 +1230,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#send",
     "access": "public",
     "description": "Sends the data to the recipient, encrypted.",
-    "lineNumber": 314,
+    "lineNumber": 317,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1289,7 +1279,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#export",
     "access": "public",
     "description": "Used to export the (safe) JSON for the Contact",
-    "lineNumber": 325,
+    "lineNumber": 328,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1328,7 +1318,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#verify",
     "access": "public",
     "description": "Verifies the signed data.",
-    "lineNumber": 338,
+    "lineNumber": 341,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1379,7 +1369,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#publicKey",
     "access": "public",
     "description": "Returns the public key",
-    "lineNumber": 347,
+    "lineNumber": 350,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1407,7 +1397,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#privateKey",
     "access": "public",
     "description": "Returns the private key",
-    "lineNumber": 356,
+    "lineNumber": 359,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1435,7 +1425,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#compute",
     "access": "public",
     "description": "Computes the private key for a contact from an input key.",
-    "lineNumber": 367,
+    "lineNumber": 370,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1476,7 +1466,7 @@
     "longname": "src/discretecrypt.js~ContactPromise#clean",
     "access": "public",
     "description": "",
-    "lineNumber": 379,
+    "lineNumber": 382,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1516,7 +1506,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": "{Contact}",
     "description": "A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.",
-    "lineNumber": 389,
+    "lineNumber": 392,
     "interface": false
   },
   {
@@ -1530,7 +1520,7 @@
     "longname": "src/discretecrypt.js~Contact#publicKey",
     "access": "public",
     "description": "Returns the public key",
-    "lineNumber": 395,
+    "lineNumber": 398,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1558,7 +1548,7 @@
     "longname": "src/discretecrypt.js~Contact#privateKey",
     "access": "public",
     "description": "Returns the private key",
-    "lineNumber": 409,
+    "lineNumber": 412,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1586,7 +1576,7 @@
     "longname": "src/discretecrypt.js~Contact#setParams",
     "access": "protected",
     "description": "",
-    "lineNumber": 425,
+    "lineNumber": 428,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1623,7 +1613,7 @@
     "longname": "src/discretecrypt.js~Contact#params",
     "access": "public",
     "description": null,
-    "lineNumber": 427,
+    "lineNumber": 430,
     "undocument": true,
     "type": {
       "types": [
@@ -1642,7 +1632,7 @@
     "longname": "src/discretecrypt.js~Contact#setScrypt",
     "access": "protected",
     "description": "",
-    "lineNumber": 440,
+    "lineNumber": 443,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1679,7 +1669,7 @@
     "longname": "src/discretecrypt.js~Contact#scryptConfig",
     "access": "public",
     "description": null,
-    "lineNumber": 442,
+    "lineNumber": 445,
     "undocument": true,
     "type": {
       "types": [
@@ -1701,7 +1691,7 @@
     "see": [
       "fromJSON"
     ],
-    "lineNumber": 452,
+    "lineNumber": 456,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1719,6 +1709,16 @@
         "optional": false,
         "name": "json",
         "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "sync",
+        "description": "Specifies whether this should be synchronous or not"
       }
     ],
     "return": {
@@ -1742,7 +1742,7 @@
     "longname": "src/discretecrypt.js~Contact._fromJSONAsync",
     "access": "private",
     "description": "Imports the asynchronous version of a DiscreteCrypt Contact",
-    "lineNumber": 463,
+    "lineNumber": 467,
     "params": [
       {
         "nullable": null,
@@ -1774,7 +1774,7 @@
     "longname": "src/discretecrypt.js~Contact._fromJSONSync",
     "access": "private",
     "description": "Imports the synchronous version of a DiscreteCrypt Contact",
-    "lineNumber": 483,
+    "lineNumber": 487,
     "params": [
       {
         "nullable": null,
@@ -1805,7 +1805,7 @@
     "longname": "src/discretecrypt.js~Contact.fromJSON",
     "access": "public",
     "description": "Processes a JSON string or object, and converts it into a Contact class. ",
-    "lineNumber": 507,
+    "lineNumber": 511,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1856,7 +1856,7 @@
     "longname": "src/discretecrypt.js~Contact#export",
     "access": "public",
     "description": "Used to export the (safe) JSON for the Contact for sharing.",
-    "lineNumber": 522,
+    "lineNumber": 526,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1895,7 +1895,7 @@
     "longname": "src/discretecrypt.js~Contact#send",
     "access": "public",
     "description": "Sends the data to the recipient, encrypted.",
-    "lineNumber": 551,
+    "lineNumber": 555,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1945,7 +1945,7 @@
     "longname": "src/discretecrypt.js~Contact#open",
     "access": "public",
     "description": "Opens an encrypted payload for the contact.",
-    "lineNumber": 561,
+    "lineNumber": 565,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1984,7 +1984,7 @@
     "longname": "src/discretecrypt.js~Contact#sign",
     "access": "public",
     "description": "Signs data using the Contact, using the Schnorr Signature algorithm.\n\nThis is not how DiscreteCrypt (C++) currently handles signatures,\nbut that will be changed.",
-    "lineNumber": 577,
+    "lineNumber": 580,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1992,16 +1992,6 @@
       }
     ],
     "params": [
-      {
-        "nullable": null,
-        "types": [
-          "*"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "data",
-        "description": ""
-      },
       {
         "nullable": null,
         "types": [
@@ -2044,7 +2034,7 @@
     "longname": "src/discretecrypt.js~Contact#verify",
     "access": "public",
     "description": "Verifies the signed data.",
-    "lineNumber": 645,
+    "lineNumber": 648,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2095,7 +2085,7 @@
     "longname": "src/discretecrypt.js~Contact#clean",
     "access": "public",
     "description": "",
-    "lineNumber": 694,
+    "lineNumber": 697,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2134,7 +2124,7 @@
     "longname": "src/discretecrypt.js~Contact#async",
     "access": "public",
     "description": "Converts the object to the fully asynchronous Contact",
-    "lineNumber": 719,
+    "lineNumber": 722,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2162,7 +2152,7 @@
     "longname": "src/discretecrypt.js~Contact._modifyPromise",
     "access": "private",
     "description": null,
-    "lineNumber": 724,
+    "lineNumber": 727,
     "undocument": true,
     "params": [
       {
@@ -2189,7 +2179,7 @@
     "longname": "src/discretecrypt.js~Contact#compute",
     "access": "public",
     "description": "Computes the private key for a contact from an input key.",
-    "lineNumber": 751,
+    "lineNumber": 754,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2228,7 +2218,7 @@
     "longname": "src/discretecrypt.js~Contact#private",
     "access": "public",
     "description": null,
-    "lineNumber": 763,
+    "lineNumber": 766,
     "undocument": true,
     "type": {
       "types": [
@@ -2247,7 +2237,7 @@
     "longname": "src/discretecrypt.js~Contact.create",
     "access": "public",
     "description": "Creates a contact from the given key / salt. ",
-    "lineNumber": 785,
+    "lineNumber": 787,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2260,6 +2250,7 @@
         "types": [
           "String",
           "Buffer",
+          "Uint8Array",
           "Array="
         ],
         "spread": false,
@@ -2270,7 +2261,10 @@
       {
         "nullable": null,
         "types": [
-          "*="
+          "String",
+          "Buffer",
+          "Uint8Array",
+          "Array="
         ],
         "spread": false,
         "optional": false,
@@ -2319,7 +2313,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 840,
+    "lineNumber": 851,
     "undocument": true,
     "type": {
       "types": [
@@ -2342,7 +2336,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 842,
+    "lineNumber": 853,
     "undocument": true,
     "params": [
       {
@@ -2379,7 +2373,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": "{open}",
     "description": "Opens an encrypted payload",
-    "lineNumber": 858,
+    "lineNumber": 869,
     "params": [
       {
         "nullable": null,
@@ -2423,7 +2417,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": "{exchange}",
     "description": "Creates an encrypted payload from the sender, to the receiver.\n\nThis code assumes both individuals are using the same parameters. ",
-    "lineNumber": 923,
+    "lineNumber": 934,
     "todo": [
       "consider adding advanced options, like allowing the embedding of tuned scrypt parameters\non the exchange key.\n\nThe scrypt step is important for keysize derivation, and creates uniqueness between message exchanges,\nbut the speed is not as important in this step. "
     ],
@@ -2477,7 +2471,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": "{Symmetric}",
     "description": "DiscreteCrypt Symmetric Utilities",
-    "lineNumber": 986,
+    "lineNumber": 997,
     "unknown": [
       {
         "tagName": "@hideconstructor",
@@ -2497,7 +2491,7 @@
     "longname": "src/discretecrypt.js~Symmetric.encrypt",
     "access": "public",
     "description": "Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \nusing a given input key.\n\nUses the input key rather than a DH Exchange.",
-    "lineNumber": 998,
+    "lineNumber": 1009,
     "params": [
       {
         "nullable": null,
@@ -2528,7 +2522,7 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "scryptConfig",
+        "name": "options",
         "description": ""
       }
     ],
@@ -2549,7 +2543,7 @@
     "longname": "src/discretecrypt.js~Symmetric.decrypt",
     "access": "public",
     "description": "Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data \nusing a given input key.\n\nUses the input key rather than a DH Exchange.",
-    "lineNumber": 1057,
+    "lineNumber": 1074,
     "params": [
       {
         "nullable": null,
@@ -2580,7 +2574,7 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "scryptConfig",
+        "name": "options",
         "description": ""
       }
     ],
@@ -2602,7 +2596,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": "{defaults}",
     "description": "Provides sane defaults for use in DiscreteCrypt.js applications",
-    "lineNumber": 1109,
+    "lineNumber": 1134,
     "interface": false
   },
   {
@@ -2616,7 +2610,7 @@
     "longname": "src/discretecrypt.js~defaults.params",
     "access": "public",
     "description": "Returns the default parameters of DiscreteCrypt.js.",
-    "lineNumber": 1115,
+    "lineNumber": 1140,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2644,7 +2638,7 @@
     "longname": "src/discretecrypt.js~defaults.scrypt",
     "access": "public",
     "description": "\nThis Scrypt configuration is the default recommended scrypt configuration.\nThis is for securing highly sensitive data in worst case conditions.",
-    "lineNumber": 1126,
+    "lineNumber": 1151,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2672,7 +2666,7 @@
     "longname": "src/discretecrypt.js~defaults.ephemeralScrypt",
     "access": "public",
     "description": "This Scrypt Configuration should be applied when the keys are ephemeral.",
-    "lineNumber": 1136,
+    "lineNumber": 1161,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2700,7 +2694,7 @@
     "longname": "src/discretecrypt.js~defaults.tunedScrypt",
     "access": "public",
     "description": "\nShould be applied for performance reasons when the author is willing to accept \nslightly reduced security for performance reasons. \n\nThis can securely be applied in situations where password input is reasonably decent.\n\nConsider it a healthy middle ground between the default (top-secret) and \nephemeral.",
-    "lineNumber": 1152,
+    "lineNumber": 1177,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2731,7 +2725,7 @@
     "importPath": "discretecrypt.js/src/discretecrypt.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 1170,
+    "lineNumber": 1195,
     "undocument": true,
     "params": [],
     "return": null,
@@ -2739,7 +2733,7 @@
   },
   {
     "kind": "index",
-    "content": "# DiscreteCrypt.js\r\n\r\n[![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master) [![GitHub license](https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg)](https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE) [![npm version](https://badge.fury.io/js/discretecrypt.js.svg)](https://badge.fury.io/js/discretecrypt.js)\r\n\r\n![Shield](https://svgshare.com/i/8D1.svg)\r\n\r\nA project for simple & secure data transmission, based on the DiscreteCrypt protocol (an alternative to PGP).\r\n\r\n## What's it do?\r\n\r\nThis library makes it quite easy to implement end-to-end encryption both in the web browser and in Node.js, and provides extra utilities to make it convenient to encrypt symmetrically as well.\r\n\r\nThe library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from [nspdh](https://github.com/TotalTechGeek/nspdh). \r\n\r\nA neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.\r\n\r\nYou may alternatively generate keys ephemerally, and encrypt the generated \"contact\" symmetrically (like traditional cryptosystems).\r\n\r\nYou may also create signatures (similar to GPG/PGP).\r\n\r\n## How do I use it?\r\n\r\nIn DiscreteCrypt, we refer to \"public keys\" as \"contacts,\" and they are generated asynchronously as promises. \r\n\r\nThe create method returns a promise with a few helper functions tossed onto it, to make it slightly more convenient to use the library. \r\n\r\nAll of the helper functions return a promise that execute the generated contact's function once it completes.\r\n\r\n\r\n#### Sending and Opening Data\r\n\r\n```js\r\nconst Contact = DiscreteCrypt.Contact\r\n\r\n// generates the contact ephemerally.\r\nlet me = Contact.create()\r\n\r\n// the Contact.create().export() would happen on someone else's computer\r\nlet you = Contact.import(Contact.create().export())\r\n\r\n// any JSON-serializable object can be passed into the \"send\" function.\r\nme.send(you, 'Hello, World!').then(encrypted =>\r\n{\r\n    // code to send encrypted data to other user\r\n})\r\n```\r\n\r\n\r\nThen to open the data, \r\n\r\n```js \r\nyou.open(encrypted).then(data =>\r\n{\r\n    console.log(data) // Hello, World!\r\n}).catch(err =>\r\n{\r\n    // the decryption didn't occur correctly.\r\n    console.error(err)\r\n})\r\n```\r\n\r\n\r\n#### Creating a Reusable Contact \r\n\r\nTo create a re-usable contact for public-key cryptography (one you can import at a later date), do the following:\r\n\r\n**1 - Create the Contact** \r\n\r\n```js\r\n// you can also pass in an Buffer or Uint8-like object for the password.\r\nlet me = Contact.create('<SuperSecurePassword>')\r\n\r\n// creates the public contact, store this somewhere\r\nlet pub = me.export()\r\n```\r\n\r\n\r\n**2 - Import the Public Contact & Compute (To turn it back into a private contact)**\r\n\r\n```js\r\nlet me = Contact.import(pub).compute('<SuperSecurePassword>')\r\n```\r\n\r\nAnd that's it! \r\n\r\n\r\n#### Symmetrically Encrypting Data\r\n\r\nSometimes you'll want to encrypt data symmetrically. These methods use a slight reduction of the DiscreteCrypt protocol (removing the asymmetric steps) that allow you to securely store a payload.  \r\n\r\nOut of the box these methods perform data authenticity checks, and the necessary key stretching to keep your data safe. \r\n\r\n```js\r\n// key can be a string, buffer or uint8array-like structure.\r\nDiscreteCrypt.Symmetric.encrypt(key, data).then(encrypted =>\r\n{\r\n    // store encrypted somewhere\r\n    // ... and then later on\r\n    DiscreteCrypt.Symmetric.decrypt(key, encrypted).then(decrypted =>\r\n    {\r\n        console.log(decrypted)\r\n    })\r\n})\r\n```\r\n\r\n## Documentation\r\n\r\nHere is where you can view the rest of [the documentation](https://jessemitchell.me/DiscreteCrypt.js)\r\n\r\n## To Build (for browser)\r\n\r\nRun the following commands:\r\n```\r\nnpm i\r\nnpm run build\r\n```\r\n\r\nThis will produce the necessary output.\r\n\r\n\r\n## Dependencies\r\n\r\nThe following libraries were used:\r\n- [aes-js](https://github.com/ricmoo/aes-js)\r\n- [bn.js](https://github.com/indutny/bn.js/)\r\n- [buffer](https://github.com/feross/buffer)\r\n- [jsSHA](https://github.com/Caligatio/jsSHA)\r\n- [scrypt-async](https://github.com/dchest/scrypt-async-js)\r\n\r\n## Notes\r\n\r\nThis library can leverage the new proposal for [native BigInts](https://github.com/tc39/proposal-bigint) in JavaScript, achieving far greater performance.\r\n\r\nAt the time of writing, Chrome is the only browser with support for this proposal.\r\n",
+    "content": "# DiscreteCrypt.js\r\n\r\n[![Coverage Status](https://coveralls.io/repos/github/TotalTechGeek/DiscreteCrypt.js/badge.svg?branch=master)](https://coveralls.io/github/TotalTechGeek/DiscreteCrypt.js?branch=master) [![GitHub license](https://img.shields.io/github/license/TotalTechGeek/DiscreteCrypt.js.svg)](https://github.com/TotalTechGeek/DiscreteCrypt.js/blob/master/LICENSE) [![npm version](https://badge.fury.io/js/discretecrypt.js.svg)](https://badge.fury.io/js/discretecrypt.js)\r\n\r\n![Shield](https://cdn.rawgit.com/TotalTechGeek/31fe6bc0b4e6a82d3e3f46d4fbb3cc42/raw/d70723337819b9258779cc0284fdcc3cb6ce3331/shield-js.svg)\r\n\r\nA project for simple & secure data transmission, based on the DiscreteCrypt protocol (an alternative to PGP).\r\n\r\n## What's it do?\r\n\r\nThis library makes it quite easy to implement end-to-end encryption both in the web browser and in Node.js, and provides extra utilities to make it convenient to encrypt symmetrically as well.\r\n\r\nThe library out of the box is tuned heavily against a variety of attacks, implementing scrypt for key derivation, a strong authenticated encryption scheme using HMAC-SHA256, and AES-256 in CTR mode for encryption. It uses provably secure 3072 Bit Discrete Log Parameters generated from [nspdh](https://github.com/TotalTechGeek/nspdh). \r\n\r\nA neat feature of this implementation is that a password can be used to quickly & securely derive a private key (via scrypt), which allows for convenient public-key encryption. The code makes heavy use of JavaScript Promises.\r\n\r\nYou may alternatively generate keys ephemerally, and encrypt the generated \"contact\" symmetrically (like traditional cryptosystems).\r\n\r\nYou may also create signatures (similar to GPG/PGP).\r\n\r\n## How do I use it?\r\n\r\nIn DiscreteCrypt, we refer to \"public keys\" as \"contacts,\" and they are generated asynchronously as promises. \r\n\r\nThe create method returns a promise with a few helper functions tossed onto it, to make it slightly more convenient to use the library. \r\n\r\nAll of the helper functions return a promise that execute the generated contact's function once it completes.\r\n\r\n\r\n#### Sending and Opening Data\r\n\r\n```js\r\nconst Contact = DiscreteCrypt.Contact\r\n\r\n// generates the contact ephemerally.\r\nlet me = Contact.create()\r\n\r\n// the Contact.create().export() would happen on someone else's computer\r\nlet you = Contact.import(Contact.create().export())\r\n\r\n// any JSON-serializable object can be passed into the \"send\" function.\r\nme.send(you, 'Hello, World!').then(encrypted =>\r\n{\r\n    // code to send encrypted data to other user\r\n})\r\n```\r\n\r\n\r\nThen to open the data, \r\n\r\n```js \r\nyou.open(encrypted).then(data =>\r\n{\r\n    console.log(data) // Hello, World!\r\n}).catch(err =>\r\n{\r\n    // the decryption didn't occur correctly.\r\n    console.error(err)\r\n})\r\n```\r\n\r\n\r\n#### Creating a Reusable Contact \r\n\r\nTo create a re-usable contact for public-key cryptography (one you can import at a later date), do the following:\r\n\r\n**1 - Create the Contact** \r\n\r\n```js\r\n// you can also pass in an Buffer or Uint8-like object for the password.\r\nlet me = Contact.create('<SuperSecurePassword>')\r\n\r\n// creates the public contact, store this somewhere\r\nlet pub = me.export()\r\n```\r\n\r\n\r\n**2 - Import the Public Contact & Compute (To turn it back into a private contact)**\r\n\r\n```js\r\nlet me = Contact.import(pub).compute('<SuperSecurePassword>')\r\n```\r\n\r\nAnd that's it! \r\n\r\n\r\n#### Symmetrically Encrypting Data\r\n\r\nSometimes you'll want to encrypt data symmetrically. These methods use a slight reduction of the DiscreteCrypt protocol (removing the asymmetric steps) that allow you to securely store a payload.  \r\n\r\nOut of the box these methods perform data authenticity checks, and the necessary key stretching to keep your data safe. \r\n\r\n```js\r\n// key can be a string, buffer or uint8array-like structure.\r\nDiscreteCrypt.Symmetric.encrypt(key, data).then(encrypted =>\r\n{\r\n    // store encrypted somewhere\r\n    // ... and then later on\r\n    DiscreteCrypt.Symmetric.decrypt(key, encrypted).then(decrypted =>\r\n    {\r\n        console.log(decrypted)\r\n    })\r\n})\r\n```\r\n\r\n## Documentation\r\n\r\nHere is where you can view the rest of [the documentation](https://jessemitchell.me/DiscreteCrypt.js)\r\n\r\n## To Build (for browser)\r\n\r\nRun the following commands:\r\n```\r\nnpm i\r\nnpm run build\r\n```\r\n\r\nThis will produce the necessary output.\r\n\r\n\r\n## Dependencies\r\n\r\nThe following libraries were used:\r\n- [aes-js](https://github.com/ricmoo/aes-js)\r\n- [bn.js](https://github.com/indutny/bn.js/)\r\n- [buffer](https://github.com/feross/buffer)\r\n- [jsSHA](https://github.com/Caligatio/jsSHA)\r\n- [scrypt-async](https://github.com/dchest/scrypt-async-js)\r\n\r\n## Notes\r\n\r\nThis library can leverage the new proposal for [native BigInts](https://github.com/tc39/proposal-bigint) in JavaScript, achieving far greater performance.\r\n\r\nAt the time of writing, Chrome is the only browser with support for this proposal.\r\n",
     "longname": "C:\\Users\\Jesse\\Documents\\Projects\\DiscreteCrypt.js\\README.md",
     "name": "./README.md",
     "static": true,
@@ -2747,7 +2741,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"discretecrypt.js\",\n  \"version\": \"0.0.30\",\n  \"description\": \"A very simple-to-use cryptosystem, designed to make security easy.\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"nyc mocha\",\n    \"doc\": \"esdoc\",\n    \"coverage\": \"nyc report --reporter=text-lcov | coveralls\",\n    \"build\": \"mkdirp build && browserify src/discretecrypt.browser.js -o build/discretecrypt.js && minify build/discretecrypt.js -o build/discretecrypt.min.js\"\n  },\n  \"keywords\": [\n    \"crypto\",\n    \"discretecrypt\",\n    \"security\",\n    \"easy\",\n    \"encryption\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/TotalTechGeek/DiscreteCrypt.js\"\n  },\n  \"author\": \"Jesse Daniel Mitchell\",\n  \"license\": \"BSD-2-Clause\",\n  \"dependencies\": {\n    \"aes-js\": \"^3.1.1\",\n    \"bn.js\": \"^4.11.8\",\n    \"jssha\": \"^2.3.1\",\n    \"scrypt-async\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"babel-minify\": \"^0.2.0\",\n    \"browserify\": \"^16.2.2\",\n    \"buffer\": \"^5.2.0\",\n    \"coveralls\": \"^3.0.2\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"mkdirp\": \"^0.5.1\",\n    \"mocha\": \"^5.2.0\",\n    \"nyc\": \"^13.0.1\"\n  }\n}\n",
+    "content": "{\r\n  \"name\": \"discretecrypt.js\",\r\n  \"version\": \"0.0.40\",\r\n  \"description\": \"A very simple-to-use cryptosystem, designed to make security easy.\",\r\n  \"main\": \"index.js\",\r\n  \"scripts\": {\r\n    \"test\": \"nyc mocha\",\r\n    \"doc\": \"esdoc\",\r\n    \"coverage\": \"nyc report --reporter=text-lcov | coveralls\",\r\n    \"build\": \"mkdirp build && browserify src/discretecrypt.browser.js -o build/discretecrypt.js && minify build/discretecrypt.js -o build/discretecrypt.min.js\"\r\n  },\r\n  \"keywords\": [\r\n    \"crypto\",\r\n    \"discretecrypt\",\r\n    \"security\",\r\n    \"easy\",\r\n    \"encryption\"\r\n  ],\r\n  \"repository\": {\r\n    \"type\": \"git\",\r\n    \"url\": \"https://github.com/TotalTechGeek/DiscreteCrypt.js\"\r\n  },\r\n  \"author\": \"Jesse Daniel Mitchell\",\r\n  \"license\": \"BSD-2-Clause\",\r\n  \"dependencies\": {\r\n    \"aes-js\": \"^3.1.2\",\r\n    \"bn.js\": \"^4.11.8\",\r\n    \"jssha\": \"^2.3.1\",\r\n    \"scrypt-async\": \"^2.0.1\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"babel-minify\": \"^0.2.0\",\r\n    \"browserify\": \"^16.2.3\",\r\n    \"buffer\": \"^5.4.3\",\r\n    \"coveralls\": \"^3.0.7\",\r\n    \"esdoc\": \"^1.1.0\",\r\n    \"esdoc-standard-plugin\": \"^1.0.0\",\r\n    \"mkdirp\": \"^0.5.1\",\r\n    \"mocha\": \"^5.2.0\",\r\n    \"nyc\": \"^14.1.1\"\r\n  }\r\n}\r\n",
     "longname": "C:\\Users\\Jesse\\Documents\\Projects\\DiscreteCrypt.js\\package.json",
     "name": "package.json",
     "static": true,

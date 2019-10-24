@@ -263,7 +263,7 @@ const PROMISE_TRICK = function()
 /**
  * A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.
  */
-/*export   */class ContactPromise
+/* export   */ class ContactPromise
 {
     /**
      * 
@@ -298,7 +298,6 @@ const PROMISE_TRICK = function()
 
     /**
      * Sends the data to the recipient, encrypted.
-     * @param {Contact} recipient 
      * @param {*} data 
      * @returns {Promise.<Object>}
      * 
@@ -390,7 +389,7 @@ const PROMISE_TRICK = function()
 /**
  * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.
  */
-/*export   */class Contact
+/* export   */ class Contact
 {
     /**
      * Returns the public key
@@ -451,6 +450,7 @@ const PROMISE_TRICK = function()
      * Alias for fromJSON
      * @see fromJSON
      * @param {String|Object} json
+     * @param {Boolean} sync Specifies whether this should be synchronous or not
      * @returns {ContactPromise|Contact} 
      */
     static
@@ -573,7 +573,6 @@ const PROMISE_TRICK = function()
      * This is not how DiscreteCrypt (C++) currently handles signatures,
      * but that will be changed.
      * 
-     * @param {*} data 
      * @param {Object|Promise.<Object>} data 
      * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.
      * @returns {Promise.<Object>} Signature
@@ -867,7 +866,7 @@ function truncate(x, len)
  * @param {Contact|ContactPromise} receiver 
  * @param {*} data 
  */
-/*export   */function open(receiver, data)
+/* export   */ function open(receiver, data)
 {
     if (!(receiver instanceof Promise))
     {
@@ -932,7 +931,7 @@ function truncate(x, len)
  * @param {Contact} receiver 
  * @param {*} msg
  */
-/*export   */function exchange(sender, receiver, msg)
+/* export   */ function exchange(sender, receiver, msg)
 {
     if (!(sender instanceof Promise))
     {
@@ -995,7 +994,7 @@ function truncate(x, len)
  * DiscreteCrypt Symmetric Utilities
  * @hideconstructor
  */
-/*export   */class Symmetric 
+/* export   */ class Symmetric 
 {
     /**
      * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
@@ -1132,7 +1131,7 @@ function truncate(x, len)
 /**
  * Provides sane defaults for use in DiscreteCrypt.js applications
  */
-/*export   */class defaults 
+/* export   */ class defaults 
 {
     /**
      * Returns the default parameters of DiscreteCrypt.js.

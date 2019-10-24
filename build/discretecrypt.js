@@ -1,4 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
 (function(root) {
     "use strict";
 
@@ -21,7 +22,7 @@
     function coerceArray(arg, copy) {
 
         // ArrayBuffer view
-        if (arg.buffer && ArrayBuffer.isView(arg) && arg.name === 'Uint8Array') {
+        if (arg.buffer && arg.name === 'Uint8Array') {
 
             if (copy) {
                 if (arg.slice) {
@@ -786,7 +787,7 @@
     // http://www.requirejs.org/docs/api.html
     // https://github.com/amdjs/amdjs-api/wiki/AMD
     } else if (typeof(define) === 'function' && define.amd) {
-        define(aesjs);
+        define([], function() { return aesjs; });
 
     // Web Browsers
     } else {
@@ -870,7 +871,8 @@ function toByteArray (b64) {
     ? validLen - 4
     : validLen
 
-  for (var i = 0; i < len; i += 4) {
+  var i
+  for (i = 0; i < len; i += 4) {
     tmp =
       (revLookup[b64.charCodeAt(i)] << 18) |
       (revLookup[b64.charCodeAt(i + 1)] << 12) |
@@ -4399,6 +4401,10 @@ function fromByteArray (uint8) {
 
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
+var customInspectSymbol =
+  (typeof Symbol === 'function' && typeof Symbol.for === 'function')
+    ? Symbol.for('nodejs.util.inspect.custom')
+    : null
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -4435,7 +4441,9 @@ function typedArraySupport () {
   // Can typed array instances can be augmented?
   try {
     var arr = new Uint8Array(1)
-    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
+    var proto = { foo: function () { return 42 } }
+    Object.setPrototypeOf(proto, Uint8Array.prototype)
+    Object.setPrototypeOf(arr, proto)
     return arr.foo() === 42
   } catch (e) {
     return false
@@ -4464,7 +4472,7 @@ function createBuffer (length) {
   }
   // Return an augmented `Uint8Array` instance
   var buf = new Uint8Array(length)
-  buf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(buf, Buffer.prototype)
   return buf
 }
 
@@ -4514,7 +4522,7 @@ function from (value, encodingOrOffset, length) {
   }
 
   if (value == null) {
-    throw TypeError(
+    throw new TypeError(
       'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
       'or Array-like Object. Received type ' + (typeof value)
     )
@@ -4566,8 +4574,8 @@ Buffer.from = function (value, encodingOrOffset, length) {
 
 // Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:
 // https://github.com/feross/buffer/pull/148
-Buffer.prototype.__proto__ = Uint8Array.prototype
-Buffer.__proto__ = Uint8Array
+Object.setPrototypeOf(Buffer.prototype, Uint8Array.prototype)
+Object.setPrototypeOf(Buffer, Uint8Array)
 
 function assertSize (size) {
   if (typeof size !== 'number') {
@@ -4671,7 +4679,8 @@ function fromArrayBuffer (array, byteOffset, length) {
   }
 
   // Return an augmented `Uint8Array` instance
-  buf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(buf, Buffer.prototype)
+
   return buf
 }
 
@@ -4993,6 +5002,9 @@ Buffer.prototype.inspect = function inspect () {
   if (this.length > max) str += ' ... '
   return '<Buffer ' + str + '>'
 }
+if (customInspectSymbol) {
+  Buffer.prototype[customInspectSymbol] = Buffer.prototype.inspect
+}
 
 Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
   if (isInstance(target, Uint8Array)) {
@@ -5118,7 +5130,7 @@ function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
         return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
       }
     }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+    return arrayIndexOf(buffer, [val], byteOffset, encoding, dir)
   }
 
   throw new TypeError('val must be string, number or Buffer')
@@ -5447,7 +5459,7 @@ function hexSlice (buf, start, end) {
 
   var out = ''
   for (var i = start; i < end; ++i) {
-    out += toHex(buf[i])
+    out += hexSliceLookupTable[buf[i]]
   }
   return out
 }
@@ -5484,7 +5496,8 @@ Buffer.prototype.slice = function slice (start, end) {
 
   var newBuf = this.subarray(start, end)
   // Return an augmented `Uint8Array` instance
-  newBuf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(newBuf, Buffer.prototype)
+
   return newBuf
 }
 
@@ -5973,6 +5986,8 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
     }
   } else if (typeof val === 'number') {
     val = val & 255
+  } else if (typeof val === 'boolean') {
+    val = Number(val)
   }
 
   // Invalid ranges are not set to a default, so can range check early.
@@ -6028,11 +6043,6 @@ function base64clean (str) {
     str = str + '='
   }
   return str
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
 }
 
 function utf8ToBytes (string, units) {
@@ -6164,6 +6174,20 @@ function numberIsNaN (obj) {
   // For IE11 support
   return obj !== obj // eslint-disable-line no-self-compare
 }
+
+// Create lookup table for `toString('hex')`
+// See: https://github.com/feross/buffer/issues/219
+var hexSliceLookupTable = (function () {
+  var alphabet = '0123456789abcdef'
+  var table = new Array(256)
+  for (var i = 0; i < 16; ++i) {
+    var i16 = i * 16
+    for (var j = 0; j < 16; ++j) {
+      table[i16 + j] = alphabet[i] + alphabet[j]
+    }
+  }
+  return table
+})()
 
 },{"base64-js":2,"ieee754":6}],6:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -7402,7 +7426,7 @@ const PROMISE_TRICK = function()
 /**
  * A stub class that doesn't actually get used, but helps with autocompletion. Allows you to use Contacts asynchronously.
  */
-/*export   */class ContactPromise
+/* export   */ class ContactPromise
 {
     /**
      * 
@@ -7437,7 +7461,6 @@ const PROMISE_TRICK = function()
 
     /**
      * Sends the data to the recipient, encrypted.
-     * @param {Contact} recipient 
      * @param {*} data 
      * @returns {Promise.<Object>}
      * 
@@ -7529,7 +7552,7 @@ const PROMISE_TRICK = function()
 /**
  * A contact that can be used to send or receive secure messages. Essentially an abstraction of a public/private key.
  */
-/*export   */class Contact
+/* export   */ class Contact
 {
     /**
      * Returns the public key
@@ -7590,6 +7613,7 @@ const PROMISE_TRICK = function()
      * Alias for fromJSON
      * @see fromJSON
      * @param {String|Object} json
+     * @param {Boolean} sync Specifies whether this should be synchronous or not
      * @returns {ContactPromise|Contact} 
      */
     static
@@ -7712,7 +7736,6 @@ const PROMISE_TRICK = function()
      * This is not how DiscreteCrypt (C++) currently handles signatures,
      * but that will be changed.
      * 
-     * @param {*} data 
      * @param {Object|Promise.<Object>} data 
      * @param {Boolean} bundle allows you to specify whether the source data should be bundled in or not.
      * @returns {Promise.<Object>} Signature
@@ -8006,7 +8029,7 @@ function truncate(x, len)
  * @param {Contact|ContactPromise} receiver 
  * @param {*} data 
  */
-/*export   */function open(receiver, data)
+/* export   */ function open(receiver, data)
 {
     if (!(receiver instanceof Promise))
     {
@@ -8071,7 +8094,7 @@ function truncate(x, len)
  * @param {Contact} receiver 
  * @param {*} msg
  */
-/*export   */function exchange(sender, receiver, msg)
+/* export   */ function exchange(sender, receiver, msg)
 {
     if (!(sender instanceof Promise))
     {
@@ -8134,7 +8157,7 @@ function truncate(x, len)
  * DiscreteCrypt Symmetric Utilities
  * @hideconstructor
  */
-/*export   */class Symmetric 
+/* export   */ class Symmetric 
 {
     /**
      * Uses the Authenticated Encryption Mechanism from the DiscreteCrypt Protocol to symmetrically encrypt the data 
@@ -8271,7 +8294,7 @@ function truncate(x, len)
 /**
  * Provides sane defaults for use in DiscreteCrypt.js applications
  */
-/*export   */class defaults 
+/* export   */ class defaults 
 {
     /**
      * Returns the default parameters of DiscreteCrypt.js.

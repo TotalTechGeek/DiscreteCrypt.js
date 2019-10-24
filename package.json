@@ -1,6 +1,6 @@
 {
   "name": "discretecrypt.js",
-  "version": "0.0.39",
+  "version": "0.1.0",
   "description": "A very simple-to-use cryptosystem, designed to make security easy.",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "author": "Jesse Daniel Mitchell",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "aes-js": "^3.1.1",
+    "aes-js": "^3.1.2",
     "bn.js": "^4.11.8",
     "jssha": "^2.3.1",
     "scrypt-async": "^2.0.1"
@@ -31,12 +31,12 @@
   "devDependencies": {
     "babel-minify": "^0.2.0",
     "browserify": "^16.2.3",
-    "buffer": "^5.2.1",
-    "coveralls": "^3.0.2",
+    "buffer": "^5.4.3",
+    "coveralls": "^3.0.7",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "mkdirp": "^0.5.1",
     "mocha": "^5.2.0",
-    "nyc": "^13.1.0"
+    "nyc": "^14.1.1"
   }
 }

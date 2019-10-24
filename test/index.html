@@ -56,7 +56,7 @@ Password <input id="pass" type="password" />
     {
         let msg = document.getElementById('msg')
         let password = document.getElementById('pass').value
-        DiscreteCrypt.Symmetric.encrypt(password, msg.value, DiscreteCrypt.defaults.tunedScrypt()).then(encrypted =>
+        DiscreteCrypt.Symmetric.encrypt(password, msg.value, { scrypt: DiscreteCrypt.defaults.tunedScrypt() }).then(encrypted =>
         {
             msg.value = JSON.stringify(encrypted)
         })
@@ -66,7 +66,7 @@ Password <input id="pass" type="password" />
     {
         let msg = document.getElementById('msg')
         let password = document.getElementById('pass').value
-        DiscreteCrypt.Symmetric.decrypt(password, JSON.parse(msg.value), DiscreteCrypt.defaults.tunedScrypt()).then(decrypted =>
+        DiscreteCrypt.Symmetric.decrypt(password, JSON.parse(msg.value), { scrypt: DiscreteCrypt.defaults.tunedScrypt() }).then(decrypted =>
         {
             msg.value = decrypted
         })
