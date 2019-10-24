@@ -7213,7 +7213,7 @@ function pohlig(prime, range)
         throw "Only number types are allowed for the range parameter."
     }
 
-    /* istanbul ignore if */
+    /* istanbul ignore else: BigInts are on the way in, we might need to automate tests without bigints */
     if (typeof BigInt !== "undefined")
     {
         /*
@@ -7223,8 +7223,7 @@ function pohlig(prime, range)
          */
         function native_pohlig(prime, range)
         {
-            if (typeof prime === "string") prime = BigInt(prime)
-            else if (typeof prime !== "bigint") prime = BigInt(prime.toString())
+            if (typeof prime !== "bigint") prime = BigInt(prime.toString())
 
             prime -= BigInt(1)
             let factors = BigInt(1)
@@ -7246,22 +7245,24 @@ function pohlig(prime, range)
 
         return native_pohlig(prime, range)
     }
-
-    if (!(prime instanceof bigInt)) prime = new bigInt(prime)
-
-    prime.isubn(1)
-    let factors = new bigInt(1)
-    let max = (range || (1 << 12)) + 1
-    for (let i = 2; i < max; i++)
+    else
     {
-        while (!prime.modn(i))
-        {
-            prime.idivn(i)
-            factors.imuln(i)
-        }
-    }
+        if (!(prime instanceof bigInt)) prime = new bigInt(prime)
 
-    return [prime.toString(), factors.toString()]
+        prime.isubn(1)
+        let factors = new bigInt(1)
+        let max = (range || (1 << 12)) + 1
+        for (let i = 2; i < max; i++)
+        {
+            while (!prime.modn(i))
+            {
+                prime.idivn(i)
+                factors.imuln(i)
+            }
+        }
+
+        return [prime.toString(), factors.toString()]
+    }
 }
 
 
@@ -7278,8 +7279,8 @@ function modPow(a, b, c)
     if (!(a instanceof bigInt)) a = new bigInt(a)
     if (!(b instanceof bigInt)) b = new bigInt(b)
     if (!(c instanceof bigInt)) c = new bigInt(c)
-
-    /* istanbul ignore if */
+    
+    /* istanbul ignore else */
     if (typeof BigInt !== "undefined")
     {
         function pow(a, b, c)
