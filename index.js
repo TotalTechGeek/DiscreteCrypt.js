@@ -10,12 +10,20 @@ DiscreteCrypt.randomBytes = function(n)
 
 const DEFAULT_SCRYPT_CONFIG = DiscreteCrypt.defaults.scrypt()
 
-// Efficient Native Implementation -- Need to write tests prior to adding it.
-/* istanbul ignore if: this code actually has been tested, but I need to develop toggles */
+// Efficient Native Implementation 
+// More tests needed for different key lengths
+/* istanbul ignore else */
 if(crypto.scrypt)
 {
+    DiscreteCrypt.utils.scryptPromiseFallback = DiscreteCrypt.utils.scryptPromise
     DiscreteCrypt.utils.scryptPromise = function(key, salt, N, r, p, len)
     {
+        /* istanbul ignore if */
+        if(DiscreteCrypt.FORCE_JS_SCRYPT)
+        {
+            return DiscreteCrypt.utils.scryptPromiseFallback(key, salt, N, r, p, len)
+        }
+
         if (typeof key === "string")
         {
             key = Buffer.from(key.normalize('NFKC'))
@@ -39,10 +47,12 @@ if(crypto.scrypt)
                 p: p
             }, (err, derived) =>
             {
+                // Will need to come up with more test vectors that will lead this to crash. I may "ignore" this if I come up with mechanisms to use the fallback. 
                 if(err) return reject(err)
                 return resolve(derived)
             })
         })
     }
 }
+
 module.exports = DiscreteCrypt

@@ -575,6 +575,9 @@ describe('DiscreteCrypt', () =>
             {
                 let val = DiscreteCrypt.utils.pohlig(1556393, 400)[0]
                 if(val != 757) return done(new Error())
+
+                val = DiscreteCrypt.utils.pohlig(1556393n, 400)[0]
+                if(val != 757) return done(new Error())
                 
                 val = DiscreteCrypt.utils.pohlig('1556393', 400)[0]
                 if(val != 757) return done(new Error()) 
@@ -928,5 +931,99 @@ describe('DiscreteCrypt', () =>
         })
     })
 
+    describe('Scrypt Fallback', () =>
+    {
+        describe('#scryptPromise', () =>
+        {
+            let scryptP = DiscreteCrypt.utils.scryptPromiseFallback(TXT, '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len)
+
+            it('should be able to process string input', (done) =>
+            {
+                scryptP.then(data =>
+                {
+                    return done()
+                })
+            })
+
+
+            // todo: add tests for other inputs, but length seemed most important (because it had an actual bug associated)
+            it('should reject when the length is not an integer', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromiseFallback(TXT, '00', scrypt.N, scrypt.r, scrypt.p, 32.5).then(() =>
+                {
+                    return done(new Error())
+                }).catch(() =>
+                {
+                    return done()
+                })
+            })
+
+            it('should be able to process keys longer than 64 bytes (string)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromiseFallback('1'.repeat(65), '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+            it('should be able to process keys longer than 64 bytes (Buffer)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromiseFallback(Buffer.from('1'.repeat(65)), '00', scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+
+            it('should be able to process salt longer than 64 bytes (string)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromiseFallback('0'.repeat(64), '1'.repeat(65), scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+            it('should be able to process salt longer than 64 bytes (Buffer)', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromiseFallback('0'.repeat(64), Buffer.from('1'.repeat(65)), scrypt.N, scrypt.r, scrypt.p, scrypt.len).then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                }) 
+            })
+
+
+            it('should be able to deal with optional parameters', (done) =>
+            {
+                DiscreteCrypt.utils.scryptPromiseFallback(TXT, '00').then(() =>
+                {
+                    return done()
+                }).catch(() =>
+                {
+                    return done(new Error())
+                })
+            })
+
+            it('should match the test vector (output test)', (done) =>
+            {
+                scryptP.then(data =>
+                {
+                    if(DiscreteCrypt.utils.hex(data).toLowerCase() === '8a2d641456a541d54ed820b4d891399028b6df7df6736ce818717855751690ab')
+                        return done()
+                })
+            })
+        })
+    })
 
 })
