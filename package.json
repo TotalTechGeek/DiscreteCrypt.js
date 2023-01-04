@@ -29,7 +29,7 @@
     "scrypt-async": "^2.0.1"
   },
   "devDependencies": {
-    "babel-minify": "^0.2.0",
+    "babel-minify": "^0.5.2",
     "browserify": "^16.2.3",
     "buffer": "^5.4.3",
     "coveralls": "^3.0.7",
